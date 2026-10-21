@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import OrnamentDivider from './OrnamentDivider';
 
-export default function GetTicket({ onOpenBooking, onOpenLookup }) {
+export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster }) {
   const [timeLeft, setTimeLeft] = useState({
     days: '00',
     hours: '00',
