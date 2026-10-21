@@ -21,7 +21,7 @@ export default function Hero({ onOpenPoster }) {
         {/* Official Brush / Grunge Title Logo */}
         <div className="hero-logo-container">
           <img 
-            src="/assets/logo-white.png" 
+            src="/assets/logo-white-tight.png" 
             alt="MUSICAL 필로우맨 (The Pillowman)" 
             className="hero-official-logo"
           />

@@ -40,14 +40,12 @@ export default function Header({ onOpenBooking }) {
 
   return (
     <header className={`site-header ${scrolled ? 'scrolled' : ''}`} id="main-header">
-      <div class="nav-container">
+      <div className="nav-container">
         <a href="#home" onClick={(e) => handleNavClick(e, 'home')} className="brand-logo" aria-label="필로우맨 홈으로 이동">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <img src="/assets/symbol-white.png" alt="" style={{ height: '32px', width: 'auto', opacity: 0.92 }} />
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span className="brand-title">THE PILLOWMAN</span>
-              <span className="brand-sub">뮤지컬 〈필로우맨〉</span>
-            </div>
+          <img src="/assets/symbol-white-tight.png" alt="필로우맨 심볼" className="brand-symbol-img" />
+          <div className="brand-text-wrap">
+            <span className="brand-title">THE PILLOWMAN</span>
+            <span className="brand-sub">뮤지컬 〈필로우맨〉</span>
           </div>
         </a>
 
