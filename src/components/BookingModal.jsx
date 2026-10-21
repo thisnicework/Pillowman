@@ -267,7 +267,7 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
 
               <div className="modal-actions-dual">
                 <button type="button" className="btn-modal-print" onClick={() => window.print()}>
-                  🖨️ 티켓 인쇄 / 저장
+                  티켓 인쇄 / 저장
                 </button>
                 <button type="button" className="btn-modal-cancel-ticket" onClick={handleClose}>
                   확인 완료

@@ -158,7 +158,10 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster })
               <span className="title">예매 조회 및 취소</span>
               <span className="sub">예매자명 + 전화번호로 확인</span>
             </div>
-            <span style={{ fontSize: '1.2rem' }}>🔍</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.85 }}>
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
           </button>
         </div>
 
@@ -171,7 +174,7 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster })
             className="get-ticket-poster-img"
           />
           <div className="poster-hover-overlay">
-            <span>🔍 클릭하여 포스터 크게 보기</span>
+            <span>클릭하여 포스터 크게 보기</span>
           </div>
         </div>
 

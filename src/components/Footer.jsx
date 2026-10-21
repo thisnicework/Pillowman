@@ -52,7 +52,7 @@ export default function Footer({ onOpenBooking }) {
                 rel="noopener noreferrer" 
                 className="footer-social-link"
               >
-                <span>📷 공식 인스타그램 @pillowman_kr</span>
+                <span>공식 인스타그램 @pillowman_kr</span>
               </a>
             </div>
 

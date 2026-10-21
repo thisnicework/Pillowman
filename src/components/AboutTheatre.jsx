@@ -63,7 +63,7 @@ export default function AboutTheatre({ onNotify }) {
               className="btn-pill-action btn-pill-copy" 
               onClick={handleCopyAddress}
             >
-              📋 주소 복사하기
+              주소 복사하기
             </button>
             <a 
               href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%98%88%EC%88%A0%EB%8C%80%ED%95%99%EA%B5%90" 
