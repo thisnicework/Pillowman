@@ -100,23 +100,14 @@ export default function Team() {
               ))}
             </div>
 
-            {/* 이야기 (Storytellers) Group */}
-            <div className="storytellers-section-wrap">
-              <div className="storytellers-header">
-                <OrnamentDivider />
-                <h3 className="storytellers-section-title">이야기</h3>
-                <OrnamentDivider />
-              </div>
-
-              <div className="storytellers-grid-clean">
-                {storyCast.map((c) => (
-                  <div className="cast-card-clean" key={c.id}>
-                    {renderPhotoSlot(c)}
-                    <div className="cast-role-title">{c.role}</div>
-                    <div className="cast-actor-name">{c.name}</div>
-                  </div>
-                ))}
-              </div>
+            <div className="storytellers-grid-clean">
+              {storyCast.map((c) => (
+                <div className="cast-card-clean" key={c.id}>
+                  {renderPhotoSlot(c)}
+                  <div className="cast-role-title">{c.role}</div>
+                  <div className="cast-actor-name">{c.name}</div>
+                </div>
+              ))}
             </div>
           </div>
         )}

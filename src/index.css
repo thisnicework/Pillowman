@@ -1277,7 +1277,7 @@ input, textarea {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .cast-card-clean {
@@ -1301,6 +1301,15 @@ input, textarea {
   margin-bottom: 16px;
   color: var(--body-color);
   font-size: 0.8rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.cast-photo-slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .cast-role-title {
@@ -1320,31 +1329,15 @@ input, textarea {
   font-weight: 700;
 }
 
-.storytellers-section-wrap {
-  margin-top: 48px;
-  text-align: center;
-}
-
-.storytellers-header {
-  margin-bottom: 24px;
-}
-
-.storytellers-section-title {
-  font-family: var(--font-title);
-  letter-spacing: -0.05em;
-  font-size: 1.45rem;
-  font-weight: 700;
-  color: var(--title-color);
-  margin: 10px 0;
-  text-transform: uppercase;
-}
-
 .storytellers-grid-clean {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  justify-content: center;
   gap: 20px;
-  max-width: 860px;
-  margin: 0 auto;
+  width: 100%;
+}
+
+.storytellers-grid-clean .cast-card-clean {
+  width: calc((100% - 60px) / 4);
 }
 
 /* Production & Performance Grid */
@@ -1961,9 +1954,15 @@ input, textarea {
   .countdown-timer-grid {
     justify-content: center;
   }
-  .cast-grid-clean,
-  .storytellers-grid-clean {
+  .cast-grid-clean {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .storytellers-grid-clean {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .storytellers-grid-clean .cast-card-clean {
+    width: 100%;
   }
   .thanks-columns-clean {
     grid-template-columns: 1fr;
@@ -2009,5 +2008,8 @@ input, textarea {
   .cast-grid-clean,
   .storytellers-grid-clean {
     grid-template-columns: 1fr;
+  }
+  .storytellers-grid-clean .cast-card-clean {
+    width: 100%;
   }
 }
