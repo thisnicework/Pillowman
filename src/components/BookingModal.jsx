@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createReservation, formatPhoneNumber } from '../services/bookingService';
 
 export default function BookingModal({ isOpen, onClose, onNotify }) {
   const [name, setName] = useState('');
@@ -6,19 +7,26 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
   const [agreeAge, setAgreeAge] = useState(false);
   const [agreeTrigger, setAgreeTrigger] = useState(false);
   const [agreeCancellation, setAgreeCancellation] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
   const [reservation, setReservation] = useState(null);
 
   if (!isOpen) return null;
 
   const handlePhoneChange = (e) => {
-    let val = e.target.value.replace(/[^0-9]/g, '');
-    if (val.length > 3 && val.length <= 7) {
-      val = val.slice(0, 3) + '-' + val.slice(3);
-    } else if (val.length > 7) {
-      val = val.slice(0, 3) + '-' + val.slice(3, 7) + '-' + val.slice(7, 11);
-    }
-    setPhone(val);
+    const formatted = formatPhoneNumber(e.target.value);
+    setPhone(formatted);
+    if (errorMsg) setErrorMsg('');
   };
+
+  const handleAllAgree = (e) => {
+    const checked = e.target.checked;
+    setAgreeAge(checked);
+    setAgreeTrigger(checked);
+    setAgreeCancellation(checked);
+  };
+
+  const allAgreed = agreeAge && agreeTrigger && agreeCancellation;
 
   const handleClose = () => {
     setReservation(null);
@@ -27,61 +35,49 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
     setAgreeAge(false);
     setAgreeTrigger(false);
     setAgreeCancellation(false);
+    setErrorMsg('');
+    setIsSubmitting(false);
     onClose();
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMsg('');
 
     if (!name.trim()) {
-      if (onNotify) onNotify('예매자 성함을 입력해 주세요.');
+      setErrorMsg('예매자 성함을 입력해 주세요.');
       return;
     }
-
-    if (!phone || phone.length < 12) {
-      if (onNotify) onNotify('올바른 휴대폰 번호를 입력해 주세요.');
-      return;
-    }
-
-    if (!agreeAge || !agreeTrigger || !agreeCancellation) {
-      if (onNotify) onNotify('모든 관람 안내 및 유의사항에 동의해 주세요.');
-      return;
-    }
-
-    // Check existing booking
-    let reservations = [];
-    try {
-      const saved = localStorage.getItem('pillowman_reservations');
-      if (saved) reservations = JSON.parse(saved);
-    } catch (err) {}
 
     const cleanPhone = phone.replace(/[^0-9]/g, '');
-    const alreadyBooked = reservations.some(r => r.phone.replace(/[^0-9]/g, '') === cleanPhone);
-
-    if (alreadyBooked) {
-      if (onNotify) onNotify('이미 예매 내역이 존재합니다. 1인 1매만 예매 가능합니다.');
+    if (cleanPhone.length < 10 || cleanPhone.length > 11) {
+      setErrorMsg('올바른 휴대폰 번호를 입력해 주세요.');
       return;
     }
 
-    // Create reservation
-    const bookingCode = 'PLW-2026-' + Math.random().toString(36).substring(2, 6).toUpperCase();
-    const newReservation = {
-      code: bookingCode,
-      name: name.trim(),
-      phone: phone,
-      showTitle: '뮤지컬 〈필로우맨〉',
-      date: '2026. 11. 1.(일) 13:00',
-      venue: '서울예술대학교 마동 1층 예장',
-      seatType: '전석 비지정석 (현장 수령 선착순 배정)',
-      price: '전석 무료',
-      bookedAt: new Date().toLocaleString('ko-KR')
-    };
+    if (!allAgreed) {
+      setErrorMsg('필수 관람 및 예매 유의사항에 모두 동의해 주세요.');
+      return;
+    }
 
-    reservations.push(newReservation);
-    localStorage.setItem('pillowman_reservations', JSON.stringify(reservations));
+    setIsSubmitting(true);
+    try {
+      const result = await createReservation({
+        name,
+        phone,
+        agreedAge: agreeAge,
+        agreedTrigger: agreeTrigger,
+        agreedCancellation: agreeCancellation,
+      });
 
-    setReservation(newReservation);
-    if (onNotify) onNotify('예매가 정상적으로 완료되었습니다!');
+      setReservation(result);
+      if (onNotify) onNotify('예매가 성공적으로 완료되었습니다!');
+    } catch (err) {
+      setErrorMsg(err.message || '예매 처리 중 오류가 발생했습니다.');
+      if (onNotify) onNotify(err.message || '예매 실패');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -89,12 +85,18 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
       className="modal-overlay open" 
       role="dialog" 
       aria-modal="true" 
-      onClick={(e) => { if (e.target === e.currentTarget) handleClose(); }}
+      onClick={(e) => { if (e.target === e.currentTarget && !isSubmitting) handleClose(); }}
     >
       <div className="modal-card">
         <div className="modal-header">
           <h3>티켓 예매 (BOOK TICKET)</h3>
-          <button type="button" className="btn-close-modal" onClick={handleClose} aria-label="닫기">
+          <button 
+            type="button" 
+            className="btn-close-modal" 
+            onClick={handleClose} 
+            disabled={isSubmitting}
+            aria-label="닫기"
+          >
             ×
           </button>
         </div>
@@ -110,6 +112,23 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
                 </div>
               </div>
 
+              {errorMsg && (
+                <div style={{
+                  background: 'rgba(223, 54, 62, 0.15)',
+                  border: '1px solid var(--accent-red)',
+                  color: '#ff8a8f',
+                  padding: '12px 16px',
+                  borderRadius: '4px',
+                  fontSize: '0.9rem',
+                  marginBottom: '16px',
+                  fontFamily: 'var(--font-body)',
+                  letterSpacing: '-0.025em',
+                  lineHeight: '1.5'
+                }}>
+                  {errorMsg}
+                </div>
+              )}
+
               <div className="form-group">
                 <label htmlFor="book-name" className="form-label">예매자 성함 *</label>
                 <input 
@@ -118,9 +137,10 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
                   className="form-input" 
                   placeholder="홍길동" 
                   value={name} 
-                  onChange={(e) => setName(e.target.value)} 
+                  onChange={(e) => { setName(e.target.value); if (errorMsg) setErrorMsg(''); }} 
                   required 
                   autoComplete="name"
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -136,13 +156,24 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
                   onChange={handlePhoneChange} 
                   required 
                   autoComplete="tel"
+                  disabled={isSubmitting}
                 />
-                <small style={{ fontFamily: 'var(--font-serif)', fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block', marginTop: '4px' }}>
-                  ※ 티켓 수령 시 본인 확인 및 공연 전날 안내 문자 발송에 사용됩니다.
+                <small style={{ fontFamily: 'var(--font-body)', letterSpacing: '-0.025em', fontSize: '0.8rem', color: 'var(--body-color)', opacity: 0.8, display: 'block', marginTop: '6px' }}>
+                  ※ 티켓 수령 시 본인 확인 및 공연 안내 문자 발송에 사용됩니다. (1인 1매 제한)
                 </small>
               </div>
 
               <div className="form-agreement-box">
+                <label className="checkbox-label" style={{ paddingBottom: '10px', marginBottom: '10px', borderBottom: '1px solid var(--border-vintage)', fontWeight: 700, color: 'var(--title-color)' }}>
+                  <input 
+                    type="checkbox" 
+                    checked={allAgreed} 
+                    onChange={handleAllAgree} 
+                    disabled={isSubmitting}
+                  />
+                  <span>아래 유의사항 전체 동의</span>
+                </label>
+
                 <label className="checkbox-label">
                   <input 
                     type="checkbox" 
@@ -150,6 +181,7 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
                     checked={agreeAge} 
                     onChange={(e) => setAgreeAge(e.target.checked)} 
                     required 
+                    disabled={isSubmitting}
                   />
                   <span>[필수] 본 공연은 <strong>15세 이상 관람가</strong>임을 확인하였습니다.</span>
                 </label>
@@ -161,6 +193,7 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
                     checked={agreeTrigger} 
                     onChange={(e) => setAgreeTrigger(e.target.checked)} 
                     required 
+                    disabled={isSubmitting}
                   />
                   <span>[필수] 아동학대, 폭력 등 <strong>트리거워닝 안내 내용</strong>을 사전에 확인하였습니다.</span>
                 </label>
@@ -172,13 +205,19 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
                     checked={agreeCancellation} 
                     onChange={(e) => setAgreeCancellation(e.target.checked)} 
                     required 
+                    disabled={isSubmitting}
                   />
                   <span>[필수] 공연 시작 5분 전까지 미수령 시 취소표 처리되며, 관람 불가 시 사전 취소에 동의합니다.</span>
                 </label>
               </div>
 
-              <button type="submit" className="btn-submit-booking">
-                예매 완료하기 (무료 발권)
+              <button 
+                type="submit" 
+                className="btn-submit-booking"
+                disabled={isSubmitting}
+                style={{ opacity: isSubmitting ? 0.7 : 1 }}
+              >
+                {isSubmitting ? '예매 처리 중...' : '예매 완료하기 (무료 발권)'}
               </button>
             </form>
           ) : (
@@ -187,11 +226,11 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
                 <div className="eticket-header">
                   <div>
                     <div className="eticket-title">뮤지컬 〈필로우맨〉 E-TICKET</div>
-                    <div style={{ fontFamily: 'var(--font-sans)', fontSize: '0.78rem', color: '#10b981', marginTop: '4px' }}>
+                    <div style={{ fontFamily: 'var(--font-body)', letterSpacing: '-0.025em', fontSize: '0.8rem', color: '#10b981', marginTop: '4px', fontWeight: 700 }}>
                       ● 예매 완료 (OFFICIAL VOUCHER)
                     </div>
                   </div>
-                  <div className="eticket-num">{reservation.code}</div>
+                  <div className="eticket-num">{reservation.booking_code}</div>
                 </div>
 
                 <div className="eticket-grid">
@@ -201,11 +240,11 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
                   </div>
                   <div className="eticket-field">
                     <div className="lbl">연락처</div>
-                    <div className="val">{reservation.phone}</div>
+                    <div className="val">{reservation.phone_formatted}</div>
                   </div>
                   <div className="eticket-field">
                     <div className="lbl">공연 일시</div>
-                    <div className="val">{reservation.date}</div>
+                    <div className="val">{reservation.show_date}</div>
                   </div>
                   <div className="eticket-field">
                     <div className="lbl">공연 장소</div>
@@ -213,7 +252,7 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
                   </div>
                   <div className="eticket-field">
                     <div className="lbl">좌석 등급</div>
-                    <div className="val">{reservation.seatType}</div>
+                    <div className="val">{reservation.seat_type}</div>
                   </div>
                   <div className="eticket-field">
                     <div className="lbl">티켓 가격</div>
@@ -256,11 +295,11 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
                     <rect x="258" y="0" width="8" height="40" fill="#fff" />
                     <rect x="270" y="0" width="4" height="40" fill="#fff" />
                   </svg>
-                  <div className="eticket-barcode-code">{reservation.code}</div>
+                  <div className="eticket-barcode-code">{reservation.booking_code}</div>
                 </div>
               </div>
 
-              <div style={{ fontFamily: 'var(--font-serif)', fontSize: '0.88rem', color: 'var(--parchment-muted)', marginBottom: '20px', lineHeight: '1.6' }}>
+              <div style={{ fontFamily: 'var(--font-body)', letterSpacing: '-0.025em', fontSize: '0.88rem', color: 'var(--body-color)', marginBottom: '20px', lineHeight: '1.6' }}>
                 ※ 공연 당일 1시간 전부터 마동 로비 티켓부스에서 <strong>예매자 성함 및 연락처 뒷자리</strong>를 제시하시면 지류 티켓으로 수령하실 수 있습니다.<br />
                 ※ 공연 시작 5분 전까지 미수령 시 현장 취소표로 전환됩니다.
               </div>
