@@ -167,7 +167,6 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster })
 
         {/* Official Main Poster Display */}
         <div className="official-poster-container" onClick={onOpenPoster} role="button" tabIndex={0} title="포스터 크게 보기">
-          <div className="poster-badge-top">OFFICIAL POSTER</div>
           <img 
             src="/assets/poster.png" 
             alt="뮤지컬 필로우맨 공식 메인 포스터" 
