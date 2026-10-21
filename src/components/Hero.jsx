@@ -56,17 +56,6 @@ export default function Hero({ onOpenPoster }) {
           >
             ABOUT THE SHOW
           </button>
-
-          {onOpenPoster && (
-            <button 
-              type="button" 
-              className="btn-secondary-theatre" 
-              onClick={onOpenPoster}
-              title="공식 포스터 전체보기"
-            >
-              POSTER VIEW
-            </button>
-          )}
         </div>
       </div>
 

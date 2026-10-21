@@ -1154,45 +1154,12 @@ input, textarea {
   overflow: hidden;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
   border: 1px solid var(--border-strong);
-  cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.official-poster-container:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.95);
 }
 
 .get-ticket-poster-img {
   width: 100%;
   height: auto;
   display: block;
-  transition: transform 0.3s ease;
-}
-
-.official-poster-container:hover .get-ticket-poster-img {
-  transform: scale(1.02);
-}
-
-.poster-hover-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 16px;
-  background: linear-gradient(to top, rgba(15, 16, 12, 0.94), transparent);
-  color: var(--title-color);
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  text-align: center;
-  letter-spacing: -0.025em;
-  opacity: 0;
-  transition: opacity 0.25s ease;
-  pointer-events: none;
-}
-
-.official-poster-container:hover .poster-hover-overlay {
-  opacity: 1;
 }
 
 /* Exhibition Section */
