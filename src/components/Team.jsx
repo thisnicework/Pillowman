@@ -4,6 +4,34 @@ import OrnamentDivider from './OrnamentDivider';
 export default function Team() {
   const [activeTab, setActiveTab] = useState('cast');
 
+  const mainCast = [
+    { id: 'katurian', role: '카투리안', name: '박정윤', photo: null },
+    { id: 'ariel', role: '아리엘', name: '김예린', photo: null },
+    { id: 'tupolski', role: '투폴스키', name: '이세중', photo: null },
+    { id: 'michal', role: '마이클', name: '손승우', photo: null },
+  ];
+
+  const storyCast = [
+    { id: 'story1', role: '이야기', name: '남다현', photo: null },
+    { id: 'story2', role: '이야기', name: '최하영', photo: null },
+    { id: 'story3', role: '이야기', name: '신현우', photo: null },
+  ];
+
+  const renderPhotoSlot = (member) => (
+    <div className="cast-photo-slot">
+      {member.photo ? (
+        <img src={member.photo} alt={`${member.role}역 ${member.name}`} />
+      ) : (
+        <>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" style={{ opacity: 0.28, marginBottom: '8px' }}>
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+          <span>[프로필 사진 전달 대기]</span>
+        </>
+      )}
+    </div>
+  );
+
   return (
     <section className="section" id="team">
       <div className="container">
@@ -63,42 +91,32 @@ export default function Team() {
         {activeTab === 'cast' && (
           <div>
             <div className="cast-grid-clean">
-              <div className="cast-card-clean">
-                <div className="cast-photo-slot">
-                  <span>[프로필 사진 전달 대기]</span>
+              {mainCast.map((c) => (
+                <div className="cast-card-clean" key={c.id}>
+                  {renderPhotoSlot(c)}
+                  <div className="cast-role-title">{c.role}</div>
+                  <div className="cast-actor-name">{c.name}</div>
                 </div>
-                <div className="cast-role-title">카투리안</div>
-                <div className="cast-actor-name">박정윤</div>
-              </div>
-
-              <div className="cast-card-clean">
-                <div className="cast-photo-slot">
-                  <span>[프로필 사진 전달 대기]</span>
-                </div>
-                <div className="cast-role-title">아리엘</div>
-                <div className="cast-actor-name">김예린</div>
-              </div>
-
-              <div className="cast-card-clean">
-                <div className="cast-photo-slot">
-                  <span>[프로필 사진 전달 대기]</span>
-                </div>
-                <div className="cast-role-title">투폴스키</div>
-                <div className="cast-actor-name">이세중</div>
-              </div>
-
-              <div className="cast-card-clean">
-                <div className="cast-photo-slot">
-                  <span>[프로필 사진 전달 대기]</span>
-                </div>
-                <div className="cast-role-title">마이클</div>
-                <div className="cast-actor-name">손승우</div>
-              </div>
+              ))}
             </div>
 
-            <div className="storytellers-card-clean">
-              <div className="storytellers-title">이야기</div>
-              <div className="storytellers-names">남다현 &nbsp;·&nbsp; 최하영 &nbsp;·&nbsp; 신현우</div>
+            {/* 이야기 (Storytellers) Group */}
+            <div className="storytellers-section-wrap">
+              <div className="storytellers-header">
+                <OrnamentDivider />
+                <h3 className="storytellers-section-title">이야기</h3>
+                <OrnamentDivider />
+              </div>
+
+              <div className="storytellers-grid-clean">
+                {storyCast.map((c) => (
+                  <div className="cast-card-clean" key={c.id}>
+                    {renderPhotoSlot(c)}
+                    <div className="cast-role-title">{c.role}</div>
+                    <div className="cast-actor-name">{c.name}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}

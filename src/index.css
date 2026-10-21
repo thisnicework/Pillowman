@@ -1320,28 +1320,31 @@ input, textarea {
   font-weight: 700;
 }
 
-.storytellers-card-clean {
-  background: var(--bg-card);
-  border: 1px solid var(--border-vintage);
-  border-radius: 4px;
-  padding: 24px;
+.storytellers-section-wrap {
+  margin-top: 48px;
   text-align: center;
 }
 
-.storytellers-title {
-  font-family: var(--font-title);
-  letter-spacing: -0.04em;
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--title-color);
-  margin-bottom: 6px;
+.storytellers-header {
+  margin-bottom: 24px;
 }
 
-.storytellers-names {
-  font-family: var(--font-body);
-  letter-spacing: -0.025em;
-  font-size: 1.05rem;
-  color: var(--body-color);
+.storytellers-section-title {
+  font-family: var(--font-title);
+  letter-spacing: -0.05em;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--title-color);
+  margin: 10px 0;
+  text-transform: uppercase;
+}
+
+.storytellers-grid-clean {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 860px;
+  margin: 0 auto;
 }
 
 /* Production & Performance Grid */
@@ -1958,7 +1961,8 @@ input, textarea {
   .countdown-timer-grid {
     justify-content: center;
   }
-  .cast-grid-clean {
+  .cast-grid-clean,
+  .storytellers-grid-clean {
     grid-template-columns: repeat(2, 1fr);
   }
   .thanks-columns-clean {
@@ -2001,5 +2005,9 @@ input, textarea {
   }
   .brand-sub {
     font-size: 0.68rem;
+  }
+  .cast-grid-clean,
+  .storytellers-grid-clean {
+    grid-template-columns: 1fr;
   }
 }
