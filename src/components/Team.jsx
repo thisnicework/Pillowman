@@ -92,28 +92,24 @@ export default function Team() {
           <div>
             <div className="credit-deck">
               <div className="credit-box">
-                <div className="credit-box-title">ORIGINAL WORK</div>
                 <div className="credit-box-content">
                   원작 : The Pillowman by Martin McDonagh
                 </div>
               </div>
 
               <div className="credit-box">
-                <div className="credit-box-title">ADVISORS</div>
                 <div className="credit-box-content">
                   지도교수 : 정승호 김명진 홍우영 김치영
                 </div>
               </div>
 
               <div className="credit-box">
-                <div className="credit-box-title">PLANNING</div>
                 <div className="credit-box-content">
                   기획 : 이유진 엄대한 남선우 김대찬
                 </div>
               </div>
 
               <div className="credit-box">
-                <div className="credit-box-title">MEDIA & PROMOTION</div>
                 <div className="credit-box-content">
                   사진 : 남선우<br />
                   홍보영상 : 류다현 목지혜 김익수 이상욱 조유정<br />
@@ -138,7 +134,6 @@ export default function Team() {
         {activeTab === 'performance' && (
           <div className="credit-deck">
             <div className="credit-box">
-              <div className="credit-box-title">CREATIVE</div>
               <div className="credit-box-content">
                 뮤지컬 각색/작사 : 홍우영<br />
                 작곡 : 김치영<br />
@@ -148,7 +143,6 @@ export default function Team() {
             </div>
 
             <div className="credit-box">
-              <div className="credit-box-title">MUSIC & SESSION</div>
               <div className="credit-box-content">
                 음악감독 : 김다인<br />
                 조음악감독 : 공린희 박혜은 조주연<br />
@@ -157,7 +151,6 @@ export default function Team() {
             </div>
 
             <div className="credit-box">
-              <div className="credit-box-title">STAGE & MOVEMENT</div>
               <div className="credit-box-content">
                 안무감독 : 김민<br />
                 무대감독 : 김초은<br />
@@ -167,7 +160,6 @@ export default function Team() {
             </div>
 
             <div className="credit-box">
-              <div className="credit-box-title">TECH & DESIGN</div>
               <div className="credit-box-content">
                 조명 : 서동현<br />
                 무대영상 : 정민재 박민서 최서영 김선우<br />
