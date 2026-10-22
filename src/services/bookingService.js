@@ -692,7 +692,6 @@ export async function getAllReservationsForAdmin() {
       .neq('status', 'SYSTEM_CONFIG')
       .neq('status', 'DELETED')
       .neq('status', 'TEST_DELETED')
-      .not('booking_code', 'like', '__%')
       .order('created_at', { ascending: false });
 
     if (error) {
