@@ -11,6 +11,7 @@ import LookupModal from './components/LookupModal';
 import PosterModal from './components/PosterModal';
 import AdminPage from './components/AdminPage';
 import Toast from './components/Toast';
+import { getBookingStats } from './services/bookingService.js';
 
 export default function App() {
   const [isAdminRoute, setIsAdminRoute] = useState(() => {
@@ -23,6 +24,33 @@ export default function App() {
   const [posterModalOpen, setPosterModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
+
+  // Real-time booking statistics (Capacity & Remaining Seats)
+  const [bookingStats, setBookingStats] = useState({
+    totalCapacity: 100,
+    confirmedCount: 0,
+    remainingSeats: 100,
+    isSoldOut: false,
+  });
+
+  const refreshStats = async () => {
+    try {
+      const stats = await getBookingStats();
+      setBookingStats(stats);
+    } catch (e) {
+      console.warn('Failed to load stats:', e);
+    }
+  };
+
+  useEffect(() => {
+    refreshStats();
+    const interval = setInterval(refreshStats, 8000); // Poll every 8s for live real-time sync
+    window.addEventListener('pillowman-capacity-updated', refreshStats);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('pillowman-capacity-updated', refreshStats);
+    };
+  }, []);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -65,7 +93,10 @@ export default function App() {
   // Normal Public Site
   return (
     <div className="pillowman-app">
-      <Header onOpenBooking={() => setBookingModalOpen(true)} />
+      <Header 
+        onOpenBooking={() => setBookingModalOpen(true)} 
+        bookingStats={bookingStats}
+      />
 
       <main>
         <Hero onNotify={showToast} onOpenPoster={() => setPosterModalOpen(true)} />
@@ -74,6 +105,7 @@ export default function App() {
           onOpenBooking={() => setBookingModalOpen(true)}
           onOpenLookup={() => setLookupModalOpen(true)}
           onOpenPoster={() => setPosterModalOpen(true)}
+          bookingStats={bookingStats}
         />
         
         <AboutPillowman />
@@ -86,6 +118,7 @@ export default function App() {
       <Footer 
         onOpenBooking={() => setBookingModalOpen(true)} 
         onOpenAdmin={navigateToAdmin}
+        bookingStats={bookingStats}
       />
 
       {/* Modals */}
@@ -93,6 +126,8 @@ export default function App() {
         isOpen={bookingModalOpen}
         onClose={() => setBookingModalOpen(false)}
         onNotify={showToast}
+        bookingStats={bookingStats}
+        onReservationSuccess={refreshStats}
       />
 
       <LookupModal 

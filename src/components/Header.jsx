@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function Header({ onOpenBooking }) {
+export default function Header({ onOpenBooking, bookingStats }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
@@ -125,7 +125,12 @@ export default function Header({ onOpenBooking }) {
               if (onOpenBooking) onOpenBooking();
             }}
           >
-            GET TICKET
+            <span>GET TICKET</span>
+            {bookingStats && (
+              <span className={`nav-ticket-seat-pill ${bookingStats.isSoldOut ? 'soldout' : ''}`}>
+                {bookingStats.isSoldOut ? '매진' : `잔여 ${bookingStats.remainingSeats}`}
+              </span>
+            )}
           </button>
 
           <div 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function Footer({ onOpenBooking, onOpenAdmin }) {
+export default function Footer({ onOpenBooking, onOpenAdmin, bookingStats }) {
   const [showFloating, setShowFloating] = useState(false);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export default function Footer({ onOpenBooking, onOpenAdmin }) {
           className="btn-floating-ticket" 
           onClick={onOpenBooking}
         >
-          <span>GET TICKET</span>
+          <span>GET TICKET {bookingStats ? `(잔여 ${bookingStats.remainingSeats}석)` : ''}</span>
         </button>
         <button 
           type="button" 

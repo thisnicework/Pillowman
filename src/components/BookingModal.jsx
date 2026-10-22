@@ -5,7 +5,13 @@ import {
   isValidKoreanPhone 
 } from '../services/bookingService';
 
-export default function BookingModal({ isOpen, onClose, onNotify }) {
+export default function BookingModal({ 
+  isOpen, 
+  onClose, 
+  onNotify, 
+  bookingStats, 
+  onReservationSuccess 
+}) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [phoneConfirm, setPhoneConfirm] = useState('');
@@ -107,6 +113,7 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
       });
 
       setReservation(result);
+      if (onReservationSuccess) onReservationSuccess();
       if (onNotify) onNotify('예매가 성공적으로 완료되었습니다!');
     } catch (err) {
       setErrorMsg(err.message || '예매 처리 중 오류가 발생했습니다.');
@@ -145,6 +152,11 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
                 <div className="info">
                   일시: 2026. 11. 1.(일) 13:00 | 장소: 서울예술대학교 마동 예장<br />
                   가격: <strong>전석 무료 (1인 1매 선착순 비지정석)</strong>
+                  {bookingStats && (
+                    <div style={{ marginTop: '6px', color: bookingStats.remainingSeats > 0 ? '#10b981' : 'var(--accent-red)', fontWeight: 700, fontSize: '0.88rem' }}>
+                      ● 실시간 잔여석: {bookingStats.remainingSeats}석 / {bookingStats.totalCapacity}석
+                    </div>
+                  )}
                 </div>
               </div>
 
