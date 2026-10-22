@@ -2323,21 +2323,18 @@ font-family: var(--font-body);
   }
 
   .storytellers-grid-clean {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 12px;
     width: 100%;
   }
 
-  .storytellers-grid-clean .cast-card-clean {
-    width: 100%;
-  }
-
+  .storytellers-grid-clean .cast-card-clean,
   .storytellers-grid-clean .cast-card-clean:last-child:nth-child(odd) {
-    grid-column: 1 / -1;
-    max-width: 240px;
-    margin: 0 auto;
-    width: 100%;
+    width: calc((100% - 12px) / 2);
+    max-width: none;
+    margin: 0;
   }
 
   .cast-card-clean {
@@ -2475,10 +2472,23 @@ font-family: var(--font-body);
     transition: none;
   }
 
-  .cast-grid-clean,
-  .storytellers-grid-clean {
+  .cast-grid-clean {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
+  }
+
+  .storytellers-grid-clean {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .storytellers-grid-clean .cast-card-clean,
+  .storytellers-grid-clean .cast-card-clean:last-child:nth-child(odd) {
+    width: calc((100% - 10px) / 2);
+    max-width: none;
+    margin: 0;
   }
 
   .cast-card-clean {

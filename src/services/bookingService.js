@@ -55,13 +55,14 @@ export function toE164Phone(phone) {
  * 예: 20261022-184512
  */
 export function generateBookingCode(date = new Date()) {
-  const kst = new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
-  const yyyy = kst.getFullYear();
-  const mm = String(kst.getMonth() + 1).padStart(2, '0');
-  const dd = String(kst.getDate()).padStart(2, '0');
-  const hh = String(kst.getHours()).padStart(2, '0');
-  const min = String(kst.getMinutes()).padStart(2, '0');
-  const ss = String(kst.getSeconds()).padStart(2, '0');
+  // 한국 표준시 (KST = UTC+9) 직접 계산
+  const kstTime = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+  const yyyy = kstTime.getUTCFullYear();
+  const mm = String(kstTime.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(kstTime.getUTCDate()).padStart(2, '0');
+  const hh = String(kstTime.getUTCHours()).padStart(2, '0');
+  const min = String(kstTime.getUTCMinutes()).padStart(2, '0');
+  const ss = String(kstTime.getUTCSeconds()).padStart(2, '0');
   return `${yyyy}${mm}${dd}-${hh}${min}${ss}`;
 }
 
