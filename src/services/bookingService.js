@@ -203,6 +203,7 @@ export async function verifyPhoneOtp(phone, token) {
  */
 export async function createReservation({
   name,
+  nameConfirm,
   phone,
   phoneConfirm,
   agreedAge = true,
@@ -210,11 +211,16 @@ export async function createReservation({
   agreedCancellation = true,
 }) {
   const cleanName = name?.trim();
+  const cleanNameConfirm = nameConfirm?.trim();
   const cleanPhone = phone?.replace(/[^0-9]/g, '');
   const cleanPhoneConfirm = phoneConfirm?.replace(/[^0-9]/g, '');
 
   if (!cleanName) {
     throw new Error('예매자 성함을 입력해 주세요.');
+  }
+
+  if (nameConfirm !== undefined && cleanName !== cleanNameConfirm) {
+    throw new Error('입력하신 두 성함이 일치하지 않습니다.');
   }
 
   if (!isValidKoreanPhone(cleanPhone)) {

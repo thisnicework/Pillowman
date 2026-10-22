@@ -13,6 +13,7 @@ export default function BookingModal({
   onReservationSuccess 
 }) {
   const [name, setName] = useState('');
+  const [nameConfirm, setNameConfirm] = useState('');
   const [phone, setPhone] = useState('');
   const [phoneConfirm, setPhoneConfirm] = useState('');
   const [agreeAge, setAgreeAge] = useState(false);
@@ -46,20 +47,27 @@ export default function BookingModal({
 
   const allAgreed = agreeAge && agreeTrigger && agreeCancellation;
 
+  // Name match validation
+  const cleanName = name.trim();
+  const cleanNameConfirm = nameConfirm.trim();
+  const hasTypedNameConfirm = cleanNameConfirm.length > 0;
+  const isNameMatched = cleanName.length > 0 && cleanName === cleanNameConfirm;
+  const isNameMismatch = hasTypedNameConfirm && cleanName !== cleanNameConfirm;
+
+  // Phone match validation
   const cleanPhone = phone.replace(/[^0-9]/g, '');
   const cleanPhoneConfirm = phoneConfirm.replace(/[^0-9]/g, '');
   const isPhoneValid = isValidKoreanPhone(cleanPhone);
   const isPhonePrefixInvalid = cleanPhone.length >= 3 && !cleanPhone.startsWith('01');
   const isPhoneLengthIncomplete = cleanPhone.length >= 4 && cleanPhone.length < 10;
 
-  // Phone match validation
   const hasTypedConfirm = cleanPhoneConfirm.length > 0;
   const isPhoneMatched = isPhoneValid && cleanPhone === cleanPhoneConfirm;
   const isPhoneMismatch = hasTypedConfirm && cleanPhone !== cleanPhoneConfirm;
 
   const canSubmit = 
     !isSubmitting && 
-    name.trim().length > 0 && 
+    isNameMatched && 
     isPhoneValid && 
     isPhoneMatched && 
     allAgreed;
@@ -67,6 +75,7 @@ export default function BookingModal({
   const handleClose = () => {
     setReservation(null);
     setName('');
+    setNameConfirm('');
     setPhone('');
     setPhoneConfirm('');
     setAgreeAge(false);
@@ -81,8 +90,13 @@ export default function BookingModal({
     e.preventDefault();
     setErrorMsg('');
 
-    if (!name.trim()) {
+    if (!cleanName) {
       setErrorMsg('예매자 성함을 입력해 주세요.');
+      return;
+    }
+
+    if (cleanName !== cleanNameConfirm) {
+      setErrorMsg('입력하신 두 성함이 일치하지 않습니다. 다시 확인해 주세요.');
       return;
     }
 
@@ -104,7 +118,8 @@ export default function BookingModal({
     setIsSubmitting(true);
     try {
       const result = await createReservation({
-        name,
+        name: cleanName,
+        nameConfirm: cleanNameConfirm,
         phone,
         phoneConfirm,
         agreedAge: agreeAge,
@@ -173,13 +188,47 @@ export default function BookingModal({
                   type="text" 
                   id="book-name" 
                   className="form-input" 
-                  placeholder="홍길동" 
+                  placeholder="홍길동 (신분증 실명 입력)" 
                   value={name} 
                   onChange={(e) => { setName(e.target.value); if (errorMsg) setErrorMsg(''); }} 
                   required 
                   autoComplete="name"
                   disabled={isSubmitting}
                 />
+              </div>
+
+              {/* 1-2. 예매자 성함 확인 (재입력) */}
+              <div className="form-group">
+                <label htmlFor="book-name-confirm" className="form-label">
+                  예매자 성함 확인 (재입력) *
+                </label>
+                <input 
+                  type="text" 
+                  id="book-name-confirm" 
+                  className="form-input" 
+                  placeholder="성함을 한 번 더 입력해 주세요" 
+                  value={nameConfirm} 
+                  onChange={(e) => { setNameConfirm(e.target.value); if (errorMsg) setErrorMsg(''); }} 
+                  required 
+                  disabled={isSubmitting}
+                  style={{
+                    borderColor: isNameMatched 
+                      ? '#10b981' 
+                      : (isNameMismatch ? 'var(--accent-red)' : undefined)
+                  }}
+                />
+
+                {isNameMatched && (
+                  <div className="phone-match-badge match">
+                    <span>✓</span> 성함이 일치합니다.
+                  </div>
+                )}
+
+                {isNameMismatch && (
+                  <div className="phone-match-badge mismatch">
+                    <span>⚠</span> 입력하신 두 성함이 일치하지 않습니다.
+                  </div>
+                )}
               </div>
 
               {/* 2. 휴대폰 번호 입력 */}
