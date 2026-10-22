@@ -535,20 +535,22 @@ export async function cancelReservation(bookingCode, { phone } = {}) {
   return localList[targetIndex];
 }
 
+const SYSTEM_CAPACITY_CODE = '__SYSTEM_CONFIG_CAPACITY__';
+
 /**
- * 6. 총 정원 조회 (동적 설정)
+ * 6. 총 정원 조회 (동적 설정 - Supabase 및 안전 스토리지 동기화)
  */
 export async function getTotalCapacity() {
   if (isSupabaseConfigured && supabase) {
     try {
       const { data, error } = await supabase
-        .from('app_settings')
-        .select('value')
-        .eq('key', 'total_capacity')
+        .from('reservations')
+        .select('ticket_count')
+        .eq('booking_code', SYSTEM_CAPACITY_CODE)
         .maybeSingle();
 
-      if (!error && data?.value) {
-        const parsed = parseInt(data.value, 10);
+      if (!error && data?.ticket_count) {
+        const parsed = parseInt(data.ticket_count, 10);
         if (!isNaN(parsed) && parsed > 0) {
           safeStorage.setItem(CAPACITY_KEY, String(parsed));
           return parsed;
@@ -568,7 +570,7 @@ export async function getTotalCapacity() {
 }
 
 /**
- * 7. 총 정원 설정 변경 (관리자 전용)
+ * 7. 총 정원 설정 변경 (관리자 전용 - Supabase 실시간 동기화)
  */
 export async function updateTotalCapacity(newCapacity) {
   const cap = parseInt(newCapacity, 10);
@@ -578,17 +580,36 @@ export async function updateTotalCapacity(newCapacity) {
 
   if (isSupabaseConfigured && supabase) {
     try {
-      const { error } = await supabase
-        .from('app_settings')
-        .upsert(
-          { key: 'total_capacity', value: String(cap), updated_at: new Date().toISOString() },
-          { onConflict: 'key' }
-        );
-      if (error) {
-        console.error('Failed to update total_capacity in Supabase:', error);
+      const { data, error } = await supabase
+        .from('reservations')
+        .update({ ticket_count: cap })
+        .eq('booking_code', SYSTEM_CAPACITY_CODE)
+        .select()
+        .maybeSingle();
+
+      if (!data) {
+        await supabase
+          .from('reservations')
+          .insert({
+            booking_code: SYSTEM_CAPACITY_CODE,
+            name: 'SYSTEM_CAPACITY',
+            phone: '00000000000',
+            phone_formatted: '000-0000-0000',
+            show_title: 'SYSTEM',
+            show_date: 'SYSTEM',
+            venue: 'SYSTEM',
+            seat_type: 'SYSTEM',
+            ticket_count: cap,
+            status: 'SYSTEM_CONFIG',
+            agreed_age: true,
+            agreed_trigger: true,
+            agreed_cancellation: true,
+            created_at: new Date().toISOString(),
+          });
       }
     } catch (e) {
-      console.warn('Supabase app_settings update error:', e);
+      console.error('Failed to update total_capacity in Supabase:', e);
+      throw new Error('정원 설정 저장에 실패했습니다: ' + e.message);
     }
   }
 
@@ -609,7 +630,8 @@ export async function getBookingStats() {
     const { count, error } = await supabase
       .from('reservations')
       .select('*', { count: 'exact', head: true })
-      .in('status', ['CONFIRMED', 'CHECKED_IN']);
+      .in('status', ['CONFIRMED', 'CHECKED_IN'])
+      .neq('status', 'SYSTEM_CONFIG');
 
     const confirmedCount = error ? 0 : count || 0;
     return {
@@ -622,7 +644,7 @@ export async function getBookingStats() {
 
   const localList = getLocalReservations();
   const confirmedCount = localList.filter(
-    (r) => r.status === 'CONFIRMED' || r.status === 'CHECKED_IN'
+    (r) => (r.status === 'CONFIRMED' || r.status === 'CHECKED_IN') && r.status !== 'SYSTEM_CONFIG'
   ).length;
 
   return {
@@ -641,6 +663,8 @@ export async function getAllReservationsForAdmin() {
     const { data, error } = await supabase
       .from('reservations')
       .select('*')
+      .neq('status', 'SYSTEM_CONFIG')
+      .not('booking_code', 'like', '__SYSTEM_%')
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -655,14 +679,20 @@ export async function getAllReservationsForAdmin() {
       console.warn(e);
     }
 
-    return (data || []).map((item) => ({
+    const realReservations = (data || []).filter(
+      (item) => item.status !== 'SYSTEM_CONFIG' && !item.booking_code?.startsWith('__SYSTEM_')
+    );
+
+    return realReservations.map((item) => ({
       ...item,
       sms_sent: item.sms_sent !== undefined ? Boolean(item.sms_sent) : Boolean(smsSentMap[item.booking_code]),
       sms_sent_at: item.sms_sent_at || (smsSentMap[item.booking_code] ? item.created_at : null),
     }));
   }
 
-  const localList = getLocalReservations();
+  const localList = getLocalReservations().filter(
+    (item) => item.status !== 'SYSTEM_CONFIG' && !item.booking_code?.startsWith('__SYSTEM_')
+  );
   return [...localList].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 }
 

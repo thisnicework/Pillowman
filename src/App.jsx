@@ -44,7 +44,7 @@ export default function App() {
 
   useEffect(() => {
     refreshStats();
-    const interval = setInterval(refreshStats, 8000); // Poll every 8s for live real-time sync
+    const interval = setInterval(refreshStats, 4000); // Poll every 4s for live real-time sync
     window.addEventListener('pillowman-capacity-updated', refreshStats);
     return () => {
       clearInterval(interval);
