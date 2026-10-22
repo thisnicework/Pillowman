@@ -2062,6 +2062,12 @@ font-family: var(--font-body);
 
 /* Responsive Design & Mobile Optimization */
 @media (max-width: 768px) {
+  .site-header,
+  .site-header.scrolled {
+    height: 68px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+
   .nav-container {
     padding: 0 16px;
   }
@@ -2351,16 +2357,26 @@ font-family: var(--font-body);
     padding: 10px 12px;
   }
 
-  .brand-symbol-img {
+  .brand-logo:hover {
+    transform: none;
+  }
+
+  .brand-symbol-img,
+  .site-header.scrolled .brand-symbol-img {
     height: 44px;
+    transition: none;
   }
 
-  .brand-title {
+  .brand-title,
+  .site-header.scrolled .brand-title {
     font-size: 1.35rem;
+    transition: none;
   }
 
-  .brand-sub {
+  .brand-sub,
+  .site-header.scrolled .brand-sub {
     font-size: 0.76rem;
+    transition: none;
   }
 
   .floating-ticket-bar {
@@ -2427,16 +2443,22 @@ font-family: var(--font-body);
     gap: 10px;
   }
 
-  .brand-symbol-img {
+  .brand-symbol-img,
+  .site-header.scrolled .brand-symbol-img {
     height: 38px;
+    transition: none;
   }
 
-  .brand-title {
+  .brand-title,
+  .site-header.scrolled .brand-title {
     font-size: 1.15rem;
+    transition: none;
   }
 
-  .brand-sub {
+  .brand-sub,
+  .site-header.scrolled .brand-sub {
     font-size: 0.68rem;
+    transition: none;
   }
 
   .cast-grid-clean,
