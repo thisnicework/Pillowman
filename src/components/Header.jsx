@@ -127,16 +127,6 @@ export default function Header({ onOpenBooking, bookingStats }) {
           >
             <span>GET TICKET</span>
           </button>
-
-          <div 
-            className={`mobile-menu-toggle ${mobileMenuOpen ? 'active' : ''}`} 
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="메뉴 열기"
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </div>
         </div>
       </div>
     </header>
