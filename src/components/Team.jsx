@@ -219,15 +219,7 @@ export default function Team() {
             <div className="credit-box">
               <div className="credit-box-title">ARTISTS</div>
               <div className="credit-box-content">
-                작품명 : 정아연 이수연 이영현 차재이<br />
-                작품명 : 이태하 김형록<br />
-                작품명 : 조한만 진주<br />
-                작품명 : 이지혜 고다선<br />
-                작품명 : 안현준 안형진<br />
-                작품명 : 김진서 이정원<br />
-                <small style={{ color: 'var(--accent-red)', display: 'block', marginTop: '8px' }}>
-                  * 10/7(수) 수업에서 정해지는 작품명으로 기입
-                </small>
+                정아연 이수연 이영현 차재이 이태하 김형록 조한만 진주 이지혜 고다선 안현준 안형진 김진서 이정원
               </div>
             </div>
           </div>
