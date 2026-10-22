@@ -2090,19 +2090,29 @@ font-family: var(--font-body);
   }
 
   .nav-actions {
-    gap: 8px;
+    gap: 6px;
+  }
+
+  .btn-icon-insta {
+    width: 30px;
+    height: 30px;
+  }
+
+  .btn-icon-insta svg {
+    width: 15px;
+    height: 15px;
   }
 
   .btn-nav-ticket {
-    font-size: 0.75rem;
-    padding: 6px 12px;
-    letter-spacing: -0.02em;
+    font-size: 0.68rem;
+    padding: 4px 8px;
+    letter-spacing: -0.03em;
   }
 
   .nav-ticket-seat-pill {
-    margin-left: 5px;
-    padding: 1px 5px;
-    font-size: 0.68rem;
+    margin-left: 4px;
+    padding: 1px 4px;
+    font-size: 0.62rem;
   }
 
   .hero-content {
