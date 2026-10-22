@@ -12,8 +12,8 @@ export default function Team() {
   ];
 
   const storyCast = [
-    { id: 'story1', role: '이야기', name: '남다현', photo: '/assets/actor-story1.png' },
-    { id: 'story2', role: '이야기', name: '최하영', photo: '/assets/actor-story2.png' },
+    { id: 'story1', role: '이야기', name: '최하영', photo: '/assets/actor-story1.png' },
+    { id: 'story2', role: '이야기', name: '남다영', photo: '/assets/actor-story2.png' },
     { id: 'story3', role: '이야기', name: '신현우', photo: '/assets/actor-story3.png' },
   ];
 
