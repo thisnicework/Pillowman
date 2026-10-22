@@ -309,16 +309,6 @@ export default function AdminPage({ onGoHome }) {
       <header className="admin-header">
         <div className="admin-header-inner">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-              <span className="admin-badge">OFFICIAL STAGE CONSOLE</span>
-              <div className="traffic-live-indicator" style={{ padding: '2px 8px' }}>
-                <span className="live-dot-ping" style={{ left: '6px', width: '6px', height: '6px' }}></span>
-                <span className="live-dot-core" style={{ width: '6px', height: '6px' }}></span>
-                <span className="traffic-live-text" style={{ fontSize: '0.78rem' }}>
-                  실시간 <strong>{liveVisitorCount}</strong>명 접속 중
-                </span>
-              </div>
-            </div>
             <h1 className="admin-main-title">뮤지컬 〈필로우맨〉 예매 관리 시스템</h1>
           </div>
           <div className="admin-header-actions">
