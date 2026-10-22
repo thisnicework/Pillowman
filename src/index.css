@@ -3383,5 +3383,367 @@ font-family: var(--font-body);
   border-color: #ff8a8f;
 }
 
+/* ==========================================================================
+   Admin Real-Time Traffic & Analytics
+   ========================================================================== */
+
+.traffic-section {
+  background: #171814;
+  border: 1px solid var(--border-vintage);
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.traffic-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.traffic-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.traffic-live-indicator {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  padding: 5px 12px;
+}
+
+.live-dot-ping {
+  position: absolute;
+  left: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  animation: live-ping-anim 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.live-dot-core {
+  position: relative;
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+@keyframes live-ping-anim {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  75%, 100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.traffic-live-text {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: #34d399;
+  letter-spacing: -0.025em;
+}
+
+.traffic-live-text strong {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 2px;
+}
+
+.traffic-title {
+  font-family: var(--font-title);
+  letter-spacing: -0.03em;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ede6d1;
+  margin: 0;
+}
+
+.btn-traffic-refresh {
+  padding: 6px 14px;
+  background: rgba(237, 230, 209, 0.05);
+  border: 1px solid var(--border-strong);
+  color: var(--title-color);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-traffic-refresh:hover:not(:disabled) {
+  background: rgba(237, 230, 209, 0.15);
+  border-color: #ede6d1;
+}
+
+.traffic-pills-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.traffic-pill {
+  background: #1e201a;
+  border: 1px solid rgba(237, 230, 209, 0.08);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-bottom: 2px;
+}
+.pill-dot.live { background: #10b981; box-shadow: 0 0 6px #10b981; }
+.pill-dot.visits { background: #38bdf8; }
+.pill-dot.bookings { background: var(--accent-red); }
+.pill-dot.device { background: #a78bfa; }
+.pill-dot.peak { background: #fbbf24; }
+
+.pill-label {
+  font-family: var(--font-title);
+  letter-spacing: -0.03em;
+  font-size: 0.76rem;
+  color: var(--body-color);
+}
+
+.pill-val {
+  font-family: var(--font-title);
+  letter-spacing: -0.03em;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ede6d1;
+}
+
+.pill-val.live-highlight {
+  color: #34d399;
+}
+
+.pill-val.peak-highlight {
+  color: #fbbf24;
+}
+
+/* Chart Card */
+.traffic-chart-card {
+  background: #121310;
+  border: 1px solid rgba(237, 230, 209, 0.1);
+  padding: 20px;
+}
+
+.chart-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  color: var(--body-color);
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(237, 230, 209, 0.07);
+  padding-bottom: 12px;
+}
+
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-box {
+  width: 12px;
+  height: 12px;
+}
+
+.legend-box.visits {
+  background: #38bdf8;
+}
+
+.legend-box.bookings {
+  background: var(--accent-red);
+}
+
+.chart-legend-hint {
+  margin-left: auto;
+  font-size: 0.74rem;
+  color: rgba(237, 230, 209, 0.4);
+}
+
+.chart-scroll-container {
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.chart-bars-track {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  min-width: 700px;
+  height: 220px;
+  padding-top: 30px;
+  border-bottom: 1px solid rgba(237, 230, 209, 0.2);
+}
+
+.chart-bar-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.chart-bar-group:hover,
+.chart-bar-group.hovered {
+  opacity: 1;
+}
+
+.bars-align-bottom {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  width: 100%;
+  justify-content: center;
+  height: 160px;
+}
+
+.bar-item {
+  width: 12px;
+  min-height: 4px;
+  border-radius: 2px 2px 0 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+  transition: height 0.3s ease, filter 0.15s ease;
+}
+
+.chart-bar-group:hover .bar-item {
+  filter: brightness(1.2);
+}
+
+.bar-item.visit-bar {
+  background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+}
+
+.bar-item.booking-bar {
+  background: linear-gradient(180deg, #ef4444 0%, #991b1b 100%);
+}
+
+.bar-val-text {
+  position: absolute;
+  top: -18px;
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #ede6d1;
+  white-space: nowrap;
+}
+
+.bar-x-label {
+  margin-top: 10px;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  color: var(--body-color);
+  white-space: nowrap;
+}
+
+.chart-bar-group:hover .bar-x-label {
+  color: #fff;
+  font-weight: 700;
+}
+
+/* Tooltip */
+.chart-tooltip {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #232520;
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+  padding: 8px 12px;
+  z-index: 50;
+  min-width: 120px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.chart-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: #232520 transparent transparent transparent;
+}
+
+.tooltip-time {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ede6d1;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(237, 230, 209, 0.15);
+  padding-bottom: 4px;
+}
+
+.tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #ccc;
+  margin-top: 2px;
+}
+
+.tooltip-row .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.tooltip-row .visit-dot { background: #38bdf8; }
+.tooltip-row .booking-dot { background: var(--accent-red); }
+
+.tooltip-rate {
+  margin-top: 4px;
+  font-size: 0.72rem;
+  color: #34d399;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .traffic-section {
+    padding: 16px;
+  }
+  .traffic-pills-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .chart-bars-track {
+    min-width: 620px;
+    height: 190px;
+  }
+}
+
 
 

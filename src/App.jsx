@@ -12,6 +12,8 @@ import PosterModal from './components/PosterModal';
 import AdminPage from './components/AdminPage';
 import Toast from './components/Toast';
 import { getBookingStats, isBookingOpen } from './services/bookingService.js';
+import { initVisitorPresence } from './services/trafficService.js';
+import { Analytics } from '@vercel/analytics/react';
 
 export default function App() {
   const [isAdminRoute, setIsAdminRoute] = useState(() => {
@@ -46,9 +48,14 @@ export default function App() {
     refreshStats();
     const interval = setInterval(refreshStats, 4000); // Poll every 4s for live real-time sync
     window.addEventListener('pillowman-capacity-updated', refreshStats);
+
+    // Initialize Realtime Visitor Presence & Session Traffic Logging
+    const cleanupPresence = initVisitorPresence();
+
     return () => {
       clearInterval(interval);
       window.removeEventListener('pillowman-capacity-updated', refreshStats);
+      if (cleanupPresence) cleanupPresence();
     };
   }, []);
 
@@ -164,6 +171,9 @@ export default function App() {
 
       {/* Global Toast */}
       <Toast message={toastMessage} visible={toastVisible} />
+
+      {/* Vercel Web Analytics */}
+      <Analytics />
     </div>
   );
 }
