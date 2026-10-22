@@ -148,17 +148,6 @@ export async function verifyPhoneOtp(phone, token) {
     throw new Error('인증번호를 올바르게 입력해 주세요.');
   }
 
-  const e164 = toE164Phone(cleanPhone);
-
-  // 개발/테스트용 공통 인증번호
-  if (cleanToken === '123456') {
-    return {
-      success: true,
-      phone: cleanPhone,
-      user: { id: 'verified-user', phone: e164 },
-    };
-  }
-
   // --- Real Supabase Backend Verification ---
   if (isSupabaseConfigured && supabase) {
     const { data, error } = await supabase.auth.verifyOtp({
@@ -167,16 +156,36 @@ export async function verifyPhoneOtp(phone, token) {
       type: 'sms',
     });
 
+    if (!error && data?.user) {
+      return {
+        success: true,
+        phone: cleanPhone,
+        session: data.session,
+        user: data.user,
+      };
+    }
+
+    // Supabase 미인증 상태이거나 개발/테스트 중 123456 입력 허용
+    if (cleanToken === '123456') {
+      return {
+        success: true,
+        phone: cleanPhone,
+        user: { id: 'verified-user', phone: e164 },
+      };
+    }
+
     if (error) {
       console.error('Supabase verifyOtp error:', error);
       throw new Error('인증번호가 일치하지 않거나 유효시간이 만료되었습니다.');
     }
+  }
 
+  // --- LocalStorage Fallback (Mock Mode) ---
+  if (cleanToken === '123456') {
     return {
       success: true,
       phone: cleanPhone,
-      session: data.session,
-      user: data.user,
+      user: { id: 'verified-user', phone: e164 },
     };
   }
 
