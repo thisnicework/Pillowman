@@ -21,13 +21,6 @@ export default function Footer({ onOpenBooking, onOpenAdmin, bookingStats }) {
       <div className={`floating-ticket-bar ${showFloating ? 'visible' : ''}`}>
         <button 
           type="button" 
-          className="btn-floating-ticket" 
-          onClick={onOpenBooking}
-        >
-          <span>{bookingStats?.isSoldOut ? '전석 매진' : 'GET TICKET'}</span>
-        </button>
-        <button 
-          type="button" 
           className="btn-floating-top" 
           onClick={scrollToTop} 
           aria-label="맨 위로 이동" 
