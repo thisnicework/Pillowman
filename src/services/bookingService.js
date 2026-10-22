@@ -198,6 +198,13 @@ export async function verifyPhoneOtp(phone, token) {
   throw new Error('인증번호가 올바르지 않습니다. (테스트 번호: 123456)');
 }
 
+export const BOOKING_OPEN_ISO = '2026-10-22T20:00:00+09:00';
+export const BOOKING_OPEN_TIME = new Date(BOOKING_OPEN_ISO).getTime();
+
+export function isBookingOpen() {
+  return Date.now() >= BOOKING_OPEN_TIME;
+}
+
 /**
  * 3. 티켓 예매 생성 (인증 완료 필수)
  */
@@ -210,6 +217,10 @@ export async function createReservation({
   agreedTrigger = true,
   agreedCancellation = true,
 }) {
+  if (!isBookingOpen()) {
+    throw new Error('티켓 예매는 오늘(10/22) 20:00부터 가능합니다.');
+  }
+
   const cleanName = name?.trim();
   const cleanNameConfirm = nameConfirm?.trim();
   const cleanPhone = phone?.replace(/[^0-9]/g, '');
@@ -261,8 +272,6 @@ export async function createReservation({
     seat_type: '전석 비지정석 (현장 수령 선착순 배정)',
     ticket_count: 1,
     status: 'CONFIRMED',
-    sms_sent: false,
-    sms_sent_at: null,
     agreed_age: agreedAge,
     agreed_trigger: agreedTrigger,
     agreed_cancellation: agreedCancellation,
@@ -613,7 +622,19 @@ export async function getAllReservationsForAdmin() {
       console.error('Supabase fetch all reservations error:', error);
       throw new Error('예매 목록을 불러오는 중 오류가 발생했습니다.');
     }
-    return data || [];
+
+    let smsSentMap = {};
+    try {
+      smsSentMap = JSON.parse(localStorage.getItem('pillowman_admin_sms_sent') || '{}');
+    } catch (e) {
+      console.warn(e);
+    }
+
+    return (data || []).map((item) => ({
+      ...item,
+      sms_sent: item.sms_sent !== undefined ? Boolean(item.sms_sent) : Boolean(smsSentMap[item.booking_code]),
+      sms_sent_at: item.sms_sent_at || (smsSentMap[item.booking_code] ? item.created_at : null),
+    }));
   }
 
   const localList = getLocalReservations();
@@ -634,8 +655,6 @@ export async function adminUpdateReservationStatus(bookingCode, newStatus) {
   };
   if (newStatus === 'CANCELLED') {
     updatePayload.cancelled_at = new Date().toISOString();
-  } else if (newStatus === 'CHECKED_IN') {
-    updatePayload.checked_in_at = new Date().toISOString();
   }
 
   if (isSupabaseConfigured && supabase) {
@@ -700,6 +719,14 @@ export async function adminToggleSmsSent(bookingCode, isSent) {
     sms_sent: Boolean(isSent),
     sms_sent_at: isSent ? new Date().toISOString() : null,
   };
+
+  try {
+    const smsSentMap = JSON.parse(localStorage.getItem('pillowman_admin_sms_sent') || '{}');
+    smsSentMap[bookingCode] = Boolean(isSent);
+    localStorage.setItem('pillowman_admin_sms_sent', JSON.stringify(smsSentMap));
+  } catch (e) {
+    console.warn(e);
+  }
 
   // 1. Supabase 백엔드 연동
   if (isSupabaseConfigured && supabase) {

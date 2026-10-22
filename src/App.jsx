@@ -11,7 +11,7 @@ import LookupModal from './components/LookupModal';
 import PosterModal from './components/PosterModal';
 import AdminPage from './components/AdminPage';
 import Toast from './components/Toast';
-import { getBookingStats } from './services/bookingService.js';
+import { getBookingStats, isBookingOpen } from './services/bookingService.js';
 
 export default function App() {
   const [isAdminRoute, setIsAdminRoute] = useState(() => {
@@ -85,6 +85,18 @@ export default function App() {
     }, 3200);
   };
 
+  const handleOpenBooking = () => {
+    if (!isBookingOpen()) {
+      showToast('티켓 예매는 오늘(10/22) 20:00에 오픈됩니다.');
+      const ticketSection = document.getElementById('ticket');
+      if (ticketSection) {
+        ticketSection.scrollIntoView({ behavior: 'smooth' });
+      }
+      return;
+    }
+    setBookingModalOpen(true);
+  };
+
   // If URL is /admin, render Admin Console
   if (isAdminRoute) {
     return <AdminPage onGoHome={navigateToHome} />;
@@ -94,7 +106,7 @@ export default function App() {
   return (
     <div className="pillowman-app">
       <Header 
-        onOpenBooking={() => setBookingModalOpen(true)} 
+        onOpenBooking={handleOpenBooking} 
         bookingStats={bookingStats}
       />
 
@@ -102,7 +114,7 @@ export default function App() {
         <Hero onNotify={showToast} onOpenPoster={() => setPosterModalOpen(true)} />
         
         <GetTicket 
-          onOpenBooking={() => setBookingModalOpen(true)}
+          onOpenBooking={handleOpenBooking}
           onOpenLookup={() => setLookupModalOpen(true)}
           onOpenPoster={() => setPosterModalOpen(true)}
           bookingStats={bookingStats}
@@ -116,7 +128,7 @@ export default function App() {
       </main>
 
       <Footer 
-        onOpenBooking={() => setBookingModalOpen(true)} 
+        onOpenBooking={handleOpenBooking} 
         onOpenAdmin={navigateToAdmin}
         bookingStats={bookingStats}
       />

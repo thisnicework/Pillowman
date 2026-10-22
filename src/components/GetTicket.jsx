@@ -144,14 +144,27 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster, b
           >
             <div className="btn-action-text-wrap">
               <div className="btn-title-row">
-                <span className="title">예매하기</span>
+                <span className="title">
+                  {bookingStats?.isSoldOut 
+                    ? '전석 매진' 
+                    : (!timeLeft.isOpen ? '예매 오픈 대기 중 (20:00)' : '예매하기')}
+                </span>
                 {bookingStats?.isSoldOut && (
                   <span className="btn-remaining-badge soldout">
                     전석 매진
                   </span>
                 )}
+                {!bookingStats?.isSoldOut && !timeLeft.isOpen && (
+                  <span className="btn-remaining-badge" style={{ background: '#2563eb', color: '#fff' }}>
+                    오늘 20:00 오픈
+                  </span>
+                )}
               </div>
-              <span className="sub">*예매 시 이름/전화번호 작성 (1인 1매 무료)</span>
+              <span className="sub">
+                {!timeLeft.isOpen 
+                  ? '* 오늘(10/22) 20:00 정각부터 예매가 시작됩니다' 
+                  : '*예매 시 이름/전화번호 작성 (1인 1매 무료)'}
+              </span>
             </div>
             <span style={{ fontSize: '1.4rem' }}>➔</span>
           </button>
