@@ -2,6 +2,9 @@ import React from 'react';
 import * as ReactDOMClient from 'react-dom/client';
 import App from './App';
 import './index.css';
+import { startVersionWatcher } from './services/versionCheck';
+
+startVersionWatcher();
 
 const createRoot = ReactDOMClient.createRoot || (ReactDOMClient.default && ReactDOMClient.default.createRoot);
 const rootElement = document.getElementById('root');

@@ -1,4 +1,5 @@
 import { supabase, isSupabaseConfigured } from './supabaseClient.js';
+import { ensureLatestVersion } from './versionCheck.js';
 
 const LOCAL_STORAGE_KEY = 'pillowman_reservations';
 const CAPACITY_KEY = 'pillowman_total_capacity';
@@ -235,6 +236,9 @@ export async function createReservation({
   if (!isBookingOpen()) {
     throw new Error('티켓 예매는 오늘(10/22) 20:00부터 가능합니다.');
   }
+
+  // 구버전 탭에서의 예매 차단 (최신 버전으로 새로고침 유도)
+  await ensureLatestVersion();
 
   const cleanName = name?.trim();
   const cleanNameConfirm = nameConfirm?.trim();
