@@ -64,7 +64,11 @@ export default function Header({ onOpenBooking }) {
             <li>
               <a 
                 href="#ticket" 
-                onClick={(e) => handleNavClick(e, 'ticket')} 
+                onClick={(e) => {
+                  e.preventDefault();
+                  setMobileMenuOpen(false);
+                  if (onOpenBooking) onOpenBooking();
+                }} 
                 className={`nav-link ${activeSection === 'ticket' ? 'active' : ''}`}
               >
                 GET TICKET
@@ -117,7 +121,9 @@ export default function Header({ onOpenBooking }) {
           <button 
             type="button" 
             className="btn-nav-ticket" 
-            onClick={(e) => handleNavClick(e, 'ticket')}
+            onClick={() => {
+              if (onOpenBooking) onOpenBooking();
+            }}
           >
             GET TICKET
           </button>
