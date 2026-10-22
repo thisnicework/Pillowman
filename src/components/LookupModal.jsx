@@ -1,51 +1,124 @@
-import React, { useState } from 'react';
-import { lookupReservation, cancelReservation, formatPhoneNumber } from '../services/bookingService';
+import React, { useState, useEffect } from 'react';
+import { 
+  lookupReservation, 
+  cancelReservation, 
+  formatPhoneNumber,
+  sendPhoneOtp,
+  verifyPhoneOtp
+} from '../services/bookingService';
 
-export default function LookupModal({ isOpen, onClose, onNotify }) {
-  const [name, setName] = useState('');
+export default function LookupModal({ isOpen, onClose, onNotify, onOpenBooking }) {
   const [phone, setPhone] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpCode, setOtpCode] = useState('');
+  const [otpTimer, setOtpTimer] = useState(0);
+  const [isSendingOtp, setIsSendingOtp] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [otpInfoMsg, setOtpInfoMsg] = useState('');
   const [foundReservation, setFoundReservation] = useState(null);
 
+  // 180s countdown timer
+  useEffect(() => {
+    let interval;
+    if (otpTimer > 0 && !foundReservation) {
+      interval = setInterval(() => {
+        setOtpTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [otpTimer, foundReservation]);
+
   if (!isOpen) return null;
+
+  const formatTimer = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  };
 
   const handlePhoneChange = (e) => {
     const formatted = formatPhoneNumber(e.target.value);
     setPhone(formatted);
     if (errorMsg) setErrorMsg('');
+    if (otpSent && !foundReservation) {
+      setOtpSent(false);
+      setOtpCode('');
+      setOtpTimer(0);
+      setOtpInfoMsg('');
+    }
   };
 
-  const handleClose = () => {
-    setFoundReservation(null);
-    setName('');
-    setPhone('');
+  const handleSendOtp = async () => {
     setErrorMsg('');
-    setIsSearching(false);
-    setIsCancelling(false);
-    onClose();
+    setOtpInfoMsg('');
+    const cleanPhone = phone.replace(/[^0-9]/g, '');
+    if (cleanPhone.length < 10 || cleanPhone.length > 11) {
+      setErrorMsg('올바른 휴대폰 번호(10~11자리)를 입력해 주세요.');
+      return;
+    }
+
+    setIsSendingOtp(true);
+    try {
+      const res = await sendPhoneOtp(phone);
+      setOtpSent(true);
+      setOtpTimer(180);
+      setOtpInfoMsg(res.message || '인증번호가 발송되었습니다.');
+      if (onNotify) onNotify(res.message || '인증번호 발송 완료');
+    } catch (err) {
+      setErrorMsg(err.message || '인증번호 발송에 실패했습니다.');
+    } finally {
+      setIsSendingOtp(false);
+    }
   };
 
-  const handleSearch = async (e) => {
+  const handleVerifyAndLookup = async (e) => {
     e.preventDefault();
     setErrorMsg('');
 
-    if (!name.trim() || !phone.trim()) {
-      setErrorMsg('성함과 연락처를 모두 입력해 주세요.');
+    if (!otpCode.trim()) {
+      setErrorMsg('인증번호를 입력해 주세요.');
+      return;
+    }
+
+    if (otpTimer <= 0) {
+      setErrorMsg('인증 유효시간이 만료되었습니다. 다시 인증요청을 눌러주세요.');
       return;
     }
 
     setIsSearching(true);
     try {
-      const result = await lookupReservation({ name, phone });
+      // 1. 휴대폰 번호 OTP 인증
+      await verifyPhoneOtp(phone, otpCode);
+
+      // 2. 인증 완료 후 해당 번호의 예매 내역 조회
+      const result = await lookupReservation({ phone, isVerified: true });
       setFoundReservation(result);
+      if (onNotify) onNotify('예매 내역 조회가 완료되었습니다.');
     } catch (err) {
-      setErrorMsg(err.message || '예매 내역을 찾을 수 없습니다.');
+      setErrorMsg(err.message || '예매 내역을 찾을 수 없거나 인증에 실패했습니다.');
       if (onNotify) onNotify(err.message || '조회 실패');
     } finally {
       setIsSearching(false);
     }
+  };
+
+  const handleResetSearch = () => {
+    setFoundReservation(null);
+    setPhone('');
+    setOtpSent(false);
+    setOtpCode('');
+    setOtpTimer(0);
+    setOtpInfoMsg('');
+    setErrorMsg('');
+    setIsSearching(false);
+    setIsCancelling(false);
+  };
+
+  const handleClose = () => {
+    handleResetSearch();
+    onClose();
   };
 
   const handleCancelBooking = async () => {
@@ -58,7 +131,6 @@ export default function LookupModal({ isOpen, onClose, onNotify }) {
     setErrorMsg('');
     try {
       const updated = await cancelReservation(foundReservation.booking_code, {
-        name: foundReservation.name,
         phone: foundReservation.phone,
       });
 
@@ -97,82 +169,94 @@ export default function LookupModal({ isOpen, onClose, onNotify }) {
 
         <div className="modal-body">
           {!foundReservation ? (
-            <form onSubmit={handleSearch} id="ticket-lookup-form">
-              <p style={{ fontFamily: 'var(--font-body)', letterSpacing: '-0.025em', fontSize: '0.95rem', color: 'var(--body-color)', marginBottom: '20px' }}>
-                예매 시 등록하셨던 <strong>예매자 성함과 휴대폰 번호</strong>를 입력해 주세요.
+            <form onSubmit={handleVerifyAndLookup} id="ticket-lookup-form">
+              <p style={{ fontFamily: 'var(--font-body)', letterSpacing: '-0.025em', fontSize: '0.92rem', color: 'var(--body-color)', marginBottom: '18px', lineHeight: '1.6' }}>
+                개인정보 보호 및 안전한 예매 관리를 위해 <strong>휴대폰 번호 본인 인증</strong> 후 예매 내역 조회 및 취소가 가능합니다.
               </p>
 
               {errorMsg && (
-                <div style={{
-                  background: 'rgba(223, 54, 62, 0.15)',
-                  border: '1px solid var(--accent-red)',
-                  color: '#ff8a8f',
-                  padding: '12px 16px',
-                  borderRadius: '4px',
-                  fontSize: '0.9rem',
-                  marginBottom: '16px',
-                  fontFamily: 'var(--font-body)',
-                  letterSpacing: '-0.025em',
-                  lineHeight: '1.5'
-                }}>
+                <div className="modal-alert-error">
                   {errorMsg}
                 </div>
               )}
 
+              {/* 휴대폰 번호 입력 및 발송 */}
               <div className="form-group">
-                <label htmlFor="lookup-name" className="form-label">예매자 성함</label>
-                <input 
-                  type="text" 
-                  id="lookup-name" 
-                  className="form-input" 
-                  placeholder="홍길동" 
-                  value={name} 
-                  onChange={(e) => { setName(e.target.value); if (errorMsg) setErrorMsg(''); }} 
-                  required 
-                  autoComplete="name"
-                  disabled={isSearching}
-                />
+                <label htmlFor="lookup-phone" className="form-label">휴대폰 번호 *</label>
+                <div className="input-with-action">
+                  <input 
+                    type="tel" 
+                    id="lookup-phone" 
+                    className="form-input" 
+                    placeholder="010-1234-5678" 
+                    maxLength={13} 
+                    value={phone} 
+                    onChange={handlePhoneChange} 
+                    required 
+                    autoComplete="tel"
+                    disabled={isSearching || isSendingOtp}
+                  />
+                  <button
+                    type="button"
+                    className="btn-input-action"
+                    onClick={handleSendOtp}
+                    disabled={isSendingOtp || isSearching || phone.replace(/[^0-9]/g, '').length < 10}
+                  >
+                    {isSendingOtp ? '발송 중...' : (otpSent ? '재전송' : '인증요청')}
+                  </button>
+                </div>
               </div>
 
-              <div className="form-group">
-                <label htmlFor="lookup-phone" className="form-label">휴대폰 번호</label>
-                <input 
-                  type="tel" 
-                  id="lookup-phone" 
-                  className="form-input" 
-                  placeholder="010-1234-5678" 
-                  maxLength={13} 
-                  value={phone} 
-                  onChange={handlePhoneChange} 
-                  required 
-                  autoComplete="tel"
-                  disabled={isSearching}
-                />
-              </div>
+              {/* OTP 입력 및 조회 버튼 */}
+              {otpSent && (
+                <div className="otp-box">
+                  <div className="otp-box-header">
+                    <span className="otp-box-title">인증번호 6자리 입력</span>
+                    <span className="otp-timer">{formatTimer(otpTimer)}</span>
+                  </div>
 
-              <button 
-                type="submit" 
-                className="btn-submit-booking"
-                disabled={isSearching}
-                style={{ opacity: isSearching ? 0.7 : 1 }}
-              >
-                {isSearching ? '예매 내역 조회 중...' : '예매 내역 확인'}
-              </button>
+                  <div className="input-with-action">
+                    <input 
+                      type="text" 
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      maxLength={6}
+                      className="form-input" 
+                      placeholder="인증번호 6자리" 
+                      value={otpCode}
+                      onChange={(e) => { setOtpCode(e.target.value.replace(/[^0-9]/g, '')); if (errorMsg) setErrorMsg(''); }}
+                      disabled={isSearching}
+                      autoFocus
+                    />
+                  </div>
+
+                  {otpInfoMsg && (
+                    <div className="otp-box-note">
+                      {otpInfoMsg}
+                    </div>
+                  )}
+
+                  <button 
+                    type="submit" 
+                    className="btn-submit-booking"
+                    style={{ marginTop: '14px' }}
+                    disabled={isSearching || otpCode.length < 4 || otpTimer <= 0}
+                  >
+                    {isSearching ? '인증 및 예매 조회 중...' : '인증 확인 및 예매 내역 조회'}
+                  </button>
+                </div>
+              )}
+
+              {!otpSent && (
+                <div style={{ textAlign: 'center', marginTop: '16px', color: 'var(--body-color)', fontSize: '0.82rem', opacity: 0.7 }}>
+                  [인증요청] 버튼을 눌러 SMS 인증번호를 수신해 주세요.
+                </div>
+              )}
             </form>
           ) : (
             <div>
               {errorMsg && (
-                <div style={{
-                  background: 'rgba(223, 54, 62, 0.15)',
-                  border: '1px solid var(--accent-red)',
-                  color: '#ff8a8f',
-                  padding: '12px 16px',
-                  borderRadius: '4px',
-                  fontSize: '0.9rem',
-                  marginBottom: '16px',
-                  fontFamily: 'var(--font-body)',
-                  letterSpacing: '-0.025em'
-                }}>
+                <div className="modal-alert-error">
                   {errorMsg}
                 </div>
               )}
@@ -287,7 +371,7 @@ export default function LookupModal({ isOpen, onClose, onNotify }) {
               ) : (
                 <div style={{ textAlign: 'center', marginTop: '20px' }}>
                   <p style={{ fontFamily: 'var(--font-body)', letterSpacing: '-0.025em', color: 'var(--body-color)', fontSize: '0.9rem', marginBottom: '16px' }}>
-                    취소 완료된 티켓입니다. 다른 관객 분들을 위해 좌석이 반환되었습니다.
+                    취소 완료된 티켓입니다. 좌석이 안전하게 반환되었습니다.
                   </p>
                   <button type="button" className="btn-modal-print" onClick={handleClose}>
                     닫기
