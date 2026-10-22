@@ -258,6 +258,10 @@ export default function LookupModal({ isOpen, onClose, onNotify, onOpenBooking }
                     </div>
                   )}
 
+                  <div style={{ fontSize: '0.76rem', color: 'var(--body-color)', opacity: 0.75, marginTop: '8px', lineHeight: '1.4' }}>
+                    ※ 보안 발신 시스템(Twilio)을 통해 <strong>[국제발신]</strong> 문자로 수신될 수 있으니 수신함을 확인해 주세요.
+                  </div>
+
                   <button 
                     type="submit" 
                     className="btn-submit-booking"
