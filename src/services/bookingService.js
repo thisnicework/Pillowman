@@ -280,6 +280,12 @@ export async function createReservation({
 
   // --- Real Supabase Backend Integration ---
   if (isSupabaseConfigured && supabase) {
+    // 0. 잔여석 및 정원 확인 (정원 초과 시 강력 차단)
+    const stats = await getBookingStats();
+    if (stats.isSoldOut || stats.remainingSeats <= 0) {
+      throw new Error('준비된 전 좌석이 모두 매진되어 예매가 마감되었습니다.');
+    }
+
     // 1. 중복 확인
     const { data: existing, error: checkError } = await supabase
       .from('reservations')
@@ -348,6 +354,11 @@ export async function createReservation({
 
   // --- LocalStorage Fallback (Mock Mode) ---
   await new Promise((res) => setTimeout(res, 350));
+
+  const stats = await getBookingStats();
+  if (stats.isSoldOut || stats.remainingSeats <= 0) {
+    throw new Error('준비된 전 좌석이 모두 매진되어 예매가 마감되었습니다.');
+  }
 
   const localList = getLocalReservations();
   const alreadyBooked = localList.some(

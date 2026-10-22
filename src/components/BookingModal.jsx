@@ -109,10 +109,12 @@ export default function BookingModal({
   }, [isOpen, isPhoneMatched, cleanPhone]);
 
   const isOpenTime = isBookingOpen();
+  const isSoldOut = Boolean(bookingStats?.isSoldOut);
 
   const canSubmit = 
     !isSubmitting && 
     isOpenTime &&
+    !isSoldOut &&
     isNameMatched && 
     isPhoneValid && 
     isPhoneMatched && 
@@ -137,6 +139,11 @@ export default function BookingModal({
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
+
+    if (bookingStats?.isSoldOut) {
+      setErrorMsg('준비된 전 좌석이 모두 매진되어 예매가 불가합니다.');
+      return;
+    }
 
     if (!isBookingOpen()) {
       setErrorMsg('티켓 예매는 오늘(10/22) 20:00부터 가능합니다.');
@@ -427,9 +434,11 @@ export default function BookingModal({
               >
                 {isSubmitting 
                   ? '예매 처리 중...' 
-                  : (!isOpenTime 
-                      ? '예매 오픈 대기 중 (오늘 20:00 오픈)' 
-                      : (!isPhoneMatched ? '휴대폰 번호 일치 확인 필요' : '예매 완료하기 (무료 발권)'))
+                  : (isSoldOut 
+                      ? '전석 매진 (예매 마감)' 
+                      : (!isOpenTime 
+                          ? '예매 오픈 대기 중 (오늘 20:00 오픈)' 
+                          : (!isPhoneMatched ? '휴대폰 번호 일치 확인 필요' : '예매 완료하기 (무료 발권)')))
                 }
               </button>
             </form>

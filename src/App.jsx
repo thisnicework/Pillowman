@@ -86,6 +86,15 @@ export default function App() {
   };
 
   const handleOpenBooking = () => {
+    if (bookingStats?.isSoldOut) {
+      showToast('준비된 전 좌석이 모두 매진되어 예매가 마감되었습니다.');
+      const ticketSection = document.getElementById('ticket');
+      if (ticketSection) {
+        ticketSection.scrollIntoView({ behavior: 'smooth' });
+      }
+      return;
+    }
+
     if (!isBookingOpen()) {
       showToast('티켓 예매는 오늘(10/22) 20:00에 오픈됩니다.');
       const ticketSection = document.getElementById('ticket');
