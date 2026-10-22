@@ -2900,3 +2900,232 @@ font-family: var(--font-body);
   }
 }
 
+/* ==========================================================================
+   PHONE CONFIRMATION & INSTAGRAM DM GUIDANCE STYLING
+   ========================================================================== */
+.phone-match-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  font-family: var(--font-body);
+  letter-spacing: -0.025em;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-top: 6px;
+  border-radius: 0;
+}
+
+.phone-match-badge.match {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid #10b981;
+  color: #10b981;
+}
+
+.phone-match-badge.mismatch {
+  background: rgba(223, 54, 62, 0.15);
+  border: 1px solid var(--accent-red);
+  color: #ff8a8f;
+}
+
+/* Booking DM Notice in Voucher Card */
+.booking-dm-notice-box {
+  background: #151612;
+  border: 1px dashed var(--border-strong);
+  padding: 16px 18px;
+  margin-bottom: 20px;
+  border-radius: 0;
+}
+
+.dm-notice-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-title);
+  letter-spacing: -0.03em;
+  font-size: 0.92rem;
+  color: var(--title-color);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.dm-notice-text {
+  font-family: var(--font-body);
+  letter-spacing: -0.025em;
+  font-size: 0.86rem;
+  color: var(--body-color);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.btn-dm-link {
+  display: inline-block;
+  background: rgba(237, 230, 209, 0.08);
+  border: 1px solid var(--border-strong);
+  color: var(--title-color);
+  padding: 8px 16px;
+  font-family: var(--font-title);
+  letter-spacing: -0.03em;
+  font-size: 0.84rem;
+  text-decoration: none;
+  border-radius: 0;
+  transition: all 0.2s ease;
+}
+
+.btn-dm-link:hover {
+  background: var(--accent-red);
+  color: #fff;
+  border-color: var(--accent-red);
+}
+
+/* Lookup Modal DM Hero Card */
+.lookup-dm-hero-card {
+  background: #141511;
+  border: 1px solid var(--border-strong);
+  padding: 22px;
+  margin-bottom: 24px;
+  border-radius: 0;
+}
+
+.lookup-dm-tag {
+  display: inline-block;
+  background: rgba(223, 54, 62, 0.15);
+  border: 1px solid var(--accent-red);
+  color: #ff9ca1;
+  font-family: var(--font-title);
+  letter-spacing: 0.05em;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  margin-bottom: 10px;
+  border-radius: 0;
+}
+
+.lookup-dm-heading {
+  font-family: var(--font-title);
+  letter-spacing: -0.04em;
+  font-size: 1.22rem;
+  color: var(--title-color);
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.lookup-dm-desc {
+  font-family: var(--font-body);
+  letter-spacing: -0.025em;
+  font-size: 0.9rem;
+  color: var(--body-color);
+  line-height: 1.55;
+  margin-bottom: 16px;
+}
+
+.lookup-dm-guide-box {
+  background: #1b1c18;
+  border: 1px solid var(--border-vintage);
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  border-radius: 0;
+}
+
+.guide-title {
+  font-family: var(--font-title);
+  letter-spacing: -0.03em;
+  font-size: 0.85rem;
+  color: var(--title-color);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.guide-list {
+  padding-left: 20px;
+  margin: 0;
+  font-family: var(--font-body);
+  letter-spacing: -0.025em;
+  font-size: 0.85rem;
+  color: var(--body-color);
+  line-height: 1.6;
+}
+
+.lookup-dm-btn-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.btn-dm-direct-action {
+  flex: 1;
+  min-width: 220px;
+  text-align: center;
+  background: var(--accent-red);
+  color: #fff;
+  border: 1px solid var(--accent-red);
+  padding: 12px 18px;
+  font-family: var(--font-title);
+  letter-spacing: -0.03em;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 0;
+  transition: all 0.2s ease;
+}
+
+.btn-dm-direct-action:hover {
+  background: #b5262d;
+  border-color: #b5262d;
+}
+
+.btn-dm-copy-action {
+  background: rgba(237, 230, 209, 0.08);
+  border: 1px solid var(--border-strong);
+  color: var(--title-color);
+  padding: 12px 16px;
+  font-family: var(--font-title);
+  letter-spacing: -0.03em;
+  font-size: 0.86rem;
+  cursor: pointer;
+  border-radius: 0;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-dm-copy-action:hover {
+  background: var(--title-color);
+  color: #11120f;
+}
+
+.lookup-dm-subinfo {
+  font-family: var(--font-body);
+  letter-spacing: -0.025em;
+  font-size: 0.8rem;
+  color: var(--body-color);
+  opacity: 0.75;
+}
+
+.lookup-divider {
+  position: relative;
+  text-align: center;
+  margin: 24px 0 20px;
+}
+
+.lookup-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--border-vintage);
+}
+
+.lookup-divider span {
+  position: relative;
+  background: #1b1c18;
+  padding: 0 14px;
+  font-family: var(--font-title);
+  letter-spacing: -0.03em;
+  font-size: 0.8rem;
+  color: var(--body-color);
+  opacity: 0.8;
+}
+
+

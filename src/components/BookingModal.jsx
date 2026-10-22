@@ -1,123 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   createReservation, 
   formatPhoneNumber, 
-  sendPhoneOtp, 
-  verifyPhoneOtp,
-  isValidKoreanPhone
+  isValidKoreanPhone 
 } from '../services/bookingService';
 
 export default function BookingModal({ isOpen, onClose, onNotify }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [phoneConfirm, setPhoneConfirm] = useState('');
   const [agreeAge, setAgreeAge] = useState(false);
   const [agreeTrigger, setAgreeTrigger] = useState(false);
   const [agreeCancellation, setAgreeCancellation] = useState(false);
-  
-  // OTP Verification States
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpCode, setOtpCode] = useState('');
-  const [isVerified, setIsVerified] = useState(false);
-  const [otpTimer, setOtpTimer] = useState(0);
-  const [isSendingOtp, setIsSendingOtp] = useState(false);
-  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
-  const [otpInfoMsg, setOtpInfoMsg] = useState('');
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [reservation, setReservation] = useState(null);
 
-  // 180s OTP countdown timer
-  useEffect(() => {
-    let interval;
-    if (otpTimer > 0 && !isVerified) {
-      interval = setInterval(() => {
-        setOtpTimer((prev) => prev - 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [otpTimer, isVerified]);
-
   if (!isOpen) return null;
-
-  const formatTimer = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-  };
 
   const handlePhoneChange = (e) => {
     const formatted = formatPhoneNumber(e.target.value);
     setPhone(formatted);
     if (errorMsg) setErrorMsg('');
-    if (otpSent && !isVerified) {
-      setOtpSent(false);
-      setOtpCode('');
-      setOtpTimer(0);
-      setOtpInfoMsg('');
-    }
   };
 
-  const cleanPhone = phone.replace(/[^0-9]/g, '');
-  const isPhoneValid = isValidKoreanPhone(cleanPhone);
-  const isPhonePrefixInvalid = cleanPhone.length >= 3 && !cleanPhone.startsWith('01');
-  const isPhoneLengthIncomplete = cleanPhone.length >= 4 && cleanPhone.length < 10;
-
-  const handleSendOtp = async () => {
-    setErrorMsg('');
-    setOtpInfoMsg('');
-    if (!isPhoneValid) {
-      setErrorMsg('010으로 시작하는 올바른 휴대폰 번호(10~11자리)를 입력해 주세요.');
-      return;
-    }
-
-    setIsSendingOtp(true);
-    try {
-      const res = await sendPhoneOtp(phone);
-      setOtpSent(true);
-      setOtpTimer(180);
-      setOtpInfoMsg(res.message || '인증번호가 발송되었습니다.');
-      if (onNotify) onNotify(res.message || '인증번호 발송 완료');
-    } catch (err) {
-      setErrorMsg(err.message || '인증번호 발송에 실패했습니다.');
-    } finally {
-      setIsSendingOtp(false);
-    }
-  };
-
-  const handleVerifyOtp = async () => {
-    setErrorMsg('');
-    if (!otpCode.trim()) {
-      setErrorMsg('인증번호를 입력해 주세요.');
-      return;
-    }
-
-    if (otpTimer <= 0) {
-      setErrorMsg('인증 유효시간이 만료되었습니다. 다시 인증요청을 눌러주세요.');
-      return;
-    }
-
-    setIsVerifyingOtp(true);
-    try {
-      await verifyPhoneOtp(phone, otpCode);
-      setIsVerified(true);
-      setOtpSent(false);
-      setOtpInfoMsg('');
-      if (onNotify) onNotify('휴대폰 번호 인증이 완료되었습니다.');
-    } catch (err) {
-      setErrorMsg(err.message || '인증번호가 일치하지 않습니다.');
-    } finally {
-      setIsVerifyingOtp(false);
-    }
-  };
-
-  const handleResetPhone = () => {
-    setIsVerified(false);
-    setOtpSent(false);
-    setOtpCode('');
-    setOtpTimer(0);
-    setOtpInfoMsg('');
-    setErrorMsg('');
+  const handlePhoneConfirmChange = (e) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setPhoneConfirm(formatted);
+    if (errorMsg) setErrorMsg('');
   };
 
   const handleAllAgree = (e) => {
@@ -129,15 +40,29 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
 
   const allAgreed = agreeAge && agreeTrigger && agreeCancellation;
 
+  const cleanPhone = phone.replace(/[^0-9]/g, '');
+  const cleanPhoneConfirm = phoneConfirm.replace(/[^0-9]/g, '');
+  const isPhoneValid = isValidKoreanPhone(cleanPhone);
+  const isPhonePrefixInvalid = cleanPhone.length >= 3 && !cleanPhone.startsWith('01');
+  const isPhoneLengthIncomplete = cleanPhone.length >= 4 && cleanPhone.length < 10;
+
+  // Phone match validation
+  const hasTypedConfirm = cleanPhoneConfirm.length > 0;
+  const isPhoneMatched = isPhoneValid && cleanPhone === cleanPhoneConfirm;
+  const isPhoneMismatch = hasTypedConfirm && cleanPhone !== cleanPhoneConfirm;
+
+  const canSubmit = 
+    !isSubmitting && 
+    name.trim().length > 0 && 
+    isPhoneValid && 
+    isPhoneMatched && 
+    allAgreed;
+
   const handleClose = () => {
     setReservation(null);
     setName('');
     setPhone('');
-    setIsVerified(false);
-    setOtpSent(false);
-    setOtpCode('');
-    setOtpTimer(0);
-    setOtpInfoMsg('');
+    setPhoneConfirm('');
     setAgreeAge(false);
     setAgreeTrigger(false);
     setAgreeCancellation(false);
@@ -155,8 +80,13 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
       return;
     }
 
-    if (!isVerified) {
-      setErrorMsg('휴대폰 번호 인증을 완료해 주세요.');
+    if (!isPhoneValid) {
+      setErrorMsg('010으로 시작하는 올바른 휴대폰 번호(10~11자리)를 입력해 주세요.');
+      return;
+    }
+
+    if (cleanPhone !== cleanPhoneConfirm) {
+      setErrorMsg('입력하신 두 휴대폰 번호가 일치하지 않습니다. 다시 확인해 주세요.');
       return;
     }
 
@@ -170,7 +100,7 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
       const result = await createReservation({
         name,
         phone,
-        isVerified: true,
+        phoneConfirm,
         agreedAge: agreeAge,
         agreedTrigger: agreeTrigger,
         agreedCancellation: agreeCancellation,
@@ -224,6 +154,7 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
                 </div>
               )}
 
+              {/* 1. 예매자 성함 */}
               <div className="form-group">
                 <label htmlFor="book-name" className="form-label">예매자 성함 *</label>
                 <input 
@@ -239,117 +170,77 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
                 />
               </div>
 
-              {/* 휴대폰 번호 및 Supabase OTP 인증 */}
+              {/* 2. 휴대폰 번호 입력 */}
               <div className="form-group">
                 <label htmlFor="book-phone" className="form-label">
-                  휴대폰 번호 (본인 인증 필수) *
+                  휴대폰 번호 *
                 </label>
-                
-                <div className="input-with-action">
-                  <input 
-                    type="tel" 
-                    id="book-phone" 
-                    className="form-input" 
-                    placeholder="010-1234-5678" 
-                    maxLength={13} 
-                    value={phone} 
-                    onChange={handlePhoneChange} 
-                    required 
-                    autoComplete="tel"
-                    disabled={isVerified || isSubmitting || isSendingOtp}
-                  />
-                  {!isVerified ? (
-                    <button
-                      type="button"
-                      className="btn-input-action"
-                      onClick={handleSendOtp}
-                      disabled={isSendingOtp || isSubmitting || !isPhoneValid}
-                      style={{
-                        background: isPhoneValid ? 'rgba(223, 54, 62, 0.25)' : undefined,
-                        borderColor: isPhoneValid ? 'var(--accent-red)' : undefined,
-                        color: isPhoneValid ? '#fff' : undefined,
-                      }}
-                    >
-                      {isSendingOtp ? '발송 중...' : (otpSent ? '재전송' : '인증요청')}
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      className="btn-input-action btn-change-phone"
-                      onClick={handleResetPhone}
-                      disabled={isSubmitting}
-                    >
-                      번호변경
-                    </button>
-                  )}
-                </div>
+                <input 
+                  type="tel" 
+                  id="book-phone" 
+                  className="form-input" 
+                  placeholder="010-1234-5678" 
+                  maxLength={13} 
+                  value={phone} 
+                  onChange={handlePhoneChange} 
+                  required 
+                  autoComplete="tel"
+                  disabled={isSubmitting}
+                />
 
-                {isPhonePrefixInvalid && !isVerified && (
+                {isPhonePrefixInvalid && (
                   <div style={{ color: '#ff8a8f', fontSize: '0.8rem', marginTop: '6px', fontFamily: 'var(--font-body)', letterSpacing: '-0.025em' }}>
                     ⚠ 휴대폰 번호는 010 등 '01'로 시작해야 합니다.
                   </div>
                 )}
 
-                {!isPhonePrefixInvalid && isPhoneLengthIncomplete && !isVerified && (
+                {!isPhonePrefixInvalid && isPhoneLengthIncomplete && (
                   <div style={{ color: 'var(--body-color)', opacity: 0.7, fontSize: '0.78rem', marginTop: '6px', fontFamily: 'var(--font-body)', letterSpacing: '-0.025em' }}>
                     휴대폰 번호 10~11자리를 모두 입력해 주세요.
                   </div>
                 )}
+              </div>
 
-                {isVerified && (
-                  <div className="verified-badge">
-                    <span style={{ fontSize: '1rem' }}>✓</span> 휴대폰 번호 인증 완료
+              {/* 3. 휴대폰 번호 확인 (일치 검증) */}
+              <div className="form-group">
+                <label htmlFor="book-phone-confirm" className="form-label">
+                  휴대폰 번호 확인 (재입력) *
+                </label>
+                <input 
+                  type="tel" 
+                  id="book-phone-confirm" 
+                  className="form-input" 
+                  placeholder="010-1234-5678 (한 번 더 입력해 주세요)" 
+                  maxLength={13} 
+                  value={phoneConfirm} 
+                  onChange={handlePhoneConfirmChange} 
+                  required 
+                  disabled={isSubmitting}
+                  style={{
+                    borderColor: isPhoneMatched 
+                      ? '#10b981' 
+                      : (isPhoneMismatch ? 'var(--accent-red)' : undefined)
+                  }}
+                />
+
+                {isPhoneMatched && (
+                  <div className="phone-match-badge match">
+                    <span>✓</span> 휴대폰 번호가 일치합니다.
                   </div>
                 )}
 
-                {/* OTP 입력 창 */}
-                {otpSent && !isVerified && (
-                  <div className="otp-box">
-                    <div className="otp-box-header">
-                      <span className="otp-box-title">인증번호 6자리 입력</span>
-                      <span className="otp-timer">{formatTimer(otpTimer)}</span>
-                    </div>
-
-                    <div className="input-with-action">
-                      <input 
-                        type="text" 
-                        inputMode="numeric"
-                        pattern="[0-9]*"
-                        maxLength={6}
-                        className="form-input" 
-                        placeholder="인증번호 6자리" 
-                        value={otpCode}
-                        onChange={(e) => { setOtpCode(e.target.value.replace(/[^0-9]/g, '')); if (errorMsg) setErrorMsg(''); }}
-                        disabled={isVerifyingOtp}
-                        autoFocus
-                      />
-                      <button
-                        type="button"
-                        className="btn-input-action btn-verify-action"
-                        onClick={handleVerifyOtp}
-                        disabled={isVerifyingOtp || otpCode.length < 4 || otpTimer <= 0}
-                      >
-                        {isVerifyingOtp ? '확인 중...' : '인증확인'}
-                      </button>
-                    </div>
-
-                    {otpInfoMsg && (
-                      <div className="otp-box-note">
-                        {otpInfoMsg}
-                      </div>
-                    )}
-                    <div style={{ fontSize: '0.76rem', color: 'var(--body-color)', opacity: 0.75, marginTop: '8px', lineHeight: '1.4' }}>
-                      ※ 보안 발신 시스템(Twilio)을 통해 <strong>[국제발신]</strong> 문자로 수신될 수 있으니 수신함을 확인해 주세요.
-                    </div>
+                {isPhoneMismatch && (
+                  <div className="phone-match-badge mismatch">
+                    <span>⚠</span> 입력하신 두 휴대폰 번호가 일치하지 않습니다.
                   </div>
                 )}
 
                 <small className="form-help-text">
-                  ※ 1인 1매 원칙으로, 번호 인증을 완료하신 관객에 한해 예매가 확정됩니다.
+                  ※ 오입력 방지를 위해 휴대폰 번호를 두 번 입력해 주세요. (1인 1매 제한)
                 </small>
               </div>
 
-              {/* 필수 관람 유의사항 동의 */}
+              {/* 4. 필수 관람 유의사항 동의 */}
               <div className="form-agreement-box">
                 <label className="checkbox-label" style={{ paddingBottom: '10px', marginBottom: '10px', borderBottom: '1px solid var(--border-vintage)', fontWeight: 700, color: 'var(--title-color)' }}>
                   <input 
@@ -401,13 +292,16 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
               <button 
                 type="submit" 
                 className="btn-submit-booking"
-                disabled={isSubmitting || !isVerified}
+                disabled={!canSubmit}
                 style={{ 
-                  opacity: (isSubmitting || !isVerified) ? 0.6 : 1,
-                  cursor: !isVerified ? 'not-allowed' : 'pointer'
+                  opacity: canSubmit ? 1 : 0.6,
+                  cursor: canSubmit ? 'pointer' : 'not-allowed'
                 }}
               >
-                {isSubmitting ? '예매 처리 중...' : (!isVerified ? '휴대폰 번호 인증 필요' : '예매 완료하기 (무료 발권)')}
+                {isSubmitting 
+                  ? '예매 처리 중...' 
+                  : (!isPhoneMatched ? '휴대폰 번호 일치 확인 필요' : '예매 완료하기 (무료 발권)')
+                }
               </button>
             </form>
           ) : (
@@ -489,7 +383,25 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
                 </div>
               </div>
 
-              <div style={{ fontFamily: 'var(--font-body)', letterSpacing: '-0.025em', fontSize: '0.88rem', color: 'var(--body-color)', marginBottom: '20px', lineHeight: '1.6' }}>
+              {/* Instagram DM Notice */}
+              <div className="booking-dm-notice-box">
+                <div className="dm-notice-title">
+                  <span>ℹ</span> 예매 확인 및 취소 안내
+                </div>
+                <p className="dm-notice-text">
+                  예매 내역 확인 및 취소 요청은 공연 <strong>공식 인스타그램 DM(@pillowman_kr)</strong>으로 예매자 성함과 연락처를 보내주시면 신속히 처리해 드립니다.
+                </p>
+                <a 
+                  href="https://www.instagram.com/pillowman_kr/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="btn-dm-link"
+                >
+                  공식 인스타그램 @pillowman_kr 바로가기 →
+                </a>
+              </div>
+
+              <div style={{ fontFamily: 'var(--font-body)', letterSpacing: '-0.025em', fontSize: '0.84rem', color: 'var(--body-color)', opacity: 0.85, marginBottom: '20px', lineHeight: '1.6' }}>
                 ※ 공연 당일 1시간 전부터 마동 로비 티켓부스에서 <strong>예매자 성함 및 연락처 뒷자리</strong>를 제시하시면 지류 티켓으로 수령하실 수 있습니다.<br />
                 ※ 공연 시작 5분 전까지 미수령 시 현장 취소표로 전환됩니다.
               </div>

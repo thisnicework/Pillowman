@@ -201,13 +201,14 @@ export async function verifyPhoneOtp(phone, token) {
 export async function createReservation({
   name,
   phone,
-  isVerified = false,
+  phoneConfirm,
   agreedAge = true,
   agreedTrigger = true,
   agreedCancellation = true,
 }) {
   const cleanName = name?.trim();
   const cleanPhone = phone?.replace(/[^0-9]/g, '');
+  const cleanPhoneConfirm = phoneConfirm?.replace(/[^0-9]/g, '');
 
   if (!cleanName) {
     throw new Error('예매자 성함을 입력해 주세요.');
@@ -217,8 +218,8 @@ export async function createReservation({
     throw new Error('010으로 시작하는 올바른 휴대폰 번호(10~11자리)를 입력해 주세요.');
   }
 
-  if (!isVerified) {
-    throw new Error('휴대폰 번호 인증을 완료해야 예매할 수 있습니다.');
+  if (phoneConfirm !== undefined && cleanPhone !== cleanPhoneConfirm) {
+    throw new Error('입력하신 두 휴대폰 번호가 일치하지 않습니다.');
   }
 
   if (!agreedAge || !agreedTrigger || !agreedCancellation) {
@@ -310,26 +311,29 @@ export async function createReservation({
 }
 
 /**
- * 4. 티켓 예매 내역 조회 (인증 완료 필수)
+ * 4. 티켓 예매 내역 조회 (성함 및 휴대폰 번호)
  */
-export async function lookupReservation({ phone, isVerified = false }) {
+export async function lookupReservation({ phone, name }) {
   const cleanPhone = phone?.replace(/[^0-9]/g, '');
+  const cleanName = name?.trim();
 
   if (!isValidKoreanPhone(cleanPhone)) {
     throw new Error('010으로 시작하는 올바른 휴대폰 번호(10~11자리)를 입력해 주세요.');
   }
 
-  if (!isVerified) {
-    throw new Error('휴대폰 번호 인증을 완료해야 예매 내역을 조회할 수 있습니다.');
-  }
-
   // --- Real Supabase Backend Integration ---
   if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
+    let query = supabase
       .from('reservations')
       .select('*')
       .eq('phone', cleanPhone)
       .order('created_at', { ascending: false });
+
+    if (cleanName) {
+      query = query.eq('name', cleanName);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('Supabase lookup error:', error);
@@ -337,11 +341,11 @@ export async function lookupReservation({ phone, isVerified = false }) {
     }
 
     if (!data || data.length === 0) {
-      throw new Error('해당 휴대폰 번호로 등록된 예매 내역이 없습니다.');
+      throw new Error('해당 정보로 등록된 예매 내역이 없습니다.');
     }
 
     // 활성 상태 예매 우선 반환
-    const active = data.find((r) => r.status === 'CONFIRMED') || data[0];
+    const active = data.find((r) => r.status === 'CONFIRMED' || r.status === 'CHECKED_IN') || data[0];
     return active;
   }
 
@@ -349,14 +353,17 @@ export async function lookupReservation({ phone, isVerified = false }) {
   await new Promise((res) => setTimeout(res, 250));
 
   const localList = getLocalReservations();
-  const foundList = localList.filter((r) => r.phone === cleanPhone);
+  const foundList = localList.filter((r) => {
+    const matchPhone = r.phone === cleanPhone;
+    const matchName = cleanName ? r.name === cleanName : true;
+    return matchPhone && matchName;
+  });
 
   if (foundList.length === 0) {
-    throw new Error('해당 휴대폰 번호로 등록된 예매 내역이 없습니다.');
+    throw new Error('해당 정보로 등록된 예매 내역이 없습니다.');
   }
 
-  const active = foundList.find((r) => r.status === 'CONFIRMED') || foundList[0];
-  return active;
+  const active = foundList.find((r) => r.status === 'CONFIRMED' || r.status === 'CHECKED_IN') || foundList[0];
 }
 
 /**
