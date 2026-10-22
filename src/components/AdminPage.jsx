@@ -5,6 +5,7 @@ import {
   getAllReservationsForAdmin,
   adminUpdateReservationStatus,
   adminDeleteReservation,
+  adminToggleSmsSent,
 } from '../services/bookingService';
 
 export default function AdminPage({ onGoHome }) {
@@ -24,7 +25,7 @@ export default function AdminPage({ onGoHome }) {
 
   // Search & Filter
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('ALL'); // ALL, CONFIRMED, CHECKED_IN, CANCELLED
+  const [statusFilter, setStatusFilter] = useState('ALL'); // ALL, CONFIRMED, CHECKED_IN, SMS_PENDING, CANCELLED
 
   const showNotice = (msg) => {
     setNotification(msg);
@@ -115,6 +116,39 @@ export default function AdminPage({ onGoHome }) {
     }
   };
 
+  // Toggle SMS Sent Status (Checkbox)
+  const handleToggleSms = async (bookingCode, currentVal) => {
+    const nextVal = !currentVal;
+    const nowIso = nextVal ? new Date().toISOString() : null;
+
+    // Optimistic UI update for instant feedback
+    setReservations((prev) =>
+      prev.map((r) =>
+        r.booking_code === bookingCode
+          ? { ...r, sms_sent: nextVal, sms_sent_at: nowIso }
+          : r
+      )
+    );
+
+    try {
+      await adminToggleSmsSent(bookingCode, nextVal);
+      showNotice(
+        `[${bookingCode}] 안내문자 상태가 '${nextVal ? '발송완료' : '미발송'}'(으)로 저장되었습니다.`
+      );
+    } catch (err) {
+      console.error('Failed to update SMS status:', err);
+      // Rollback on failure
+      setReservations((prev) =>
+        prev.map((r) =>
+          r.booking_code === bookingCode
+            ? { ...r, sms_sent: currentVal, sms_sent_at: r.sms_sent_at }
+            : r
+        )
+      );
+      alert('문자 발송 상태 저장 중 오류가 발생했습니다: ' + err.message);
+    }
+  };
+
   // Delete Reservation
   const handleDeleteReservation = async (bookingCode, name) => {
     if (!window.confirm(`[주의] '${name}'님의 예매 데이터(${bookingCode})를 완전히 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) {
@@ -137,11 +171,13 @@ export default function AdminPage({ onGoHome }) {
       return;
     }
 
-    const headers = ['예매번호', '예매자성명', '연락처', '상태', '공연일시', '공연장소', '예매일시'];
+    const headers = ['예매번호', '예매자성명', '연락처', '문자발송여부', '문자발송일시', '상태', '공연일시', '공연장소', '예매일시'];
     const rows = reservations.map((r) => [
       r.booking_code,
       r.name,
       r.phone_formatted || r.phone,
+      r.sms_sent ? '발송완료' : '미발송',
+      r.sms_sent_at ? new Date(r.sms_sent_at).toLocaleString('ko-KR') : '-',
       r.status === 'CONFIRMED' ? '예매확정' : (r.status === 'CHECKED_IN' ? '현장수령완료' : '예매취소'),
       r.show_date || '2026. 11. 1.(일) 13:00',
       r.venue || '서울예술대학교 마동 1층 예장',
@@ -168,6 +204,7 @@ export default function AdminPage({ onGoHome }) {
         statusFilter === 'ALL' ||
         (statusFilter === 'CONFIRMED' && r.status === 'CONFIRMED') ||
         (statusFilter === 'CHECKED_IN' && r.status === 'CHECKED_IN') ||
+        (statusFilter === 'SMS_PENDING' && !r.sms_sent && r.status !== 'CANCELLED') ||
         (statusFilter === 'CANCELLED' && r.status === 'CANCELLED');
 
       const q = searchQuery.trim().toLowerCase();
@@ -188,6 +225,8 @@ export default function AdminPage({ onGoHome }) {
   const cancelledCount = reservations.filter((r) => r.status === 'CANCELLED').length;
   const occupiedCount = confirmedCount + checkedInCount;
   const remainingSeats = Math.max(0, totalCapacity - occupiedCount);
+  const smsSentCount = reservations.filter((r) => r.sms_sent && r.status !== 'CANCELLED').length;
+  const smsPendingCount = Math.max(0, occupiedCount - smsSentCount);
 
   // If NOT Authenticated, show Login Screen
   if (!isAuthenticated) {
@@ -341,6 +380,21 @@ export default function AdminPage({ onGoHome }) {
             </div>
             <small className="kpi-note">반환된 취소표 수량</small>
           </div>
+
+          <div className="admin-kpi-card">
+            <div className="kpi-label">문자 발송 (SMS SENT)</div>
+            <div className="kpi-val-row">
+              <span className="kpi-val" style={{ color: smsSentCount > 0 ? '#10b981' : 'var(--body-color)' }}>
+                {smsSentCount}
+              </span>
+              <span className="kpi-unit">/ {occupiedCount}명</span>
+            </div>
+            <small className="kpi-note">
+              {occupiedCount > 0 && smsPendingCount === 0
+                ? '✓ 유효 예매자 전원 발송 완료'
+                : `발송 대기: ${smsPendingCount}명`}
+            </small>
+          </div>
         </section>
 
         {/* Reservations Management Section */}
@@ -380,6 +434,13 @@ export default function AdminPage({ onGoHome }) {
               </button>
               <button
                 type="button"
+                className={`admin-tab ${statusFilter === 'SMS_PENDING' ? 'active' : ''}`}
+                onClick={() => setStatusFilter('SMS_PENDING')}
+              >
+                문자 미발송 ({smsPendingCount})
+              </button>
+              <button
+                type="button"
                 className={`admin-tab ${statusFilter === 'CANCELLED' ? 'active' : ''}`}
                 onClick={() => setStatusFilter('CANCELLED')}
               >
@@ -401,6 +462,7 @@ export default function AdminPage({ onGoHome }) {
                   <th>예매번호</th>
                   <th>예매자 성명</th>
                   <th>연락처</th>
+                  <th style={{ textAlign: 'center' }}>문자 발송</th>
                   <th>상태</th>
                   <th>예매 일시</th>
                   <th style={{ textAlign: 'right' }}>관리 조치</th>
@@ -409,7 +471,7 @@ export default function AdminPage({ onGoHome }) {
               <tbody>
                 {filteredReservations.length === 0 ? (
                   <tr>
-                    <td colSpan="7" style={{ textAlign: 'center', padding: '40px', color: 'var(--body-color)' }}>
+                    <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: 'var(--body-color)' }}>
                       조회된 예매 내역이 없습니다.
                     </td>
                   </tr>
@@ -424,6 +486,33 @@ export default function AdminPage({ onGoHome }) {
                         <span className="table-name">{item.name}</span>
                       </td>
                       <td>{item.phone_formatted || item.phone}</td>
+                      <td style={{ textAlign: 'center' }}>
+                        <label 
+                          className={`sms-check-label ${item.sms_sent ? 'is-sent' : 'is-pending'}`}
+                          title={
+                            item.sms_sent 
+                              ? `발송 완료${item.sms_sent_at ? ` (${new Date(item.sms_sent_at).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })})` : ''} - 클릭 시 미발송 처리` 
+                              : '클릭하여 문자 발송 완료 표시'
+                          }
+                        >
+                          <input
+                            type="checkbox"
+                            className="sms-checkbox-input"
+                            checked={Boolean(item.sms_sent)}
+                            onChange={() => handleToggleSms(item.booking_code, Boolean(item.sms_sent))}
+                          />
+                          <span className="sms-check-box">
+                            {item.sms_sent && (
+                              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                <path d="M2.5 6.5L4.5 8.5L9.5 3.5" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            )}
+                          </span>
+                          <span className="sms-label-text">
+                            {item.sms_sent ? '발송완료' : '미발송'}
+                          </span>
+                        </label>
+                      </td>
                       <td>
                         {item.status === 'CONFIRMED' && (
                           <span className="status-badge status-confirmed">예매확정</span>

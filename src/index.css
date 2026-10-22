@@ -2805,6 +2805,79 @@ font-family: var(--font-body);
   color: #ff9ca1;
 }
 
+/* SMS Sent Checkbox & Toggle */
+.sms-check-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 0;
+  font-family: var(--font-body);
+  letter-spacing: -0.025em;
+  font-size: 0.78rem;
+  font-weight: 700;
+  transition: all 0.15s ease;
+  position: relative;
+}
+
+.sms-check-label.is-sent {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  color: #34d399;
+}
+
+.sms-check-label.is-sent:hover {
+  background: rgba(16, 185, 129, 0.22);
+  border-color: #10b981;
+}
+
+.sms-check-label.is-pending {
+  background: rgba(237, 230, 209, 0.04);
+  border: 1px solid rgba(237, 230, 209, 0.18);
+  color: rgba(237, 230, 209, 0.55);
+}
+
+.sms-check-label.is-pending:hover {
+  background: rgba(237, 230, 209, 0.09);
+  border-color: rgba(237, 230, 209, 0.4);
+  color: #ede6d1;
+}
+
+.sms-checkbox-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.sms-check-box {
+  width: 14px;
+  height: 14px;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.sms-check-label.is-sent .sms-check-box {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.sms-check-label.is-pending .sms-check-box {
+  border-color: rgba(237, 230, 209, 0.35);
+}
+
+.sms-label-text {
+  line-height: 1;
+}
+
 /* Table Actions */
 .table-actions {
   display: flex;

@@ -17,6 +17,8 @@ CREATE TABLE IF NOT EXISTS public.reservations (
     seat_type TEXT NOT NULL DEFAULT '전석 비지정석 (현장 수령)',   -- 좌석 구분
     ticket_count INTEGER NOT NULL DEFAULT 1,                    -- 1인 1매
     status TEXT NOT NULL DEFAULT 'CONFIRMED',                   -- 상태: 'CONFIRMED' (예매확정), 'CANCELLED' (예매취소), 'CHECKED_IN' (현장발권완료)
+    sms_sent BOOLEAN NOT NULL DEFAULT false,                    -- 관리자 안내 문자 발송 완료 여부 (체크박스)
+    sms_sent_at TIMESTAMP WITH TIME ZONE,                       -- 문자 발송 완료 시각
     agreed_age BOOLEAN NOT NULL DEFAULT true,                   -- 15세 이상 관람가 확인
     agreed_trigger BOOLEAN NOT NULL DEFAULT true,               -- 트리거워닝 확인
     agreed_cancellation BOOLEAN NOT NULL DEFAULT true,          -- 취소 및 노쇼 규정 확인
@@ -24,6 +26,10 @@ CREATE TABLE IF NOT EXISTS public.reservations (
     cancelled_at TIMESTAMP WITH TIME ZONE,
     checked_in_at TIMESTAMP WITH TIME ZONE
 );
+
+-- 기존 테이블에 문자 발송 컬럼 추가 마이그레이션 (이미 테이블이 생성된 경우 실행)
+ALTER TABLE public.reservations ADD COLUMN IF NOT EXISTS sms_sent BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE public.reservations ADD COLUMN IF NOT EXISTS sms_sent_at TIMESTAMP WITH TIME ZONE;
 
 -- 2. 인덱스 생성 (초고속 조회 및 1인 1매 중복 방지)
 CREATE INDEX IF NOT EXISTS idx_reservations_phone ON public.reservations(phone);

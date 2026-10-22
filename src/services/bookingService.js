@@ -252,6 +252,8 @@ export async function createReservation({
     seat_type: '전석 비지정석 (현장 수령 선착순 배정)',
     ticket_count: 1,
     status: 'CONFIRMED',
+    sms_sent: false,
+    sms_sent_at: null,
     agreed_age: agreedAge,
     agreed_trigger: agreedTrigger,
     agreed_cancellation: agreedCancellation,
@@ -604,5 +606,64 @@ export async function adminDeleteReservation(bookingCode) {
   const filtered = localList.filter((r) => r.booking_code !== bookingCode);
   saveLocalReservations(filtered);
   return true;
+}
+
+/**
+ * 12. 관리자용 안내 문자 발송 상태 토글 (체크박스)
+ */
+export async function adminToggleSmsSent(bookingCode, isSent) {
+  if (!bookingCode) throw new Error('예매 코드가 유효하지 않습니다.');
+
+  const updatePayload = {
+    sms_sent: Boolean(isSent),
+    sms_sent_at: isSent ? new Date().toISOString() : null,
+  };
+
+  // 1. Supabase 백엔드 연동
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('reservations')
+        .update(updatePayload)
+        .eq('booking_code', bookingCode)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Supabase adminToggleSmsSent error:', error);
+        // Supabase DB에 컬럼이 아직 없을 경우의 안내
+        if (error.message?.includes('sms_sent') || error.code === '42703') {
+          console.warn('Supabase DB에 sms_sent 컬럼이 없습니다. supabase_schema.sql을 실행해 주세요.');
+        } else {
+          throw new Error(error.message || '문자 발송 상태 변경에 실패했습니다.');
+        }
+      } else if (data) {
+        // 로컬스토리지에도 동기화
+        const localList = getLocalReservations();
+        const idx = localList.findIndex((r) => r.booking_code === bookingCode);
+        if (idx !== -1) {
+          localList[idx] = { ...localList[idx], ...updatePayload };
+          saveLocalReservations(localList);
+        }
+        return data;
+      }
+    } catch (err) {
+      console.warn('Supabase SMS update fallback to local:', err);
+    }
+  }
+
+  // 2. LocalStorage Fallback (Mock/Offline)
+  const localList = getLocalReservations();
+  const index = localList.findIndex((r) => r.booking_code === bookingCode);
+  if (index !== -1) {
+    localList[index] = {
+      ...localList[index],
+      ...updatePayload,
+    };
+    saveLocalReservations(localList);
+    return localList[index];
+  }
+
+  return { booking_code: bookingCode, ...updatePayload };
 }
 
