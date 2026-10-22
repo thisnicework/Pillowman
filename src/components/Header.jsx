@@ -126,9 +126,9 @@ export default function Header({ onOpenBooking, bookingStats }) {
             }}
           >
             <span>GET TICKET</span>
-            {bookingStats && (
-              <span className={`nav-ticket-seat-pill ${bookingStats.isSoldOut ? 'soldout' : ''}`}>
-                {bookingStats.isSoldOut ? '매진' : `잔여 ${bookingStats.remainingSeats}`}
+            {bookingStats?.isSoldOut && (
+              <span className="nav-ticket-seat-pill soldout">
+                매진
               </span>
             )}
           </button>

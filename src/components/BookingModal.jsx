@@ -152,9 +152,9 @@ export default function BookingModal({
                 <div className="info">
                   일시: 2026. 11. 1.(일) 13:00 | 장소: 서울예술대학교 마동 예장<br />
                   가격: <strong>전석 무료 (1인 1매 선착순 비지정석)</strong>
-                  {bookingStats && (
-                    <div style={{ marginTop: '6px', color: bookingStats.remainingSeats > 0 ? '#10b981' : 'var(--accent-red)', fontWeight: 700, fontSize: '0.88rem' }}>
-                      ● 실시간 잔여석: {bookingStats.remainingSeats}석 / {bookingStats.totalCapacity}석
+                  {bookingStats?.isSoldOut && (
+                    <div style={{ marginTop: '6px', color: 'var(--accent-red)', fontWeight: 700, fontSize: '0.88rem' }}>
+                      ● 현재 온라인 예매가 전석 매진되었습니다.
                     </div>
                   )}
                 </div>

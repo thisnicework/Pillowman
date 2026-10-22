@@ -135,45 +135,6 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster, b
           </div>
         </div>
 
-        {/* ==========================================================================
-            REAL-TIME SEAT CAPACITY & REMAINING STATUS CARD
-            ========================================================================== */}
-        {bookingStats && (
-          <div className="seat-status-box">
-            <div className="seat-status-header">
-              <div className="seat-status-title">
-                <span className="live-pulse-dot" />
-                실시간 잔여 좌석 현황
-              </div>
-              <div className="seat-status-numbers">
-                <span className="remaining-number">{bookingStats.remainingSeats}</span>
-                <span className="total-number"> / {bookingStats.totalCapacity}석</span>
-              </div>
-            </div>
-
-            <div className="seat-progress-bar-bg">
-              <div 
-                className={`seat-progress-bar-fill ${bookingStats.isSoldOut ? 'sold-out' : ''}`}
-                style={{ 
-                  width: `${Math.min(100, Math.round(((bookingStats.totalCapacity - bookingStats.remainingSeats) / Math.max(1, bookingStats.totalCapacity)) * 100))}%` 
-                }} 
-              />
-            </div>
-
-            <div className="seat-status-footer">
-              <span className="seat-status-note">
-                {bookingStats.isSoldOut 
-                  ? '⚠ 현재 온라인 예매가 전석 매진되었습니다. (공연 당일 현장 취소표 대기 가능)' 
-                  : `* 현재 선착순으로 ${bookingStats.remainingSeats}석 예매 가능합니다. (1인 1매 전석 무료)`
-                }
-              </span>
-              <span className="seat-occupancy-rate">
-                예매율 {Math.round(((bookingStats.totalCapacity - bookingStats.remainingSeats) / Math.max(1, bookingStats.totalCapacity)) * 100)}%
-              </span>
-            </div>
-          </div>
-        )}
-
         {/* Action Buttons */}
         <div className="booking-actions-row">
           <button 
@@ -184,9 +145,9 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster, b
             <div className="btn-action-text-wrap">
               <div className="btn-title-row">
                 <span className="title">예매하기</span>
-                {bookingStats && (
-                  <span className={`btn-remaining-badge ${bookingStats.isSoldOut ? 'soldout' : ''}`}>
-                    {bookingStats.isSoldOut ? '전석 매진' : `잔여 ${bookingStats.remainingSeats}석`}
+                {bookingStats?.isSoldOut && (
+                  <span className="btn-remaining-badge soldout">
+                    전석 매진
                   </span>
                 )}
               </div>

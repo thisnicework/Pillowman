@@ -24,7 +24,7 @@ export default function Footer({ onOpenBooking, onOpenAdmin, bookingStats }) {
           className="btn-floating-ticket" 
           onClick={onOpenBooking}
         >
-          <span>GET TICKET {bookingStats ? `(잔여 ${bookingStats.remainingSeats}석)` : ''}</span>
+          <span>{bookingStats?.isSoldOut ? '전석 매진' : 'GET TICKET'}</span>
         </button>
         <button 
           type="button" 
