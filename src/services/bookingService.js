@@ -15,6 +15,15 @@ export function formatPhoneNumber(val) {
 }
 
 /**
+ * 휴대폰 번호 유효성 검사 (010, 011, 016, 017, 018, 019로 시작하는 10~11자리)
+ */
+export function isValidKoreanPhone(phone) {
+  if (!phone) return false;
+  const clean = phone.replace(/[^0-9]/g, '');
+  return /^01[016789]\d{7,8}$/.test(clean);
+}
+
+/**
  * 한국 전화번호를 국제 E.164 형식으로 변환 (+82 10-XXXX-XXXX)
  */
 export function toE164Phone(phone) {
@@ -24,6 +33,7 @@ export function toE164Phone(phone) {
   }
   return `+82${clean}`;
 }
+
 
 /**
  * 고유 예매 코드 생성 (예: PLW-2026-K4B2)
@@ -63,8 +73,8 @@ function saveLocalReservations(reservations) {
  */
 export async function sendPhoneOtp(phone) {
   const cleanPhone = phone?.replace(/[^0-9]/g, '');
-  if (!cleanPhone || cleanPhone.length < 10 || cleanPhone.length > 11) {
-    throw new Error('올바른 휴대폰 번호(10~11자리)를 입력해 주세요.');
+  if (!isValidKoreanPhone(cleanPhone)) {
+    throw new Error('010으로 시작하는 올바른 휴대폰 번호(10~11자리)를 입력해 주세요.');
   }
 
   const e164 = toE164Phone(cleanPhone);
@@ -193,8 +203,8 @@ export async function createReservation({
     throw new Error('예매자 성함을 입력해 주세요.');
   }
 
-  if (!cleanPhone || cleanPhone.length < 10 || cleanPhone.length > 11) {
-    throw new Error('올바른 휴대폰 번호(10~11자리)를 입력해 주세요.');
+  if (!isValidKoreanPhone(cleanPhone)) {
+    throw new Error('010으로 시작하는 올바른 휴대폰 번호(10~11자리)를 입력해 주세요.');
   }
 
   if (!isVerified) {
@@ -295,8 +305,8 @@ export async function createReservation({
 export async function lookupReservation({ phone, isVerified = false }) {
   const cleanPhone = phone?.replace(/[^0-9]/g, '');
 
-  if (!cleanPhone) {
-    throw new Error('휴대폰 번호를 입력해 주세요.');
+  if (!isValidKoreanPhone(cleanPhone)) {
+    throw new Error('010으로 시작하는 올바른 휴대폰 번호(10~11자리)를 입력해 주세요.');
   }
 
   if (!isVerified) {

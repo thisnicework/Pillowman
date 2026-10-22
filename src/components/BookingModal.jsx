@@ -3,7 +3,8 @@ import {
   createReservation, 
   formatPhoneNumber, 
   sendPhoneOtp, 
-  verifyPhoneOtp 
+  verifyPhoneOtp,
+  isValidKoreanPhone
 } from '../services/bookingService';
 
 export default function BookingModal({ isOpen, onClose, onNotify }) {
@@ -57,12 +58,16 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
     }
   };
 
+  const cleanPhone = phone.replace(/[^0-9]/g, '');
+  const isPhoneValid = isValidKoreanPhone(cleanPhone);
+  const isPhonePrefixInvalid = cleanPhone.length >= 3 && !cleanPhone.startsWith('01');
+  const isPhoneLengthIncomplete = cleanPhone.length >= 4 && cleanPhone.length < 10;
+
   const handleSendOtp = async () => {
     setErrorMsg('');
     setOtpInfoMsg('');
-    const cleanPhone = phone.replace(/[^0-9]/g, '');
-    if (cleanPhone.length < 10 || cleanPhone.length > 11) {
-      setErrorMsg('올바른 휴대폰 번호(10~11자리)를 입력해 주세요.');
+    if (!isPhoneValid) {
+      setErrorMsg('010으로 시작하는 올바른 휴대폰 번호(10~11자리)를 입력해 주세요.');
       return;
     }
 
@@ -258,7 +263,12 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
                       type="button"
                       className="btn-input-action"
                       onClick={handleSendOtp}
-                      disabled={isSendingOtp || isSubmitting || phone.replace(/[^0-9]/g, '').length < 10}
+                      disabled={isSendingOtp || isSubmitting || !isPhoneValid}
+                      style={{
+                        background: isPhoneValid ? 'rgba(223, 54, 62, 0.25)' : undefined,
+                        borderColor: isPhoneValid ? 'var(--accent-red)' : undefined,
+                        color: isPhoneValid ? '#fff' : undefined,
+                      }}
                     >
                       {isSendingOtp ? '발송 중...' : (otpSent ? '재전송' : '인증요청')}
                     </button>
@@ -273,6 +283,18 @@ export default function BookingModal({ isOpen, onClose, onNotify }) {
                     </button>
                   )}
                 </div>
+
+                {isPhonePrefixInvalid && !isVerified && (
+                  <div style={{ color: '#ff8a8f', fontSize: '0.8rem', marginTop: '6px', fontFamily: 'var(--font-body)', letterSpacing: '-0.025em' }}>
+                    ⚠ 휴대폰 번호는 010 등 '01'로 시작해야 합니다.
+                  </div>
+                )}
+
+                {!isPhonePrefixInvalid && isPhoneLengthIncomplete && !isVerified && (
+                  <div style={{ color: 'var(--body-color)', opacity: 0.7, fontSize: '0.78rem', marginTop: '6px', fontFamily: 'var(--font-body)', letterSpacing: '-0.025em' }}>
+                    휴대폰 번호 10~11자리를 모두 입력해 주세요.
+                  </div>
+                )}
 
                 {isVerified && (
                   <div className="verified-badge">
