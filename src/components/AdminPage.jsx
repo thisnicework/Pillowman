@@ -576,24 +576,25 @@ export default function AdminPage({ onGoHome }) {
                           )}
 
                           {item.status === 'CANCELLED' && (
-                            <button
-                              type="button"
-                              className="btn-table-action reconfirm"
-                              onClick={() => handleStatusChange(item.booking_code, 'CONFIRMED')}
-                              title="취소 건을 다시 예매 확정으로 복구"
-                            >
-                              예매복구
-                            </button>
+                            <>
+                              <button
+                                type="button"
+                                className="btn-table-action reconfirm"
+                                onClick={() => handleStatusChange(item.booking_code, 'CONFIRMED')}
+                                title="취소 건을 다시 예매 확정으로 복구"
+                              >
+                                예매복구
+                              </button>
+                              <button
+                                type="button"
+                                className="btn-table-action delete"
+                                onClick={() => handleDeleteReservation(item.booking_code, item.name)}
+                                title="취소된 예매 데이터 완전 삭제"
+                              >
+                                삭제
+                              </button>
+                            </>
                           )}
-
-                          <button
-                            type="button"
-                            className="btn-table-action delete"
-                            onClick={() => handleDeleteReservation(item.booking_code, item.name)}
-                            title="데이터 완전 삭제"
-                          >
-                            삭제
-                          </button>
                         </div>
                       </td>
                     </tr>
