@@ -151,16 +151,25 @@ export default function AdminPage({ onGoHome }) {
 
   // Delete Reservation
   const handleDeleteReservation = async (bookingCode, name) => {
-    if (!window.confirm(`[주의] '${name}'님의 예매 데이터(${bookingCode})를 완전히 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) {
+    const targetName = name ? `'${name}' 님의 ` : '';
+    if (!window.confirm(`${targetName}예매 데이터를 삭제하시겠습니까?`)) {
       return;
     }
 
     try {
+      // 1. 낙관적 UI 업데이트: 즉시 화면 목록에서 제거
+      setReservations((prev) => prev.filter((r) => r.booking_code !== bookingCode));
+
+      // 2. 서버 및 로컬 스토리지 삭제 처리
       await adminDeleteReservation(bookingCode);
-      showNotice(`예매 [${bookingCode}]가 삭제되었습니다.`);
-      loadData();
+      showNotice(`예매 [${bookingCode}] (${name || ''})가 정상적으로 삭제되었습니다.`);
+
+      // 3. 최신 데이터 재동기화 (잔여석/정원 등 통계 갱신)
+      await loadData();
     } catch (err) {
+      console.error('Failed to delete reservation:', err);
       alert(err.message || '예매 삭제에 실패했습니다.');
+      await loadData();
     }
   };
 

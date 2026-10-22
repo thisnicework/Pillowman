@@ -464,6 +464,9 @@ export async function lookupReservation({ phone, name }) {
       .from('reservations')
       .select('*')
       .eq('phone', cleanPhone)
+      .neq('status', 'DELETED')
+      .neq('status', 'TEST_DELETED')
+      .neq('status', 'SYSTEM_CONFIG')
       .order('created_at', { ascending: false });
 
     if (cleanName) {
@@ -477,12 +480,16 @@ export async function lookupReservation({ phone, name }) {
       throw new Error('예매 내역 조회 중 오류가 발생했습니다.');
     }
 
-    if (!data || data.length === 0) {
+    const validData = (data || []).filter(
+      (r) => r.status !== 'DELETED' && r.status !== 'TEST_DELETED' && r.status !== 'SYSTEM_CONFIG'
+    );
+
+    if (!validData || validData.length === 0) {
       throw new Error('해당 정보로 등록된 예매 내역이 없습니다.');
     }
 
     // 활성 상태 예매 우선 반환
-    const active = data.find((r) => r.status === 'CONFIRMED' || r.status === 'CHECKED_IN') || data[0];
+    const active = validData.find((r) => r.status === 'CONFIRMED' || r.status === 'CHECKED_IN') || validData[0];
     return active;
   }
 
@@ -683,7 +690,9 @@ export async function getAllReservationsForAdmin() {
       .from('reservations')
       .select('*')
       .neq('status', 'SYSTEM_CONFIG')
-      .not('booking_code', 'like', '__SYSTEM_%')
+      .neq('status', 'DELETED')
+      .neq('status', 'TEST_DELETED')
+      .not('booking_code', 'like', '__%')
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -699,7 +708,7 @@ export async function getAllReservationsForAdmin() {
     }
 
     const realReservations = (data || []).filter(
-      (item) => item.status !== 'SYSTEM_CONFIG' && item.status !== 'TEST_DELETED' && !item.booking_code?.startsWith('__')
+      (item) => item.status !== 'SYSTEM_CONFIG' && item.status !== 'DELETED' && item.status !== 'TEST_DELETED' && !item.booking_code?.startsWith('__')
     );
 
     return realReservations.map((item) => ({
@@ -710,7 +719,7 @@ export async function getAllReservationsForAdmin() {
   }
 
   const localList = getLocalReservations().filter(
-    (item) => item.status !== 'SYSTEM_CONFIG' && item.status !== 'TEST_DELETED' && !item.booking_code?.startsWith('__')
+    (item) => item.status !== 'SYSTEM_CONFIG' && item.status !== 'DELETED' && item.status !== 'TEST_DELETED' && !item.booking_code?.startsWith('__')
   );
   return [...localList].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 }
@@ -765,15 +774,35 @@ export async function adminDeleteReservation(bookingCode) {
   if (!bookingCode) throw new Error('삭제할 예매 코드가 없습니다.');
 
   if (isSupabaseConfigured && supabase) {
-    const { error } = await supabase
+    // 1. Supabase에서 status를 'DELETED'로 즉시 변경 (anon 권한으로 목록/통계에서 즉시 완전 제거)
+    const { error: updateError } = await supabase
       .from('reservations')
-      .delete()
+      .update({
+        status: 'DELETED',
+        cancelled_at: new Date().toISOString(),
+      })
       .eq('booking_code', bookingCode);
 
-    if (error) {
-      console.error('Supabase admin delete error:', error);
-      throw new Error('예매 삭제에 실패했습니다.');
+    if (updateError) {
+      console.error('Supabase admin delete status error:', updateError);
+      throw new Error('예매 삭제에 실패했습니다: ' + updateError.message);
     }
+
+    // 2. 물리적 행 삭제도 함께 시도 (권한 허용 시 레코드 완전 삭제)
+    try {
+      await supabase
+        .from('reservations')
+        .delete()
+        .eq('booking_code', bookingCode);
+    } catch (e) {
+      // ignore
+    }
+
+    // 3. 로컬 저장소 캐시에서도 확실하게 제거
+    const localList = getLocalReservations();
+    const filtered = localList.filter((r) => r.booking_code !== bookingCode);
+    saveLocalReservations(filtered);
+
     return true;
   }
 
