@@ -25,7 +25,10 @@ export default function Hero({ onOpenPoster }) {
             원작 The Pillowman by Martin McDonagh
           </p>
           <p className="hero-date-venue">
-            2026.11.1(SUN) 13:00 &nbsp; 서울예술대학교 마동 예장
+            <span className="hero-date-text">2026.11.1(SUN) 13:00</span>
+            <span className="hero-separator">&nbsp;&nbsp;</span>
+            <br className="mobile-venue-br" />
+            <span className="hero-venue-text">서울예술대학교 마동 예장</span>
           </p>
         </div>
 
