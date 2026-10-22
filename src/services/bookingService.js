@@ -363,6 +363,25 @@ export async function createReservation({
       throw new Error('예매 처리 중 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
     }
 
+    // 3. 실시간 잔여석 및 선착순 순위 엄격 검증 (동시 접속 초과 방지)
+    const totalCap = stats.totalCapacity;
+    const { count: rankCount, error: rankError } = await supabase
+      .from('reservations')
+      .select('*', { count: 'exact', head: true })
+      .in('status', ['CONFIRMED', 'CHECKED_IN'])
+      .neq('status', 'SYSTEM_CONFIG')
+      .lte('created_at', inserted.created_at);
+
+    if (!rankError && rankCount > totalCap) {
+      // 정원 초과 예매분 즉시 롤백 삭제
+      await supabase
+        .from('reservations')
+        .delete()
+        .eq('id', inserted.id);
+
+      throw new Error('준비된 전 좌석이 방금 전 선착순으로 모두 매진되었습니다.');
+    }
+
     return inserted;
   }
 

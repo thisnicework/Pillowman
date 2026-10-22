@@ -5,6 +5,7 @@ import {
   isValidKoreanPhone,
   checkPhoneAlreadyBooked,
   isBookingOpen,
+  getBookingStats,
 } from '../services/bookingService';
 
 export default function BookingModal({ 
@@ -26,6 +27,17 @@ export default function BookingModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [reservation, setReservation] = useState(null);
+  const [liveStats, setLiveStats] = useState(bookingStats);
+
+  useEffect(() => {
+    if (bookingStats) setLiveStats(bookingStats);
+  }, [bookingStats]);
+
+  useEffect(() => {
+    if (isOpen) {
+      getBookingStats().then(setLiveStats).catch(console.warn);
+    }
+  }, [isOpen]);
 
   const handlePhoneChange = (e) => {
     const formatted = formatPhoneNumber(e.target.value);
@@ -108,8 +120,10 @@ export default function BookingModal({
     };
   }, [isOpen, isPhoneMatched, cleanPhone]);
 
+  const currentStats = liveStats || bookingStats;
   const isOpenTime = isBookingOpen();
-  const isSoldOut = Boolean(bookingStats?.isSoldOut);
+  const isSoldOut = Boolean(currentStats?.isSoldOut) || (currentStats?.remainingSeats !== undefined && currentStats.remainingSeats <= 0);
+  const remainingSeats = currentStats?.remainingSeats ?? 0;
 
   const canSubmit = 
     !isSubmitting && 
@@ -182,6 +196,16 @@ export default function BookingModal({
 
     setIsSubmitting(true);
     try {
+      // 0. 실시간 잔여석 최신 확인
+      const freshStats = await getBookingStats();
+      setLiveStats(freshStats);
+
+      if (freshStats.isSoldOut || freshStats.remainingSeats <= 0) {
+        setErrorMsg('준비된 전 좌석이 모두 매진되어 예매가 마감되었습니다.');
+        setIsSubmitting(false);
+        return;
+      }
+
       const result = await createReservation({
         name: cleanName,
         nameConfirm: cleanNameConfirm,
@@ -198,6 +222,7 @@ export default function BookingModal({
     } catch (err) {
       setErrorMsg(err.message || '예매 처리 중 오류가 발생했습니다.');
       if (onNotify) onNotify(err.message || '예매 실패');
+      getBookingStats().then(setLiveStats).catch(console.warn);
     } finally {
       setIsSubmitting(false);
     }
@@ -234,11 +259,31 @@ export default function BookingModal({
                 <div className="info">
                   일시: 2026. 11. 1.(일) 13:00 | 장소: 서울예술대학교 마동 예장<br />
                   가격: <strong>전석 무료 (1인 1매 선착순 비지정석)</strong>
-                  {bookingStats?.isSoldOut && (
-                    <div style={{ marginTop: '6px', color: 'var(--accent-red)', fontWeight: 700, fontSize: '0.88rem' }}>
-                      ● 현재 온라인 예매가 전석 매진되었습니다.
-                    </div>
-                  )}
+                  <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {isSoldOut ? (
+                      <span style={{ 
+                        padding: '4px 10px', 
+                        background: 'rgba(239, 68, 68, 0.15)', 
+                        border: '1px solid var(--accent-red)', 
+                        color: 'var(--accent-red)', 
+                        fontSize: '0.85rem', 
+                        fontWeight: 700 
+                      }}>
+                        ● 현재 온라인 예매가 전석 매진되었습니다.
+                      </span>
+                    ) : (
+                      <span style={{ 
+                        padding: '4px 10px', 
+                        background: 'rgba(16, 185, 129, 0.15)', 
+                        border: '1px solid #10b981', 
+                        color: '#10b981', 
+                        fontSize: '0.85rem', 
+                        fontWeight: 700 
+                      }}>
+                        ● 실시간 잔여석: {remainingSeats}석 / 정원 {currentStats?.totalCapacity ?? 100}석
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -426,19 +471,19 @@ export default function BookingModal({
               <button 
                 type="submit" 
                 className="btn-submit-booking"
-                disabled={!canSubmit}
+                disabled={!canSubmit || isSubmitting}
                 style={{ 
-                  opacity: canSubmit ? 1 : 0.6,
-                  cursor: canSubmit ? 'pointer' : 'not-allowed'
+                  opacity: canSubmit && !isSubmitting ? 1 : 0.6,
+                  cursor: canSubmit && !isSubmitting ? 'pointer' : 'not-allowed'
                 }}
               >
                 {isSubmitting 
-                  ? '예매 처리 중...' 
+                  ? '잔여석 확인 및 예매 처리 중...' 
                   : (isSoldOut 
                       ? '전석 매진 (예매 마감)' 
                       : (!isOpenTime 
                           ? '예매 오픈 대기 중 (오늘 20:00 오픈)' 
-                          : (!isPhoneMatched ? '휴대폰 번호 일치 확인 필요' : '예매 완료하기 (무료 발권)')))
+                          : (!isPhoneMatched ? '휴대폰 번호 일치 확인 필요' : `예매 완료하기 (${remainingSeats}석 남음)`)))
                 }
               </button>
             </form>
