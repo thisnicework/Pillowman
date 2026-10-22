@@ -219,8 +219,13 @@ export default function Team() {
 
             <div className="credit-box">
               <div className="credit-box-title">ARTISTS</div>
-              <div className="credit-box-content">
-                정아연 이수연 이영현 차재이 이태하 김형록 조한만 진주 이지혜 고다선 안현준 안형진 김진서 이정원
+              <div className="credit-box-content" style={{ lineHeight: '2' }}>
+                〈LIBERTAD: 리베르타드〉 정아연 이수연 이영현 차재이<br />
+                〈Hug e hug〉 김형록 이태하<br />
+                〈un, fortune〉 진주 조한만<br />
+                〈카투리안의 이야기들〉 고다선 이지혜<br />
+                〈초록돼지〉 안현준 안형진<br />
+                〈Eater〉 이정원 김진서
               </div>
             </div>
           </div>
