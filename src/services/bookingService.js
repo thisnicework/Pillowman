@@ -1,4 +1,4 @@
-import { supabase, isSupabaseConfigured } from './supabaseClient';
+import { supabase, isSupabaseConfigured } from './supabaseClient.js';
 
 const LOCAL_STORAGE_KEY = 'pillowman_reservations';
 const CAPACITY_KEY = 'pillowman_total_capacity';
