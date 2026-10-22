@@ -1,7 +1,8 @@
 import { supabase, isSupabaseConfigured } from './supabaseClient';
 
 const LOCAL_STORAGE_KEY = 'pillowman_reservations';
-const TOTAL_CAPACITY = 100; // 서울예술대학교 마동 예장 회차당 정원
+const CAPACITY_KEY = 'pillowman_total_capacity';
+const DEFAULT_CAPACITY = 100; // 서울예술대학교 마동 예장 기본 정원
 
 /**
  * 01012345678 -> 010-1234-5678 포맷팅 헬퍼
@@ -410,30 +411,191 @@ export async function cancelReservation(bookingCode, { phone } = {}) {
 }
 
 /**
- * 6. 정원 및 잔여석 통계
+ * 6. 총 정원 조회 (동적 설정)
+ */
+export async function getTotalCapacity() {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('app_settings')
+        .select('value')
+        .eq('key', 'total_capacity')
+        .maybeSingle();
+
+      if (!error && data?.value) {
+        const parsed = parseInt(data.value, 10);
+        if (!isNaN(parsed) && parsed > 0) {
+          localStorage.setItem(CAPACITY_KEY, String(parsed));
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to load total_capacity from Supabase:', e);
+    }
+  }
+
+  const stored = localStorage.getItem(CAPACITY_KEY);
+  if (stored) {
+    const parsed = parseInt(stored, 10);
+    if (!isNaN(parsed) && parsed > 0) return parsed;
+  }
+  return DEFAULT_CAPACITY;
+}
+
+/**
+ * 7. 총 정원 설정 변경 (관리자 전용)
+ */
+export async function updateTotalCapacity(newCapacity) {
+  const cap = parseInt(newCapacity, 10);
+  if (isNaN(cap) || cap < 1) {
+    throw new Error('정원은 1명 이상의 숫자로 입력해 주세요.');
+  }
+
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { error } = await supabase
+        .from('app_settings')
+        .upsert(
+          { key: 'total_capacity', value: String(cap), updated_at: new Date().toISOString() },
+          { onConflict: 'key' }
+        );
+      if (error) {
+        console.error('Failed to update total_capacity in Supabase:', error);
+      }
+    } catch (e) {
+      console.warn('Supabase app_settings update error:', e);
+    }
+  }
+
+  localStorage.setItem(CAPACITY_KEY, String(cap));
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('pillowman-capacity-updated', { detail: cap }));
+  }
+  return cap;
+}
+
+/**
+ * 8. 정원 및 잔여석 통계 (실시간 동적 정원 반영)
  */
 export async function getBookingStats() {
+  const totalCapacity = await getTotalCapacity();
+
   if (isSupabaseConfigured && supabase) {
     const { count, error } = await supabase
       .from('reservations')
       .select('*', { count: 'exact', head: true })
-      .eq('status', 'CONFIRMED');
+      .in('status', ['CONFIRMED', 'CHECKED_IN']);
 
     const confirmedCount = error ? 0 : count || 0;
     return {
-      totalCapacity: TOTAL_CAPACITY,
+      totalCapacity,
       confirmedCount,
-      remainingSeats: Math.max(0, TOTAL_CAPACITY - confirmedCount),
-      isSoldOut: confirmedCount >= TOTAL_CAPACITY,
+      remainingSeats: Math.max(0, totalCapacity - confirmedCount),
+      isSoldOut: confirmedCount >= totalCapacity,
     };
   }
 
   const localList = getLocalReservations();
-  const confirmedCount = localList.filter((r) => r.status === 'CONFIRMED').length;
+  const confirmedCount = localList.filter(
+    (r) => r.status === 'CONFIRMED' || r.status === 'CHECKED_IN'
+  ).length;
+
   return {
-    totalCapacity: TOTAL_CAPACITY,
+    totalCapacity,
     confirmedCount,
-    remainingSeats: Math.max(0, TOTAL_CAPACITY - confirmedCount),
-    isSoldOut: confirmedCount >= TOTAL_CAPACITY,
+    remainingSeats: Math.max(0, totalCapacity - confirmedCount),
+    isSoldOut: confirmedCount >= totalCapacity,
   };
 }
+
+/**
+ * 9. 관리자용 전체 예매 목록 조회
+ */
+export async function getAllReservationsForAdmin() {
+  if (isSupabaseConfigured && supabase) {
+    const { data, error } = await supabase
+      .from('reservations')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Supabase fetch all reservations error:', error);
+      throw new Error('예매 목록을 불러오는 중 오류가 발생했습니다.');
+    }
+    return data || [];
+  }
+
+  const localList = getLocalReservations();
+  return [...localList].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+}
+
+/**
+ * 10. 관리자용 예매 상태 변경 (확정/취소/현장발권)
+ */
+export async function adminUpdateReservationStatus(bookingCode, newStatus) {
+  if (!bookingCode) throw new Error('예매 코드가 유효하지 않습니다.');
+  if (!['CONFIRMED', 'CANCELLED', 'CHECKED_IN'].includes(newStatus)) {
+    throw new Error('올바르지 않은 상태값입니다.');
+  }
+
+  const updatePayload = {
+    status: newStatus,
+  };
+  if (newStatus === 'CANCELLED') {
+    updatePayload.cancelled_at = new Date().toISOString();
+  } else if (newStatus === 'CHECKED_IN') {
+    updatePayload.checked_in_at = new Date().toISOString();
+  }
+
+  if (isSupabaseConfigured && supabase) {
+    const { data, error } = await supabase
+      .from('reservations')
+      .update(updatePayload)
+      .eq('booking_code', bookingCode)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Supabase admin update error:', error);
+      throw new Error('상태 변경에 실패했습니다.');
+    }
+    return data;
+  }
+
+  const localList = getLocalReservations();
+  const index = localList.findIndex((r) => r.booking_code === bookingCode);
+  if (index === -1) throw new Error('예매 건을 찾을 수 없습니다.');
+
+  localList[index] = {
+    ...localList[index],
+    ...updatePayload,
+  };
+  saveLocalReservations(localList);
+  return localList[index];
+}
+
+/**
+ * 11. 관리자용 예매 삭제
+ */
+export async function adminDeleteReservation(bookingCode) {
+  if (!bookingCode) throw new Error('삭제할 예매 코드가 없습니다.');
+
+  if (isSupabaseConfigured && supabase) {
+    const { error } = await supabase
+      .from('reservations')
+      .delete()
+      .eq('booking_code', bookingCode);
+
+    if (error) {
+      console.error('Supabase admin delete error:', error);
+      throw new Error('예매 삭제에 실패했습니다.');
+    }
+    return true;
+  }
+
+  const localList = getLocalReservations();
+  const filtered = localList.filter((r) => r.booking_code !== bookingCode);
+  saveLocalReservations(filtered);
+  return true;
+}
+

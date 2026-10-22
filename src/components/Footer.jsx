@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function Footer({ onOpenBooking }) {
+export default function Footer({ onOpenBooking, onOpenAdmin }) {
   const [showFloating, setShowFloating] = useState(false);
 
   useEffect(() => {
@@ -77,7 +77,14 @@ export default function Footer({ onOpenBooking }) {
           </div>
 
           <div className="footer-bottom">
-            <p className="copyright">© 2026 THE PILLOWMAN Production. All Rights Reserved.</p>
+            <p className="copyright">
+              © 2026 THE PILLOWMAN Production. All Rights Reserved.
+              {onOpenAdmin && (
+                <span style={{ marginLeft: '12px', opacity: 0.35 }}>
+                  | <a href="/admin" onClick={(e) => { e.preventDefault(); onOpenAdmin(); }} style={{ color: 'inherit', textDecoration: 'none' }}>Admin</a>
+                </span>
+              )}
+            </p>
             <p className="support-credits">서울예술대학교 앵커사업단 × EMK뮤지컬컴퍼니 제작지원</p>
           </div>
         </div>
