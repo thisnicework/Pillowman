@@ -5,20 +5,20 @@ export default function Team() {
   const [activeTab, setActiveTab] = useState('cast');
 
   const mainCast = [
-    { id: 'katurian', role: '카투리안', name: '박정윤', photo: null },
-    { id: 'ariel', role: '아리엘', name: '김예린', photo: null },
-    { id: 'tupolski', role: '투폴스키', name: '이세중', photo: null },
-    { id: 'michal', role: '마이클', name: '손승우', photo: null },
+    { id: 'katurian', role: '카투리안', name: '박정윤', photo: '/assets/actor-katurian.png' },
+    { id: 'ariel', role: '아리엘', name: '김예린', photo: '/assets/actor-ariel.png' },
+    { id: 'tupolski', role: '투폴스키', name: '이세중', photo: '/assets/actor-tupolski.png' },
+    { id: 'michal', role: '마이클', name: '손승우', photo: '/assets/actor-michael.png' },
   ];
 
   const storyCast = [
-    { id: 'story1', role: '이야기', name: '남다현', photo: null },
-    { id: 'story2', role: '이야기', name: '최하영', photo: null },
-    { id: 'story3', role: '이야기', name: '신현우', photo: null },
+    { id: 'story1', role: '이야기', name: '남다현', photo: '/assets/actor-story1.png' },
+    { id: 'story2', role: '이야기', name: '최하영', photo: '/assets/actor-story2.png' },
+    { id: 'story3', role: '이야기', name: '신현우', photo: '/assets/actor-story3.png' },
   ];
 
   const renderPhotoSlot = (member) => (
-    <div className="cast-photo-slot">
+    <div className={`cast-photo-slot ${member.photo ? 'has-photo' : ''}`}>
       {member.photo ? (
         <img src={member.photo} alt={`${member.role}역 ${member.name}`} />
       ) : (

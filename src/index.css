@@ -1292,11 +1292,25 @@ input, textarea {
   position: relative;
 }
 
+.cast-photo-slot.has-photo {
+  border: none;
+  background: transparent;
+  aspect-ratio: auto;
+  overflow: visible;
+}
+
 .cast-photo-slot img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  aspect-ratio: 792 / 1201;
+  object-fit: contain;
   display: block;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.55));
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cast-card-clean:hover .cast-photo-slot img {
+  transform: translateY(-4px) scale(1.02);
 }
 
 .cast-role-title {
