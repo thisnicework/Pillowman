@@ -10,14 +10,6 @@ export default function Hero({ onOpenPoster }) {
   return (
     <section className="hero-section" id="home">
       <div className="hero-content">
-        {/* Date & Venue Badge */}
-        <div className="hero-badge-wrap">
-          <div className="hero-badge">
-            <span className="badge-tag">PERFORMANCE</span>
-            <span className="badge-text">2026. 11. 1.(일) 13:00 | 서울예술대학교 마동 예장</span>
-          </div>
-        </div>
-
         {/* Official Brush / Grunge Title Logo */}
         <div className="hero-logo-container">
           <img 
