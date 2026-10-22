@@ -348,7 +348,7 @@ input, textarea {
   background: var(--accent-red);
   color: #fff;
   border-radius: 3px;
-  box-shadow: 0 4px 16px rgba(223, 54, 62, 0.35);
+  box-shadow: none;
 }
 
 .btn-nav-ticket:hover {
@@ -551,7 +551,7 @@ input, textarea {
   color: #fff;
   background: var(--accent-red);
   border-radius: 3px;
-  box-shadow: 0 6px 24px rgba(223, 54, 62, 0.4);
+  box-shadow: none;
 }
 
 .btn-primary-theatre:hover {
@@ -750,7 +750,7 @@ input, textarea {
   background: var(--accent-red);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 6px 20px rgba(223, 54, 62, 0.35);
+  box-shadow: none;
 }
 
 .btn-action-primary:hover {
@@ -1031,7 +1031,7 @@ input, textarea {
   background: var(--accent-red);
   border-color: var(--accent-red);
   color: #fff;
-  box-shadow: 0 4px 14px rgba(223, 54, 62, 0.35);
+  box-shadow: none;
 }
 
 .director-theatre-card {
@@ -1642,7 +1642,7 @@ input, textarea {
   font-size: 0.88rem;
   font-weight: 700;
   border-radius: 30px;
-  box-shadow: 0 8px 24px rgba(223, 54, 62, 0.45);
+  box-shadow: none;
 }
 
 .btn-floating-top {
