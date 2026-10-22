@@ -144,7 +144,7 @@ body {
 }
 ::-webkit-scrollbar-thumb {
   background: #34362d;
-  border-radius: 4px;
+  border-radius: 0;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent-red);
@@ -326,8 +326,8 @@ input, textarea {
   justify-content: center;
   width: 38px;
   height: 38px;
-  border-radius: 50%;
-  background: rgba(237, 230, 209, 0.05);
+  border-radius: 0;
+background: rgba(237, 230, 209, 0.05);
   border: 1px solid var(--border-vintage);
   color: var(--title-color);
 }
@@ -347,8 +347,8 @@ input, textarea {
   padding: 9px 20px;
   background: var(--accent-red);
   color: #fff;
-  border-radius: 3px;
-  box-shadow: none;
+  border-radius: 0;
+box-shadow: none;
 }
 
 .btn-nav-ticket:hover {
@@ -418,7 +418,7 @@ input, textarea {
   padding: 6px 18px;
   background: rgba(36, 38, 32, 0.85);
   border: 1px solid var(--border-vintage);
-  border-radius: 30px;
+  border-radius: 0;
 }
 
 .badge-tag {
@@ -429,7 +429,7 @@ input, textarea {
   background: var(--accent-red);
   color: #fff;
   padding: 2px 7px;
-  border-radius: 2px;
+  border-radius: 0;
 }
 
 .badge-text {
@@ -550,8 +550,8 @@ input, textarea {
   font-weight: 700;
   color: #fff;
   background: var(--accent-red);
-  border-radius: 3px;
-  box-shadow: none;
+  border-radius: 0;
+box-shadow: none;
 }
 
 .btn-primary-theatre:hover {
@@ -571,7 +571,7 @@ input, textarea {
   color: var(--title-color);
   background: rgba(237, 230, 209, 0.06);
   border: 1px solid var(--border-vintage);
-  border-radius: 3px;
+  border-radius: 0;
 }
 
 .btn-secondary-theatre:hover {
@@ -631,8 +631,8 @@ input, textarea {
   background-size: cover;
   background-position: center;
   border: 1px solid var(--border-strong);
-  border-radius: 6px;
-  padding: 44px 36px;
+  border-radius: 0;
+padding: 44px 36px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
   text-align: center;
 }
@@ -682,8 +682,8 @@ input, textarea {
   gap: 20px;
   background: rgba(22, 23, 19, 0.95);
   border: 1px solid var(--border-strong);
-  border-radius: 6px;
-  padding: 30px 36px;
+  border-radius: 0;
+padding: 30px 36px;
   margin-bottom: 40px;
 }
 
@@ -701,7 +701,7 @@ input, textarea {
   height: 82px;
   background: #11120f;
   border: 1px solid var(--border-vintage);
-  border-radius: 4px;
+  border-radius: 0;
 }
 
 .timer-num {
@@ -734,8 +734,8 @@ input, textarea {
   align-items: center;
   justify-content: space-between;
   padding: 20px 28px;
-  border-radius: 4px;
-  transition: all 0.25s ease;
+  border-radius: 0;
+transition: all 0.25s ease;
   text-align: left;
 }
 
@@ -814,8 +814,8 @@ input, textarea {
 /* Poster Slot Placeholder (Ready for real poster) */
 .poster-slot-card {
   border: 1px dashed var(--border-strong);
-  border-radius: 6px;
-  background: rgba(22, 23, 19, 0.7);
+  border-radius: 0;
+background: rgba(22, 23, 19, 0.7);
   padding: 36px;
   text-align: center;
   margin-bottom: 50px;
@@ -854,8 +854,8 @@ input, textarea {
   color: var(--body-color);
   background: rgba(237, 230, 209, 0.05);
   border: 1px solid var(--border-vintage);
-  border-radius: 3px;
-  transition: all 0.2s ease;
+  border-radius: 0;
+transition: all 0.2s ease;
 }
 
 .tab-btn.active, .tab-btn:hover {
@@ -877,8 +877,8 @@ input, textarea {
 .guidelines-panels {
   background: var(--bg-card);
   border: 1px solid var(--border-vintage);
-  border-radius: 6px;
-  padding: 36px;
+  border-radius: 0;
+padding: 36px;
 }
 
 .guideline-panel-title {
@@ -920,8 +920,8 @@ input, textarea {
   padding: 16px 20px;
   background: rgba(223, 54, 62, 0.08);
   border-left: 3px solid var(--accent-red);
-  border-radius: 0 3px 3px 0;
-  font-family: var(--font-body);
+  border-radius: 0;
+font-family: var(--font-body);
   letter-spacing: -0.025em;
   font-size: 0.94rem;
   color: #ff9ca1;
@@ -932,8 +932,8 @@ input, textarea {
 .trigger-card-inner {
   background: rgba(35, 18, 20, 0.6);
   border: 1px solid rgba(223, 54, 62, 0.4);
-  border-radius: 4px;
-  padding: 26px;
+  border-radius: 0;
+padding: 26px;
 }
 
 .trigger-lead {
@@ -967,8 +967,8 @@ input, textarea {
   background-size: cover;
   background-position: center;
   border: 1px solid var(--border-strong);
-  border-radius: 6px;
-  padding: 48px 36px;
+  border-radius: 0;
+padding: 48px 36px;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
   text-align: center;
 }
@@ -1014,8 +1014,8 @@ input, textarea {
   font-size: 0.85rem;
   font-weight: 700;
   padding: 8px 18px;
-  border-radius: 20px;
-  background: rgba(30, 32, 26, 0.85);
+  border-radius: 0;
+background: rgba(30, 32, 26, 0.85);
   border: 1px solid var(--border-vintage);
   color: var(--body-color);
   cursor: pointer;
@@ -1044,8 +1044,8 @@ input, textarea {
   background-size: cover;
   background-position: center;
   border: 1px solid var(--border-strong);
-  border-radius: 6px;
-  padding: 48px 36px;
+  border-radius: 0;
+padding: 48px 36px;
   box-shadow: 0 16px 45px rgba(0, 0, 0, 0.65);
   text-align: center;
   position: relative;
@@ -1093,8 +1093,8 @@ input, textarea {
   background: rgba(223, 54, 62, 0.07);
   border-left: 3px solid var(--accent-red);
   border-right: 3px solid var(--accent-red);
-  border-radius: 4px;
-  max-width: 460px;
+  border-radius: 0;
+max-width: 460px;
 }
 
 .highlight-red-bold {
@@ -1137,8 +1137,8 @@ input, textarea {
   font-size: 0.85rem;
   font-weight: 700;
   padding: 8px 18px;
-  border-radius: 4px;
-  cursor: pointer;
+  border-radius: 0;
+cursor: pointer;
   transition: all 0.2s ease;
 }
 
@@ -1170,8 +1170,8 @@ input, textarea {
   width: 92%;
   margin: 48px auto 60px;
   position: relative;
-  border-radius: 8px;
-  overflow: hidden;
+  border-radius: 0;
+overflow: hidden;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
   border: 1px solid var(--border-strong);
 }
@@ -1193,8 +1193,8 @@ input, textarea {
   background-size: cover;
   background-position: center;
   border: 1px solid var(--border-strong);
-  border-radius: 6px;
-  padding: 44px 36px;
+  border-radius: 0;
+padding: 44px 36px;
   box-shadow: 0 16px 45px rgba(0, 0, 0, 0.65);
   text-align: center;
 }
@@ -1216,8 +1216,8 @@ input, textarea {
   padding: 16px 20px;
   background: rgba(20, 21, 18, 0.7);
   border: 1px solid var(--border-vintage);
-  border-radius: 4px;
-  font-family: var(--font-body);
+  border-radius: 0;
+font-family: var(--font-body);
   letter-spacing: -0.025em;
   font-size: 0.92rem;
   color: var(--title-color);
@@ -1243,8 +1243,8 @@ input, textarea {
   color: var(--body-color);
   background: var(--bg-card);
   border: 1px solid var(--border-vintage);
-  border-radius: 3px;
-  transition: all 0.2s ease;
+  border-radius: 0;
+transition: all 0.2s ease;
 }
 
 .team-nav-btn:hover, .team-nav-btn.active {
@@ -1270,8 +1270,8 @@ input, textarea {
 .cast-card-clean {
   background: var(--bg-card);
   border: 1px solid var(--border-vintage);
-  border-radius: 4px;
-  padding: 24px 18px;
+  border-radius: 0;
+padding: 24px 18px;
   text-align: center;
 }
 
@@ -1280,8 +1280,8 @@ input, textarea {
   aspect-ratio: 3/4;
   background: #11120f;
   border: 1px dashed var(--border-strong);
-  border-radius: 3px;
-  display: flex;
+  border-radius: 0;
+display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -1351,8 +1351,8 @@ input, textarea {
 .credit-box {
   background: var(--bg-card);
   border: 1px solid var(--border-vintage);
-  border-radius: 4px;
-  padding: 24px;
+  border-radius: 0;
+padding: 24px;
 }
 
 .credit-box-title {
@@ -1377,8 +1377,8 @@ input, textarea {
 .support-banner-clean {
   background: var(--bg-card);
   border: 1px solid var(--border-strong);
-  border-radius: 4px;
-  padding: 24px;
+  border-radius: 0;
+padding: 24px;
   text-align: center;
   margin-top: 24px;
 }
@@ -1393,8 +1393,8 @@ input, textarea {
 .thanks-box-clean {
   background: var(--bg-card);
   border: 1px solid var(--border-vintage);
-  border-radius: 4px;
-  padding: 24px;
+  border-radius: 0;
+padding: 24px;
 }
 
 .thanks-box-clean h4 {
@@ -1422,8 +1422,8 @@ input, textarea {
 .theatre-rules-box {
   background: var(--bg-card);
   border: 1px solid var(--border-strong);
-  border-radius: 6px;
-  padding: 36px;
+  border-radius: 0;
+padding: 36px;
   margin-bottom: 40px;
 }
 
@@ -1463,8 +1463,8 @@ input, textarea {
   justify-content: space-between;
   background: var(--bg-card);
   border: 1px solid var(--border-strong);
-  border-radius: 6px;
-  padding: 24px 30px;
+  border-radius: 0;
+padding: 24px 30px;
   margin-bottom: 30px;
   flex-wrap: wrap;
   gap: 16px;
@@ -1494,8 +1494,8 @@ input, textarea {
 
 .btn-pill-action {
   padding: 10px 18px;
-  border-radius: 3px;
-  font-family: var(--font-title);
+  border-radius: 0;
+font-family: var(--font-title);
   letter-spacing: -0.03em;
   font-size: 0.84rem;
   font-weight: 700;
@@ -1531,8 +1531,8 @@ input, textarea {
 .transit-box-vintage {
   background: var(--bg-card);
   border: 1px solid var(--border-vintage);
-  border-radius: 4px;
-  padding: 22px;
+  border-radius: 0;
+padding: 22px;
 }
 
 .transit-box-head {
@@ -1548,7 +1548,7 @@ input, textarea {
   font-size: 0.72rem;
   font-weight: 700;
   padding: 2px 7px;
-  border-radius: 2px;
+  border-radius: 0;
 }
 
 .transit-station-name {
@@ -1563,8 +1563,8 @@ input, textarea {
   padding: 14px 18px;
   background: rgba(223, 54, 62, 0.08);
   border-left: 3px solid var(--accent-red);
-  border-radius: 0 3px 3px 0;
-  font-family: var(--font-body);
+  border-radius: 0;
+font-family: var(--font-body);
   letter-spacing: -0.025em;
   font-size: 0.92rem;
   color: #ff9ca1;
@@ -1655,15 +1655,15 @@ input, textarea {
   letter-spacing: -0.03em;
   font-size: 0.88rem;
   font-weight: 700;
-  border-radius: 30px;
-  box-shadow: none;
+  border-radius: 0;
+box-shadow: none;
 }
 
 .btn-floating-top {
   width: 42px;
   height: 42px;
-  border-radius: 50%;
-  background: var(--bg-card);
+  border-radius: 0;
+background: var(--bg-card);
   border: 1px solid var(--border-strong);
   color: var(--title-color);
   display: flex;
@@ -1692,8 +1692,8 @@ input, textarea {
 .modal-card {
   background: #1b1c18;
   border: 1px solid var(--border-strong);
-  border-radius: 6px;
-  max-width: 580px;
+  border-radius: 0;
+max-width: 580px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
@@ -1727,8 +1727,8 @@ input, textarea {
 .form-perf-summary {
   background: #12130f;
   border: 1px solid var(--border-vintage);
-  border-radius: 4px;
-  padding: 14px 18px;
+  border-radius: 0;
+padding: 14px 18px;
   margin-bottom: 20px;
 }
 
@@ -1757,8 +1757,8 @@ input, textarea {
   padding: 12px 16px;
   background: #12130f;
   border: 1px solid var(--border-vintage);
-  border-radius: 3px;
-  color: #fff;
+  border-radius: 0;
+color: #fff;
   font-family: var(--font-body);
   font-size: 0.95rem;
 }
@@ -1771,8 +1771,8 @@ input, textarea {
 .form-agreement-box {
   background: #12130f;
   border: 1px solid var(--border-vintage);
-  border-radius: 4px;
-  padding: 16px;
+  border-radius: 0;
+padding: 16px;
   margin-bottom: 22px;
   display: flex;
   flex-direction: column;
@@ -1797,8 +1797,8 @@ input, textarea {
   padding: 14px;
   background: var(--accent-red);
   color: #fff;
-  border-radius: 3px;
-  font-family: var(--font-title);
+  border-radius: 0;
+font-family: var(--font-title);
   letter-spacing: -0.03em;
   font-size: 0.98rem;
   font-weight: 700;
@@ -1808,8 +1808,8 @@ input, textarea {
 .eticket-card {
   background: #141511;
   border: 1px solid var(--border-strong);
-  border-radius: 6px;
-  padding: 24px;
+  border-radius: 0;
+padding: 24px;
   margin-bottom: 20px;
 }
 
@@ -1877,8 +1877,8 @@ input, textarea {
   background: rgba(223, 54, 62, 0.15);
   border: 1px solid var(--accent-red);
   color: #ff9ca1;
-  border-radius: 3px;
-  font-family: var(--font-title);
+  border-radius: 0;
+font-family: var(--font-title);
   letter-spacing: -0.03em;
   font-size: 0.85rem;
   font-weight: 700;
@@ -1890,8 +1890,8 @@ input, textarea {
   background: rgba(237, 230, 209, 0.08);
   border: 1px solid var(--border-strong);
   color: var(--title-color);
-  border-radius: 3px;
-  font-family: var(--font-title);
+  border-radius: 0;
+font-family: var(--font-title);
   letter-spacing: -0.03em;
   font-size: 0.85rem;
   font-weight: 700;
@@ -1907,8 +1907,8 @@ input, textarea {
   border: 1px solid var(--accent-red);
   color: var(--title-color);
   padding: 12px 24px;
-  border-radius: 30px;
-  font-family: var(--font-body);
+  border-radius: 0;
+font-family: var(--font-body);
   letter-spacing: -0.025em;
   font-size: 0.9rem;
   font-weight: 700;
@@ -1924,8 +1924,12 @@ input, textarea {
   opacity: 1;
 }
 
-/* Responsive */
+/* Responsive Design & Mobile Optimization */
 @media (max-width: 768px) {
+  .nav-container {
+    padding: 0 16px;
+  }
+
   .nav-links {
     position: fixed;
     top: var(--nav-height);
@@ -1938,58 +1942,301 @@ input, textarea {
     gap: 24px;
     transform: translateX(100%);
     transition: transform 0.3s ease;
+    border-top: 1px solid var(--border-vintage);
   }
+
   .nav-links.open {
     transform: translateX(0);
   }
+
   .mobile-menu-toggle {
     display: flex;
   }
-  .booking-actions-row {
-    grid-template-columns: 1fr;
+
+  .hero-content {
+    padding: 36px 14px 28px;
   }
+
+  .hero-cta-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    gap: 10px;
+  }
+
+  .btn-primary-theatre,
+  .btn-secondary-theatre {
+    width: 100%;
+    justify-content: center;
+    padding: 13px 20px;
+  }
+
+  .theatre-card-woodcut,
+  .synopsis-theatre-card,
+  .director-theatre-card,
+  .exhibition-theatre-card,
+  .theatre-guide-card {
+    padding: 30px 18px;
+  }
+
+  .info-table-wrap {
+    margin: 24px auto 18px;
+    width: 100%;
+  }
+
+  .info-label {
+    width: 76px;
+    font-size: 0.9rem;
+  }
+
+  .info-val {
+    font-size: 0.9rem;
+  }
+
   .ticket-countdown-container {
     flex-direction: column;
     text-align: center;
+    padding: 24px 18px;
   }
+
   .countdown-timer-grid {
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto;
   }
+
+  .timer-slot {
+    width: 100%;
+    height: 70px;
+  }
+
+  .timer-num {
+    font-size: 1.45rem;
+  }
+
+  .booking-actions-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+
+  .btn-action-big {
+    padding: 16px 20px;
+  }
+
+  .btn-action-primary .title {
+    font-size: 1.15rem;
+  }
+
+  .btn-action-primary .sub {
+    font-size: 0.8rem;
+  }
+
+  .guideline-tabs {
+    display: flex;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    gap: 6px;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .guideline-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-btn {
+    white-space: nowrap;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    flex-shrink: 0;
+  }
+
+  .guidelines-panels {
+    padding: 24px 18px;
+  }
+
+  .guideline-panel-title {
+    font-size: 1.15rem;
+  }
+
+  .guideline-list li {
+    font-size: 0.92rem;
+    padding-left: 16px;
+  }
+
+  .director-page-nav {
+    display: flex;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    gap: 6px;
+    justify-content: flex-start;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .director-page-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .page-pill {
+    white-space: nowrap;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
+  .team-tab-nav {
+    display: flex;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    gap: 6px;
+    justify-content: flex-start;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .team-tab-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .team-nav-btn {
+    white-space: nowrap;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+
   .cast-grid-clean {
     grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
+
   .storytellers-grid-clean {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%;
   }
+
   .storytellers-grid-clean .cast-card-clean {
     width: 100%;
   }
+
+  .storytellers-grid-clean .cast-card-clean:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    max-width: 240px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .cast-card-clean {
+    padding: 16px 12px;
+  }
+
   .thanks-columns-clean {
     grid-template-columns: 1fr;
   }
+
   .transit-grid-vintage {
     grid-template-columns: 1fr;
   }
+
   .address-bar-vintage {
     flex-direction: column;
     align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
   }
+
   .address-actions {
     width: 100%;
+    display: flex;
+    gap: 8px;
   }
+
   .btn-pill-action {
-    width: 100%;
+    flex: 1;
     text-align: center;
+    padding: 10px 12px;
   }
+
   .brand-symbol-img {
     height: 44px;
   }
+
   .brand-title {
     font-size: 1.35rem;
   }
+
   .brand-sub {
     font-size: 0.76rem;
+  }
+
+  .floating-ticket-bar {
+    bottom: 16px;
+    right: 14px;
+    gap: 6px;
+  }
+
+  .btn-floating-ticket {
+    padding: 10px 18px;
+    font-size: 0.82rem;
+  }
+
+  .btn-floating-top {
+    width: 38px;
+    height: 38px;
+    font-size: 0.75rem;
+  }
+
+  .modal-overlay {
+    padding: 10px;
+  }
+
+  .modal-card {
+    max-height: 94vh;
+    width: 100%;
+  }
+
+  .modal-header {
+    padding: 16px 18px;
+  }
+
+  .modal-header h3 {
+    font-size: 1.15rem;
+  }
+
+  .modal-body {
+    padding: 18px 16px;
+  }
+
+  .eticket-card {
+    padding: 18px 14px;
+  }
+
+  .eticket-title {
+    font-size: 1.15rem;
+  }
+
+  .modal-actions-dual {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-modal-print,
+  .btn-modal-cancel-ticket {
+    width: 100%;
+    padding: 13px;
+    font-size: 0.9rem;
   }
 }
 
@@ -1997,20 +2244,47 @@ input, textarea {
   .brand-logo {
     gap: 10px;
   }
+
   .brand-symbol-img {
     height: 38px;
   }
+
   .brand-title {
     font-size: 1.15rem;
   }
+
   .brand-sub {
     font-size: 0.68rem;
   }
+
   .cast-grid-clean,
   .storytellers-grid-clean {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
-  .storytellers-grid-clean .cast-card-clean {
-    width: 100%;
+
+  .cast-card-clean {
+    padding: 14px 8px;
+  }
+
+  .cast-role-title {
+    font-size: 1rem;
+  }
+
+  .cast-actor-name {
+    font-size: 0.9rem;
+  }
+
+  .eticket-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .toast-notice {
+    width: 90%;
+    max-width: 340px;
+    text-align: center;
+    font-size: 0.84rem;
+    padding: 11px 16px;
   }
 }
