@@ -13,8 +13,6 @@ export default function LookupModal({ isOpen, onClose, onNotify }) {
   const [foundReservation, setFoundReservation] = useState(null);
   const [copiedTemplate, setCopiedTemplate] = useState(false);
 
-  if (!isOpen) return null;
-
   const handlePhoneChange = (e) => {
     const formatted = formatPhoneNumber(e.target.value);
     setPhone(formatted);
@@ -70,6 +68,8 @@ export default function LookupModal({ isOpen, onClose, onNotify }) {
   };
 
   const isCancelled = foundReservation?.status === 'CANCELLED';
+
+  if (!isOpen) return null;
 
   return (
     <div 

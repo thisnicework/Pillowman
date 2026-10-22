@@ -12,9 +12,9 @@ export default function Team() {
   ];
 
   const storyCast = [
-    { id: 'story1', role: '이야기', name: '최하영', photo: '/assets/actor-story1.png' },
-    { id: 'story2', role: '이야기', name: '남다영', photo: '/assets/actor-story2.png' },
-    { id: 'story3', role: '이야기', name: '신현우', photo: '/assets/actor-story3.png' },
+    { id: 'story1', role: '이야기 1', name: '최하영', photo: '/assets/actor-story1.png' },
+    { id: 'story2', role: '이야기 2', name: '남다영', photo: '/assets/actor-story2.png' },
+    { id: 'story3', role: '이야기 3', name: '신현우', photo: '/assets/actor-story3.png' },
   ];
 
   const renderPhotoSlot = (member) => (
@@ -24,7 +24,7 @@ export default function Team() {
       ) : (
         <>
           <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" style={{ opacity: 0.28, marginBottom: '8px' }}>
-            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
           </svg>
           <span>[프로필 사진 전달 대기]</span>
         </>
@@ -43,44 +43,44 @@ export default function Team() {
 
         {/* Team Tab Navigation */}
         <div className="team-tab-nav">
-          <button 
-            type="button" 
-            className={`team-nav-btn ${activeTab === 'cast' ? 'active' : ''}`} 
+          <button
+            type="button"
+            className={`team-nav-btn ${activeTab === 'cast' ? 'active' : ''}`}
             onClick={() => setActiveTab('cast')}
           >
             Cast
           </button>
-          <button 
-            type="button" 
-            className={`team-nav-btn ${activeTab === 'performance' ? 'active' : ''}`} 
+          <button
+            type="button"
+            className={`team-nav-btn ${activeTab === 'performance' ? 'active' : ''}`}
             onClick={() => setActiveTab('performance')}
           >
             Performance
           </button>
-          <button 
-            type="button" 
-            className={`team-nav-btn ${activeTab === 'production' ? 'active' : ''}`} 
+          <button
+            type="button"
+            className={`team-nav-btn ${activeTab === 'production' ? 'active' : ''}`}
             onClick={() => setActiveTab('production')}
           >
             Production
           </button>
-          <button 
-            type="button" 
-            className={`team-nav-btn ${activeTab === 'exhibition' ? 'active' : ''}`} 
+          <button
+            type="button"
+            className={`team-nav-btn ${activeTab === 'exhibition' ? 'active' : ''}`}
             onClick={() => setActiveTab('exhibition')}
           >
             Exhibition
           </button>
-          <button 
-            type="button" 
-            className={`team-nav-btn ${activeTab === 'special-thanks' ? 'active' : ''}`} 
+          <button
+            type="button"
+            className={`team-nav-btn ${activeTab === 'special-thanks' ? 'active' : ''}`}
             onClick={() => setActiveTab('special-thanks')}
           >
             Special Thanks to
           </button>
-          <button 
-            type="button" 
-            className={`team-nav-btn ${activeTab === 'thanks' ? 'active' : ''}`} 
+          <button
+            type="button"
+            className={`team-nav-btn ${activeTab === 'thanks' ? 'active' : ''}`}
             onClick={() => setActiveTab('thanks')}
           >
             Thanks to

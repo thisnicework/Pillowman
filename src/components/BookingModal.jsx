@@ -26,8 +26,6 @@ export default function BookingModal({
   const [errorMsg, setErrorMsg] = useState('');
   const [reservation, setReservation] = useState(null);
 
-  if (!isOpen) return null;
-
   const handlePhoneChange = (e) => {
     const formatted = formatPhoneNumber(e.target.value);
     setPhone(formatted);
@@ -67,10 +65,27 @@ export default function BookingModal({
   const isPhoneMatched = isPhoneValid && cleanPhone === cleanPhoneConfirm;
   const isPhoneMismatch = hasTypedConfirm && cleanPhone !== cleanPhoneConfirm;
 
+  // Reset modal state when closed
+  useEffect(() => {
+    if (!isOpen) {
+      setReservation(null);
+      setName('');
+      setNameConfirm('');
+      setPhone('');
+      setPhoneConfirm('');
+      setIsAlreadyBooked(false);
+      setAgreeAge(false);
+      setAgreeTrigger(false);
+      setAgreeCancellation(false);
+      setErrorMsg('');
+      setIsSubmitting(false);
+    }
+  }, [isOpen]);
+
   // Real-time check if phone number is already booked
   useEffect(() => {
     let isCurrent = true;
-    if (isPhoneMatched && cleanPhone.length >= 10) {
+    if (isOpen && isPhoneMatched && cleanPhone.length >= 10) {
       checkPhoneAlreadyBooked(cleanPhone).then((booked) => {
         if (isCurrent) {
           setIsAlreadyBooked(booked);
@@ -90,7 +105,7 @@ export default function BookingModal({
     return () => {
       isCurrent = false;
     };
-  }, [isPhoneMatched, cleanPhone]);
+  }, [isOpen, isPhoneMatched, cleanPhone]);
 
   const canSubmit = 
     !isSubmitting && 
@@ -171,6 +186,8 @@ export default function BookingModal({
       setIsSubmitting(false);
     }
   };
+
+  if (!isOpen) return null;
 
   return (
     <div 
