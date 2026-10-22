@@ -79,11 +79,6 @@ export default function Footer({ onOpenBooking, onOpenAdmin, bookingStats }) {
           <div className="footer-bottom">
             <p className="copyright">
               © 2026 THE PILLOWMAN Production. All Rights Reserved.
-              {onOpenAdmin && (
-                <span style={{ marginLeft: '12px', opacity: 0.35 }}>
-                  | <a href="/admin" onClick={(e) => { e.preventDefault(); onOpenAdmin(); }} style={{ color: 'inherit', textDecoration: 'none' }}>Admin</a>
-                </span>
-              )}
             </p>
             <p className="support-credits">서울예술대학교 앵커사업단 × EMK뮤지컬컴퍼니 제작지원</p>
           </div>
