@@ -7,8 +7,7 @@ import {
   adminDeleteReservation,
   adminToggleSmsSent,
 } from '../services/bookingService';
-import TrafficChart from './TrafficChart';
-import { subscribeToLiveVisitors, getTrafficAnalytics } from '../services/trafficService';
+import { subscribeToLiveVisitors } from '../services/trafficService';
 
 export default function AdminPage({ onGoHome }) {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
@@ -25,17 +24,8 @@ export default function AdminPage({ onGoHome }) {
   const [isUpdatingCapacity, setIsUpdatingCapacity] = useState(false);
   const [notification, setNotification] = useState('');
 
-  // Real-time Traffic & Analytics states
+  // Real-time live concurrent visitor count
   const [liveVisitorCount, setLiveVisitorCount] = useState(1);
-  const [trafficStats, setTrafficStats] = useState({
-    totalVisits: 0,
-    totalBookings: 0,
-    mobileRatio: 85,
-    peakHour: '-',
-    peakVisits: 0,
-    hourlyData: [],
-  });
-  const [isLoadingTraffic, setIsLoadingTraffic] = useState(false);
 
   // Search & Filter
   const [searchQuery, setSearchQuery] = useState('');
@@ -66,19 +56,6 @@ export default function AdminPage({ onGoHome }) {
     setPasswordInput('');
   };
 
-  // Load Traffic Data
-  const loadTraffic = async () => {
-    setIsLoadingTraffic(true);
-    try {
-      const stats = await getTrafficAnalytics();
-      setTrafficStats(stats);
-    } catch (err) {
-      console.warn('Failed to load traffic stats:', err);
-    } finally {
-      setIsLoadingTraffic(false);
-    }
-  };
-
   // Load Data
   const loadData = async () => {
     setIsLoading(true);
@@ -90,7 +67,6 @@ export default function AdminPage({ onGoHome }) {
       setTotalCapacity(cap);
       setNewCapacityInput(String(cap));
       setReservations(resList);
-      loadTraffic();
     } catch (err) {
       console.error('Failed to load admin data:', err);
       showNotice('데이터를 불러오지 못했습니다: ' + err.message);
@@ -102,7 +78,6 @@ export default function AdminPage({ onGoHome }) {
   useEffect(() => {
     if (isAuthenticated) {
       loadData();
-      loadTraffic();
 
       // Realtime Live Visitors Presence Subscription
       const unsub = subscribeToLiveVisitors(({ count }) => {
@@ -450,15 +425,19 @@ export default function AdminPage({ onGoHome }) {
                 : `발송 대기: ${smsPendingCount}명`}
             </small>
           </div>
-        </section>
 
-        {/* Real-time Traffic & Hourly Analytics Chart */}
-        <TrafficChart
-          liveCount={liveVisitorCount}
-          trafficStats={trafficStats}
-          onRefresh={loadTraffic}
-          isLoading={isLoadingTraffic}
-        />
+          <div className="admin-kpi-card" style={{ borderColor: 'rgba(16, 185, 129, 0.4)', background: '#161d16' }}>
+            <div className="kpi-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span className="live-dot-core" style={{ width: '6px', height: '6px' }}></span>
+              <span>실시간 접속자 (LIVE)</span>
+            </div>
+            <div className="kpi-val-row">
+              <span className="kpi-val" style={{ color: '#10b981' }}>{liveVisitorCount}</span>
+              <span className="kpi-unit">명</span>
+            </div>
+            <small className="kpi-note" style={{ color: '#34d399' }}>현재 웹사이트 동시 접속 인원</small>
+          </div>
+        </section>
 
         {/* Reservations Management Section */}
         <section className="admin-table-section">
