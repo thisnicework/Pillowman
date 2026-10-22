@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import OrnamentDivider from './OrnamentDivider';
 
 export default function Team() {
-  const [activeTab, setActiveTab] = useState('cast');
+  const [activeTab, setActiveTab] = useState('production');
 
   const mainCast = [
     { id: 'katurian', role: '카투리안', name: '박정윤', photo: '/assets/actor-katurian.png' },
@@ -45,10 +45,10 @@ export default function Team() {
         <div className="team-tab-nav">
           <button
             type="button"
-            className={`team-nav-btn ${activeTab === 'cast' ? 'active' : ''}`}
-            onClick={() => setActiveTab('cast')}
+            className={`team-nav-btn ${activeTab === 'production' ? 'active' : ''}`}
+            onClick={() => setActiveTab('production')}
           >
-            Cast
+            Production
           </button>
           <button
             type="button"
@@ -59,10 +59,10 @@ export default function Team() {
           </button>
           <button
             type="button"
-            className={`team-nav-btn ${activeTab === 'production' ? 'active' : ''}`}
-            onClick={() => setActiveTab('production')}
+            className={`team-nav-btn ${activeTab === 'cast' ? 'active' : ''}`}
+            onClick={() => setActiveTab('cast')}
           >
-            Production
+            Cast
           </button>
           <button
             type="button"
@@ -87,27 +87,49 @@ export default function Team() {
           </button>
         </div>
 
-        {/* 1. Cast Tab */}
-        {activeTab === 'cast' && (
+        {/* 1. Production Tab */}
+        {activeTab === 'production' && (
           <div>
-            <div className="cast-grid-clean">
-              {mainCast.map((c) => (
-                <div className="cast-card-clean" key={c.id}>
-                  {renderPhotoSlot(c)}
-                  <div className="cast-role-title">{c.role}</div>
-                  <div className="cast-actor-name">{c.name}</div>
+            <div className="credit-deck">
+              <div className="credit-box">
+                <div className="credit-box-title">ORIGINAL WORK</div>
+                <div className="credit-box-content">
+                  원작 : The Pillowman by Martin McDonagh
                 </div>
-              ))}
+              </div>
+
+              <div className="credit-box">
+                <div className="credit-box-title">ADVISORS</div>
+                <div className="credit-box-content">
+                  지도교수 : 정승호 김명진 홍우영 김치영
+                </div>
+              </div>
+
+              <div className="credit-box">
+                <div className="credit-box-title">PLANNING</div>
+                <div className="credit-box-content">
+                  기획 : 이유진 엄대한 남선우 김대찬
+                </div>
+              </div>
+
+              <div className="credit-box">
+                <div className="credit-box-title">MEDIA & PROMOTION</div>
+                <div className="credit-box-content">
+                  사진 : 남선우<br />
+                  홍보영상 : 류다현 목지혜 김익수 이상욱 조유정<br />
+                  홍보디자인 : 우태은<br />
+                  웹사이트 : 안현준
+                </div>
+              </div>
             </div>
 
-            <div className="storytellers-grid-clean">
-              {storyCast.map((c) => (
-                <div className="cast-card-clean" key={c.id}>
-                  {renderPhotoSlot(c)}
-                  <div className="cast-role-title">{c.role}</div>
-                  <div className="cast-actor-name">{c.name}</div>
-                </div>
-              ))}
+            <div className="support-banner-clean">
+              <div style={{ fontFamily: 'var(--font-title)', letterSpacing: '-0.04em', fontSize: '0.9rem', color: 'var(--accent-red)', marginBottom: '6px' }}>
+                제작지원
+              </div>
+              <div style={{ fontFamily: 'var(--font-title)', letterSpacing: '-0.03em', fontSize: '1.2rem', color: 'var(--title-color)', fontWeight: 700 }}>
+                서울예술대학교 앵커사업단 &nbsp;×&nbsp; EMK뮤지컬컴퍼니
+              </div>
             </div>
           </div>
         )}
@@ -157,49 +179,27 @@ export default function Team() {
           </div>
         )}
 
-        {/* 3. Production Tab */}
-        {activeTab === 'production' && (
+        {/* 3. Cast Tab */}
+        {activeTab === 'cast' && (
           <div>
-            <div className="credit-deck">
-              <div className="credit-box">
-                <div className="credit-box-title">ORIGINAL WORK</div>
-                <div className="credit-box-content">
-                  원작 : The Pillowman by Martin McDonagh
+            <div className="cast-grid-clean">
+              {mainCast.map((c) => (
+                <div className="cast-card-clean" key={c.id}>
+                  {renderPhotoSlot(c)}
+                  <div className="cast-role-title">{c.role}</div>
+                  <div className="cast-actor-name">{c.name}</div>
                 </div>
-              </div>
-
-              <div className="credit-box">
-                <div className="credit-box-title">ADVISORS</div>
-                <div className="credit-box-content">
-                  지도교수 : 정승호 김명진 홍우영 김치영
-                </div>
-              </div>
-
-              <div className="credit-box">
-                <div className="credit-box-title">PLANNING</div>
-                <div className="credit-box-content">
-                  기획 : 이유진 엄대한 남선우 김대찬
-                </div>
-              </div>
-
-              <div className="credit-box">
-                <div className="credit-box-title">MEDIA & PROMOTION</div>
-                <div className="credit-box-content">
-                  사진 : 남선우<br />
-                  홍보영상 : 류다현 목지혜 김익수 이상욱 조유정<br />
-                  홍보디자인 : 우태은<br />
-                  웹사이트 : 안현준
-                </div>
-              </div>
+              ))}
             </div>
 
-            <div className="support-banner-clean">
-              <div style={{ fontFamily: 'var(--font-title)', letterSpacing: '-0.04em', fontSize: '0.9rem', color: 'var(--accent-red)', marginBottom: '6px' }}>
-                제작지원
-              </div>
-              <div style={{ fontFamily: 'var(--font-title)', letterSpacing: '-0.03em', fontSize: '1.2rem', color: 'var(--title-color)', fontWeight: 700 }}>
-                서울예술대학교 앵커사업단 &nbsp;×&nbsp; EMK뮤지컬컴퍼니
-              </div>
+            <div className="storytellers-grid-clean">
+              {storyCast.map((c) => (
+                <div className="cast-card-clean" key={c.id}>
+                  {renderPhotoSlot(c)}
+                  <div className="cast-role-title">{c.role}</div>
+                  <div className="cast-actor-name">{c.name}</div>
+                </div>
+              ))}
             </div>
           </div>
         )}
