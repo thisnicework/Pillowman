@@ -37,15 +37,18 @@ export function toE164Phone(phone) {
 
 
 /**
- * 고유 예매 코드 생성 (예: PLW-2026-K4B2)
+ * 고유 예매 코드 생성 (예매한 일시간분초 기준: YYYYMMDD-HHmmss)
+ * 예: 20261022-184512
  */
-function generateBookingCode() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let rand = '';
-  for (let i = 0; i < 4; i++) {
-    rand += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return `PLW-2026-${rand}`;
+export function generateBookingCode(date = new Date()) {
+  const kst = new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+  const yyyy = kst.getFullYear();
+  const mm = String(kst.getMonth() + 1).padStart(2, '0');
+  const dd = String(kst.getDate()).padStart(2, '0');
+  const hh = String(kst.getHours()).padStart(2, '0');
+  const min = String(kst.getMinutes()).padStart(2, '0');
+  const ss = String(kst.getSeconds()).padStart(2, '0');
+  return `${yyyy}${mm}${dd}-${hh}${mm}${ss}`;
 }
 
 /**
@@ -279,16 +282,42 @@ export async function createReservation({
       throw new Error('해당 연락처로 이미 완료된 예매 내역이 존재합니다. (1인 1매 제한)');
     }
 
-    // 2. 신규 예매 삽입
-    const { data: inserted, error: insertError } = await supabase
-      .from('reservations')
-      .insert([reservationRecord])
-      .select()
-      .single();
+    // 2. 신규 예매 삽입 (동일 초 중복 충돌 방지 재시도)
+    let inserted = null;
+    let currentCode = bookingCode;
+    let attempts = 0;
 
-    if (insertError) {
+    while (attempts < 3) {
+      const payload = {
+        ...reservationRecord,
+        booking_code: currentCode,
+      };
+
+      const { data, error: insertError } = await supabase
+        .from('reservations')
+        .insert([payload])
+        .select()
+        .single();
+
+      if (!insertError) {
+        inserted = data;
+        break;
+      }
+
+      // 동일 초에 다중 예매로 인한 booking_code unique 제약 충돌 시 ms 추가 후 재시도
+      if (insertError.code === '23505' || insertError.message?.includes('duplicate key') || insertError.message?.includes('booking_code')) {
+        attempts++;
+        const ms = String(new Date().getMilliseconds()).padStart(3, '0').slice(0, 2);
+        currentCode = `${generateBookingCode()}-${ms}`;
+        continue;
+      }
+
       console.error('Supabase insert error:', insertError);
       throw new Error(insertError.message || '예매 처리 중 문제가 발생했습니다.');
+    }
+
+    if (!inserted) {
+      throw new Error('예매 처리 중 일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
     }
 
     return inserted;
@@ -306,10 +335,21 @@ export async function createReservation({
     throw new Error('해당 연락처로 이미 완료된 예매 내역이 존재합니다. (1인 1매 제한)');
   }
 
-  localList.push(reservationRecord);
+  let finalCode = bookingCode;
+  if (localList.some((r) => r.booking_code === finalCode)) {
+    const ms = String(new Date().getMilliseconds()).padStart(3, '0').slice(0, 2);
+    finalCode = `${finalCode}-${ms}`;
+  }
+
+  const finalRecord = {
+    ...reservationRecord,
+    booking_code: finalCode,
+  };
+
+  localList.push(finalRecord);
   saveLocalReservations(localList);
 
-  return reservationRecord;
+  return finalRecord;
 }
 
 /**
