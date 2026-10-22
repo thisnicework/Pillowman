@@ -699,7 +699,7 @@ export async function getAllReservationsForAdmin() {
     }
 
     const realReservations = (data || []).filter(
-      (item) => item.status !== 'SYSTEM_CONFIG' && !item.booking_code?.startsWith('__SYSTEM_')
+      (item) => item.status !== 'SYSTEM_CONFIG' && item.status !== 'TEST_DELETED' && !item.booking_code?.startsWith('__')
     );
 
     return realReservations.map((item) => ({
@@ -710,7 +710,7 @@ export async function getAllReservationsForAdmin() {
   }
 
   const localList = getLocalReservations().filter(
-    (item) => item.status !== 'SYSTEM_CONFIG' && !item.booking_code?.startsWith('__SYSTEM_')
+    (item) => item.status !== 'SYSTEM_CONFIG' && item.status !== 'TEST_DELETED' && !item.booking_code?.startsWith('__')
   );
   return [...localList].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 }
