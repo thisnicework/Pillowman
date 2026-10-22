@@ -736,6 +736,14 @@ input, textarea {
   padding: 20px 28px;
   border-radius: 4px;
   transition: all 0.25s ease;
+  text-align: left;
+}
+
+.btn-action-text-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
 }
 
 .btn-action-primary {
@@ -756,6 +764,9 @@ input, textarea {
   font-size: 1.25rem;
   font-weight: 700;
   display: block;
+  text-align: left;
+  margin: 0;
+  padding: 0;
 }
 
 .btn-action-primary .sub {
@@ -763,6 +774,9 @@ input, textarea {
   letter-spacing: -0.025em;
   font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.9);
+  text-align: left;
+  margin: 0;
+  padding: 0;
 }
 
 .btn-action-secondary {
@@ -782,6 +796,9 @@ input, textarea {
   font-size: 1.1rem;
   font-weight: 700;
   display: block;
+  text-align: left;
+  margin: 0;
+  padding: 0;
 }
 
 .btn-action-secondary .sub {
@@ -789,6 +806,9 @@ input, textarea {
   letter-spacing: -0.025em;
   font-size: 0.82rem;
   color: var(--body-color);
+  text-align: left;
+  margin: 0;
+  padding: 0;
 }
 
 /* Poster Slot Placeholder (Ready for real poster) */

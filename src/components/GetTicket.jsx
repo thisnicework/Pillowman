@@ -142,7 +142,7 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster })
             className="btn-action-big btn-action-primary" 
             onClick={onOpenBooking}
           >
-            <div>
+            <div className="btn-action-text-wrap">
               <span className="title">예매하기</span>
               <span className="sub">*예매 시 이름/전화번호 작성 (1인 1매 무료)</span>
             </div>
@@ -154,7 +154,7 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster })
             className="btn-action-big btn-action-secondary" 
             onClick={onOpenLookup}
           >
-            <div>
+            <div className="btn-action-text-wrap">
               <span className="title">예매 조회 및 취소</span>
               <span className="sub">예매자명 + 전화번호로 확인</span>
             </div>
