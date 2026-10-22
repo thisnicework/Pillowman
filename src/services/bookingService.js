@@ -4,6 +4,20 @@ const LOCAL_STORAGE_KEY = 'pillowman_reservations';
 const CAPACITY_KEY = 'pillowman_total_capacity';
 const DEFAULT_CAPACITY = 100; // 서울예술대학교 마동 예장 기본 정원
 
+const safeStorage = {
+  getItem: (key) => {
+    try {
+      if (typeof localStorage !== 'undefined') return localStorage.getItem(key);
+    } catch (e) {}
+    return null;
+  },
+  setItem: (key, val) => {
+    try {
+      if (typeof localStorage !== 'undefined') localStorage.setItem(key, val);
+    } catch (e) {}
+  },
+};
+
 /**
  * 01012345678 -> 010-1234-5678 포맷팅 헬퍼
  */
@@ -56,7 +70,7 @@ export function generateBookingCode(date = new Date()) {
  */
 function getLocalReservations() {
   try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+    const raw = safeStorage.getItem(LOCAL_STORAGE_KEY);
     return raw ? JSON.parse(raw) : [];
   } catch (err) {
     console.error('Failed to read localStorage reservations:', err);
@@ -66,7 +80,7 @@ function getLocalReservations() {
 
 function saveLocalReservations(reservations) {
   try {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(reservations));
+    safeStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(reservations));
   } catch (err) {
     console.error('Failed to save localStorage reservations:', err);
   }
@@ -536,7 +550,7 @@ export async function getTotalCapacity() {
       if (!error && data?.value) {
         const parsed = parseInt(data.value, 10);
         if (!isNaN(parsed) && parsed > 0) {
-          localStorage.setItem(CAPACITY_KEY, String(parsed));
+          safeStorage.setItem(CAPACITY_KEY, String(parsed));
           return parsed;
         }
       }
@@ -545,7 +559,7 @@ export async function getTotalCapacity() {
     }
   }
 
-  const stored = localStorage.getItem(CAPACITY_KEY);
+  const stored = safeStorage.getItem(CAPACITY_KEY);
   if (stored) {
     const parsed = parseInt(stored, 10);
     if (!isNaN(parsed) && parsed > 0) return parsed;
@@ -578,7 +592,7 @@ export async function updateTotalCapacity(newCapacity) {
     }
   }
 
-  localStorage.setItem(CAPACITY_KEY, String(cap));
+  safeStorage.setItem(CAPACITY_KEY, String(cap));
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent('pillowman-capacity-updated', { detail: cap }));
   }
@@ -636,7 +650,7 @@ export async function getAllReservationsForAdmin() {
 
     let smsSentMap = {};
     try {
-      smsSentMap = JSON.parse(localStorage.getItem('pillowman_admin_sms_sent') || '{}');
+      smsSentMap = JSON.parse(safeStorage.getItem('pillowman_admin_sms_sent') || '{}');
     } catch (e) {
       console.warn(e);
     }
@@ -732,9 +746,9 @@ export async function adminToggleSmsSent(bookingCode, isSent) {
   };
 
   try {
-    const smsSentMap = JSON.parse(localStorage.getItem('pillowman_admin_sms_sent') || '{}');
+    const smsSentMap = JSON.parse(safeStorage.getItem('pillowman_admin_sms_sent') || '{}');
     smsSentMap[bookingCode] = Boolean(isSent);
-    localStorage.setItem('pillowman_admin_sms_sent', JSON.stringify(smsSentMap));
+    safeStorage.setItem('pillowman_admin_sms_sent', JSON.stringify(smsSentMap));
   } catch (e) {
     console.warn(e);
   }
