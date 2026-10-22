@@ -187,7 +187,8 @@ export default function Team() {
                 <div className="credit-box-content">
                   사진 : 남선우<br />
                   홍보영상 : 류다현 목지혜 김익수 이상욱 조유정<br />
-                  홍보디자인 : 우태은
+                  홍보디자인 : 우태은<br />
+                  웹사이트 : 안현준
                 </div>
               </div>
             </div>
