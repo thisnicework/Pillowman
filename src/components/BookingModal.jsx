@@ -524,11 +524,13 @@ export default function BookingModal({
                 ※ 공연 시작 5분 전까지 미수령 시 현장 취소표로 전환됩니다.
               </div>
 
-              <div className="modal-actions-dual">
-                <button type="button" className="btn-modal-print" onClick={() => window.print()}>
-                  티켓 인쇄 / 저장
-                </button>
-                <button type="button" className="btn-modal-cancel-ticket" onClick={handleClose}>
+              <div className="modal-actions-single" style={{ marginTop: '20px' }}>
+                <button 
+                  type="button" 
+                  className="btn-modal-cancel-ticket" 
+                  onClick={handleClose}
+                  style={{ width: '100%', padding: '14px', fontSize: '0.95rem' }}
+                >
                   확인 완료
                 </button>
               </div>

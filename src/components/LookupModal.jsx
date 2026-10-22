@@ -313,18 +313,12 @@ export default function LookupModal({ isOpen, onClose, onNotify }) {
                 </div>
               )}
 
-              <div className="modal-actions-dual">
-                <button 
-                  type="button" 
-                  className="btn-modal-print" 
-                  onClick={() => window.print()}
-                >
-                  티켓 인쇄 / 저장
-                </button>
+              <div className="modal-actions-single" style={{ marginTop: '20px' }}>
                 <button 
                   type="button" 
                   className="btn-modal-cancel-ticket" 
                   onClick={handleClose}
+                  style={{ width: '100%', padding: '14px', fontSize: '0.95rem' }}
                 >
                   닫기
                 </button>
