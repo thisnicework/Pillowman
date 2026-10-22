@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   createReservation, 
   formatPhoneNumber, 
-  isValidKoreanPhone 
+  isValidKoreanPhone,
+  checkPhoneAlreadyBooked,
 } from '../services/bookingService';
 
 export default function BookingModal({ 
@@ -20,6 +21,7 @@ export default function BookingModal({
   const [agreeTrigger, setAgreeTrigger] = useState(false);
   const [agreeCancellation, setAgreeCancellation] = useState(false);
 
+  const [isAlreadyBooked, setIsAlreadyBooked] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [reservation, setReservation] = useState(null);
@@ -65,11 +67,37 @@ export default function BookingModal({
   const isPhoneMatched = isPhoneValid && cleanPhone === cleanPhoneConfirm;
   const isPhoneMismatch = hasTypedConfirm && cleanPhone !== cleanPhoneConfirm;
 
+  // Real-time check if phone number is already booked
+  useEffect(() => {
+    let isCurrent = true;
+    if (isPhoneMatched && cleanPhone.length >= 10) {
+      checkPhoneAlreadyBooked(cleanPhone).then((booked) => {
+        if (isCurrent) {
+          setIsAlreadyBooked(booked);
+          if (booked) {
+            setErrorMsg('이미 예매된 번호입니다.');
+          } else if (errorMsg === '이미 예매된 번호입니다.') {
+            setErrorMsg('');
+          }
+        }
+      });
+    } else {
+      setIsAlreadyBooked(false);
+      if (errorMsg === '이미 예매된 번호입니다.') {
+        setErrorMsg('');
+      }
+    }
+    return () => {
+      isCurrent = false;
+    };
+  }, [isPhoneMatched, cleanPhone]);
+
   const canSubmit = 
     !isSubmitting && 
     isNameMatched && 
     isPhoneValid && 
     isPhoneMatched && 
+    !isAlreadyBooked && 
     allAgreed;
 
   const handleClose = () => {
@@ -78,6 +106,7 @@ export default function BookingModal({
     setNameConfirm('');
     setPhone('');
     setPhoneConfirm('');
+    setIsAlreadyBooked(false);
     setAgreeAge(false);
     setAgreeTrigger(false);
     setAgreeCancellation(false);
@@ -107,6 +136,11 @@ export default function BookingModal({
 
     if (cleanPhone !== cleanPhoneConfirm) {
       setErrorMsg('입력하신 두 휴대폰 번호가 일치하지 않습니다. 다시 확인해 주세요.');
+      return;
+    }
+
+    if (isAlreadyBooked) {
+      setErrorMsg('이미 예매된 번호입니다.');
       return;
     }
 
@@ -278,13 +312,19 @@ export default function BookingModal({
                   required 
                   disabled={isSubmitting}
                   style={{
-                    borderColor: isPhoneMatched 
-                      ? '#10b981' 
-                      : (isPhoneMismatch ? 'var(--accent-red)' : undefined)
+                    borderColor: isAlreadyBooked 
+                      ? 'var(--accent-red)' 
+                      : (isPhoneMatched ? '#10b981' : (isPhoneMismatch ? 'var(--accent-red)' : undefined))
                   }}
                 />
 
-                {isPhoneMatched && (
+                {isAlreadyBooked && (
+                  <div className="phone-match-badge mismatch">
+                    <span>⚠</span> 이미 예매된 번호입니다.
+                  </div>
+                )}
+
+                {!isAlreadyBooked && isPhoneMatched && (
                   <div className="phone-match-badge match">
                     <span>✓</span> 휴대폰 번호가 일치합니다.
                   </div>

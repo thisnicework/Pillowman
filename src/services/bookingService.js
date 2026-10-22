@@ -276,7 +276,7 @@ export async function createReservation({
       .from('reservations')
       .select('id, booking_code, status')
       .eq('phone', cleanPhone)
-      .eq('status', 'CONFIRMED')
+      .in('status', ['CONFIRMED', 'CHECKED_IN'])
       .maybeSingle();
 
     if (checkError) {
@@ -285,7 +285,7 @@ export async function createReservation({
     }
 
     if (existing) {
-      throw new Error('해당 연락처로 이미 완료된 예매 내역이 존재합니다. (1인 1매 제한)');
+      throw new Error('이미 예매된 번호입니다.');
     }
 
     // 2. 신규 예매 삽입 (동일 초 중복 충돌 방지 재시도)
@@ -308,6 +308,14 @@ export async function createReservation({
       if (!insertError) {
         inserted = data;
         break;
+      }
+
+      // 전화번호 중복 유니크 제약 충돌 감지
+      if (
+        insertError.message?.includes('idx_unique_active_booking_phone') ||
+        (insertError.code === '23505' && insertError.message?.includes('phone'))
+      ) {
+        throw new Error('이미 예매된 번호입니다.');
       }
 
       // 동일 초에 다중 예매로 인한 booking_code unique 제약 충돌 시 ms 추가 후 재시도
@@ -334,11 +342,11 @@ export async function createReservation({
 
   const localList = getLocalReservations();
   const alreadyBooked = localList.some(
-    (r) => r.phone === cleanPhone && r.status === 'CONFIRMED'
+    (r) => r.phone === cleanPhone && (r.status === 'CONFIRMED' || r.status === 'CHECKED_IN')
   );
 
   if (alreadyBooked) {
-    throw new Error('해당 연락처로 이미 완료된 예매 내역이 존재합니다. (1인 1매 제한)');
+    throw new Error('이미 예매된 번호입니다.');
   }
 
   let finalCode = bookingCode;
@@ -356,6 +364,34 @@ export async function createReservation({
   saveLocalReservations(localList);
 
   return finalRecord;
+}
+
+/**
+ * 3-1. 휴대폰 번호 중복 예매 여부 확인 (실시간 사전 검증용)
+ */
+export async function checkPhoneAlreadyBooked(phone) {
+  const cleanPhone = phone?.replace(/[^0-9]/g, '');
+  if (!cleanPhone || cleanPhone.length < 10) return false;
+
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('reservations')
+        .select('id')
+        .eq('phone', cleanPhone)
+        .in('status', ['CONFIRMED', 'CHECKED_IN'])
+        .maybeSingle();
+
+      if (!error && data) return true;
+    } catch (e) {
+      console.warn('checkPhoneAlreadyBooked error:', e);
+    }
+  }
+
+  const localList = getLocalReservations();
+  return localList.some(
+    (r) => r.phone === cleanPhone && (r.status === 'CONFIRMED' || r.status === 'CHECKED_IN')
+  );
 }
 
 /**
