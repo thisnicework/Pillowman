@@ -2089,6 +2089,22 @@ font-family: var(--font-body);
     display: flex;
   }
 
+  .nav-actions {
+    gap: 8px;
+  }
+
+  .btn-nav-ticket {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-ticket-seat-pill {
+    margin-left: 5px;
+    padding: 1px 5px;
+    font-size: 0.68rem;
+  }
+
   .hero-content {
     padding: 36px 14px 28px;
   }
