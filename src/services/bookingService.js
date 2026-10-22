@@ -62,7 +62,7 @@ export function generateBookingCode(date = new Date()) {
   const hh = String(kst.getHours()).padStart(2, '0');
   const min = String(kst.getMinutes()).padStart(2, '0');
   const ss = String(kst.getSeconds()).padStart(2, '0');
-  return `${yyyy}${mm}${dd}-${hh}${mm}${ss}`;
+  return `${yyyy}${mm}${dd}-${hh}${min}${ss}`;
 }
 
 /**
