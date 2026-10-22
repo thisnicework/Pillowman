@@ -78,11 +78,7 @@ export default function Footer({ onOpenBooking, onOpenAdmin, bookingStats }) {
 
           <div className="footer-bottom">
             <p className="copyright">
-              © 2026 THE PILLOWMAN Production. Developed by{' '}
-              <a href="https://hyunjunahn.com" target="_blank" rel="noopener noreferrer">
-                Hyunjun Ahn
-              </a>{' '}
-              All Rights Reserved.
+              © 2026 THE PILLOWMAN Production. All Rights Reserved.
             </p>
             <p className="support-credits">서울예술대학교 앵커사업단 × EMK뮤지컬컴퍼니 제작지원</p>
           </div>
