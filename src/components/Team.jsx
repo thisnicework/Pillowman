@@ -216,7 +216,7 @@ export default function Team() {
                 〈Hug e hug〉 김형록 이태하<br />
                 〈un, fortune〉 진주 조한만<br />
                 〈카투리안의 이야기들〉 고다선 이지혜<br />
-                〈초록돼지〉 안현준 안형진<br />
+                〈초록 돼지〉 안현준 안형진<br />
                 〈Eater〉 이정원 김진서
               </div>
             </div>
