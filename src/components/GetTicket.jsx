@@ -129,15 +129,19 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster, b
             ========================================================================== */}
         <div className="ticket-countdown-container">
           <div>
-            <div style={{ fontFamily: 'var(--font-title)', letterSpacing: '-0.04em', fontSize: '1.4rem', color: 'var(--title-color)', fontWeight: 700 }}>
-              TICKET OPEN
+            <div style={{ fontFamily: 'var(--font-title)', letterSpacing: '-0.04em', fontSize: '1.35rem', color: 'var(--title-color)', fontWeight: 700 }}>
+              {!timeLeft.isOpen 
+                ? 'TICKET OPEN' 
+                : (timeLeft.isClosed ? 'BOOKING CLOSED' : '예매 마감까지 남은 시간')}
             </div>
             <div style={{ fontFamily: 'var(--font-title)', letterSpacing: '-0.03em', fontSize: '1.8rem', color: 'var(--accent-red)', fontWeight: 700, margin: '4px 0' }}>
-              10/22(목) 20:00
+              {!timeLeft.isOpen 
+                ? '10/22(목) 20:00' 
+                : (timeLeft.isClosed ? '예매 종료' : '10/30(금) 자정 마감')}
             </div>
             <p style={{ fontSize: '0.88rem', color: 'var(--body-color)', lineHeight: 1.6 }}>
               * 예매 시 이름/전화번호 작성<br />
-              * 10/30(금) 자정까지 예매 가능하도록 설정 (1인 1매 비지정석)
+              * 10/30(금) 자정까지 예매 가능 (1인 1매 비지정석)
             </p>
           </div>
 

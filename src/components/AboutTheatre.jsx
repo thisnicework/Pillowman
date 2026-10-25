@@ -1,8 +1,33 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import OrnamentDivider from './OrnamentDivider';
 
 export default function AboutTheatre({ onNotify }) {
   const addressText = '경기도 안산시 단원구 예술대학로 171, 서울예술대학교 마동 1층 예장';
+  const iframeRef = useRef(null);
+
+  const handleZoomIn = () => {
+    try {
+      if (iframeRef.current?.contentWindow?.zoomIn) {
+        iframeRef.current.contentWindow.zoomIn();
+        return;
+      }
+    } catch (e) {
+      // Cross-origin fallback
+    }
+    iframeRef.current?.contentWindow?.postMessage({ type: 'ZOOM_IN' }, '*');
+  };
+
+  const handleZoomOut = () => {
+    try {
+      if (iframeRef.current?.contentWindow?.zoomOut) {
+        iframeRef.current.contentWindow.zoomOut();
+        return;
+      }
+    } catch (e) {
+      // Cross-origin fallback
+    }
+    iframeRef.current?.contentWindow?.postMessage({ type: 'ZOOM_OUT' }, '*');
+  };
 
 
   const handleCopyAddress = () => {
@@ -66,22 +91,28 @@ export default function AboutTheatre({ onNotify }) {
             >
               주소 복사하기
             </button>
-            <a 
-              href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%98%88%EC%88%A0%EB%8C%80%ED%95%99%EA%B5%90%20%EB%A7%88%EB%8F%99" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="btn-pill-action btn-pill-naver"
-            >
-              네이버 지도 길찾기
-            </a>
-            <a 
-              href="https://map.kakao.com/?itemId=17566684" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="btn-pill-action btn-pill-kakao"
-            >
-              카카오맵 길찾기
-            </a>
+            <div className="map-logo-group">
+              <a 
+                href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%98%88%EC%88%A0%EB%8C%80%ED%95%99%EA%B5%90%20%EB%A7%88%EB%8F%99" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="btn-map-logo btn-map-naver"
+                title="네이버 지도 길찾기"
+                aria-label="네이버 지도 길찾기"
+              >
+                <img src="/assets/logo-naver-map.png" alt="네이버 지도 길찾기" className="map-logo-img" />
+              </a>
+              <a 
+                href="https://map.kakao.com/?itemId=17566684" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="btn-map-logo btn-map-kakao"
+                title="카카오맵 길찾기"
+                aria-label="카카오맵 길찾기"
+              >
+                <img src="/assets/logo-kakao-map.png" alt="카카오맵 길찾기" className="map-logo-img" />
+              </a>
+            </div>
           </div>
         </div>
 
@@ -91,11 +122,37 @@ export default function AboutTheatre({ onNotify }) {
         <div className="theatre-map-wrapper">
           <div className="theatre-map-frame-container kakao-map-container">
             <iframe 
-              src="/kakao-theatre-map.html?v=3" 
+              ref={iframeRef}
+              src="/kakao-theatre-map.html?v=5" 
               title="카카오맵 - 서울예술대학교 마동" 
               className="theatre-kakao-iframe"
               loading="lazy"
             />
+            <div className="theatre-map-zoom-controls" aria-label="지도 확대 축소">
+              <button 
+                type="button" 
+                className="btn-theatre-zoom btn-theatre-zoom-in" 
+                onClick={handleZoomIn}
+                title="지도 확대"
+                aria-label="지도 확대"
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7 1.5V12.5M1.5 7H12.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+                </svg>
+              </button>
+              <div className="theatre-zoom-divider" />
+              <button 
+                type="button" 
+                className="btn-theatre-zoom btn-theatre-zoom-out" 
+                onClick={handleZoomOut}
+                title="지도 축소"
+                aria-label="지도 축소"
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1.5 7H12.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 

@@ -35,28 +35,11 @@
     .root_daum_roughmap .map_border {
       display: none !important;
     }
-    /* Clip wrap_btn_zoom so ONLY the + and - buttons (0-65px) are rendered and the bottom reset square (70-103px) is completely removed */
-    .root_daum_roughmap .wrap_btn_zoom {
-      height: 65px !important;
-      overflow: hidden !important;
-      border-radius: 4px !important;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45) !important;
-    }
+    /* Hide roughmap built-in controllers so custom parent zoom controls handle zooming */
+    .root_daum_roughmap .wrap_btn_zoom,
     .root_daum_roughmap .btn_zoom_reset,
-    .root_daum_roughmap .btn_big_map,
-    .root_daum_roughmap .wrap_btn_zoom > :not(.btn_zoom_in):not(.btn_zoom_out) {
+    .root_daum_roughmap .btn_big_map {
       display: none !important;
-      visibility: hidden !important;
-      pointer-events: none !important;
-      height: 0 !important;
-      width: 0 !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      border: none !important;
-    }
-    .root_daum_roughmap .btn_zoom_in,
-    .root_daum_roughmap .btn_zoom_out {
-      cursor: pointer !important;
     }
   </style>
 </head>
@@ -119,13 +102,53 @@
       }
     }
 
+    function getMap() {
+      var instance = window.daum && window.daum.roughmap && window.daum.roughmap.instances && window.daum.roughmap.instances['1792948310052'];
+      return instance && instance.jsMap ? instance.jsMap : null;
+    }
+
+    function zoomIn() {
+      var map = getMap();
+      if (map && typeof map.getLevel === 'function' && typeof map.setLevel === 'function') {
+        var nextLevel = Math.max(1, map.getLevel() - 1);
+        map.setLevel(nextLevel, { animate: true });
+      } else {
+        var btn = document.querySelector('.btn_zoom_in');
+        if (btn) btn.click();
+      }
+    }
+
+    function zoomOut() {
+      var map = getMap();
+      if (map && typeof map.getLevel === 'function' && typeof map.setLevel === 'function') {
+        var nextLevel = Math.min(14, map.getLevel() + 1);
+        map.setLevel(nextLevel, { animate: true });
+      } else {
+        var btn = document.querySelector('.btn_zoom_out');
+        if (btn) btn.click();
+      }
+    }
+
+    window.zoomIn = zoomIn;
+    window.zoomOut = zoomOut;
+
+    window.addEventListener('message', function(event) {
+      if (!event || !event.data) return;
+      var action = typeof event.data === 'string' ? event.data : event.data.type;
+      if (action === 'ZOOM_IN') {
+        zoomIn();
+      } else if (action === 'ZOOM_OUT') {
+        zoomOut();
+      }
+    });
+
     var lockAttempts = 0;
     var lockInterval = setInterval(function() {
       lockAttempts++;
       cleanZoomUI();
-      var instance = window.daum?.roughmap?.instances?.['1792948310052'];
-      if (instance && instance.jsMap) {
-        applyLock(instance.jsMap);
+      var map = getMap();
+      if (map) {
+        applyLock(map);
       }
       if (lockAttempts > 60) {
         clearInterval(lockInterval);
@@ -140,9 +163,9 @@
 
     // Prevent wheel zoom from affecting map
     window.addEventListener('wheel', function(e) {
-      var instance = window.daum?.roughmap?.instances?.['1792948310052'];
-      if (instance && instance.jsMap) {
-        applyLock(instance.jsMap);
+      var map = getMap();
+      if (map) {
+        applyLock(map);
       }
     }, { passive: true });
   </script>

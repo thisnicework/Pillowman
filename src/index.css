@@ -1492,37 +1492,75 @@ padding: 24px 30px;
 
 .address-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .btn-pill-action {
   padding: 10px 18px;
   border-radius: 0;
-font-family: var(--font-title);
+  font-family: var(--font-title);
   letter-spacing: -0.03em;
   font-size: 0.84rem;
   font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  box-sizing: border-box;
 }
 
 .btn-pill-copy {
   background: rgba(237, 230, 209, 0.08);
   border: 1px solid var(--border-strong);
   color: var(--title-color);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
 .btn-pill-copy:hover {
   background: rgba(237, 230, 209, 0.16);
+  border-color: var(--title-color);
 }
 
-.btn-pill-naver {
-  background: #03c75a;
-  color: #fff;
+.map-logo-group {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  flex-shrink: 0;
 }
 
-.btn-pill-kakao {
-  background: #fee500;
-  color: #191919;
+.btn-map-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: rgba(237, 230, 209, 0.08);
+  border: 1px solid var(--border-strong);
+  border-radius: 0;
+  transition: background 0.2s ease, border-color 0.2s ease;
+  flex-shrink: 0;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.btn-map-logo:hover {
+  background: rgba(237, 230, 209, 0.16);
+  border-color: var(--title-color);
+}
+
+.btn-map-logo:active {
+  background: rgba(237, 230, 209, 0.22);
+}
+
+.map-logo-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 5px;
+  object-fit: cover;
+  display: block;
 }
 
 .transit-grid-vintage {
@@ -2360,6 +2398,7 @@ font-family: var(--font-body);
     width: 100%;
     display: flex;
     gap: 8px;
+    align-items: center;
   }
 
   .btn-pill-action {
@@ -3939,6 +3978,53 @@ font-family: var(--font-body);
   height: 100%;
   border: 0;
   display: block;
+  pointer-events: none;
+}
+
+.theatre-map-zoom-controls {
+  position: absolute;
+  right: 14px;
+  bottom: 90px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  pointer-events: auto;
+}
+
+.btn-theatre-zoom {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border: none;
+  color: #333333;
+  cursor: pointer;
+  padding: 0;
+  touch-action: manipulation;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-theatre-zoom:hover {
+  background: #f5f5f5;
+  color: #000000;
+}
+
+.btn-theatre-zoom:active {
+  background: #ebebeb;
+}
+
+.theatre-zoom-divider {
+  width: 24px;
+  height: 1px;
+  background: #e2e2e2;
+  margin: 0 auto;
 }
 
 @media (max-width: 768px) {
@@ -3948,6 +4034,11 @@ font-family: var(--font-body);
   .theatre-kakao-iframe {
     width: 100%;
     height: 100%;
+    pointer-events: none;
+  }
+  .theatre-map-zoom-controls {
+    right: 12px;
+    bottom: 80px;
   }
 }
 
