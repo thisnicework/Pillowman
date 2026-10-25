@@ -4,6 +4,7 @@ import OrnamentDivider from './OrnamentDivider';
 export default function AboutTheatre({ onNotify }) {
   const addressText = '경기도 안산시 단원구 예술대학로 171, 서울예술대학교 마동 1층 예장';
 
+
   const handleCopyAddress = () => {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(addressText).then(() => {
@@ -66,7 +67,7 @@ export default function AboutTheatre({ onNotify }) {
               주소 복사하기
             </button>
             <a 
-              href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%98%88%EC%88%A0%EB%8C%80%ED%95%99%EA%B5%90" 
+              href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%98%88%EC%88%A0%EB%8C%80%ED%95%99%EA%B5%90%20%EB%A7%88%EB%8F%99" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="btn-pill-action btn-pill-naver"
@@ -74,13 +75,27 @@ export default function AboutTheatre({ onNotify }) {
               네이버 지도 길찾기
             </a>
             <a 
-              href="https://map.kakao.com/?q=%EC%84%9C%EC%9A%B8%EC%98%88%EC%88%A0%EB%8C%80%ED%95%99%EA%B5%90" 
+              href="https://map.kakao.com/?itemId=17566684" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="btn-pill-action btn-pill-kakao"
             >
               카카오맵 길찾기
             </a>
+          </div>
+        </div>
+
+        {/* ==========================================================================
+            MAP DISPLAY (*지도 삽입 - 네임드 카카오맵)
+            ========================================================================== */}
+        <div className="theatre-map-wrapper">
+          <div className="theatre-map-frame-container kakao-map-container">
+            <iframe 
+              src="/kakao-theatre-map.html?v=3" 
+              title="카카오맵 - 서울예술대학교 마동" 
+              className="theatre-kakao-iframe"
+              loading="lazy"
+            />
           </div>
         </div>
 

@@ -25,10 +25,17 @@ export default function Hero({ onOpenPoster }) {
             원작 The Pillowman by Martin McDonagh
           </p>
           <p className="hero-date-venue">
-            <span className="hero-date-text">2026.11.1(SUN) 13:00</span>
+            <span className="hero-date-text">2026. 11. 1.(일) 13:00</span>
             <span className="hero-separator">&nbsp;&nbsp;</span>
             <br className="mobile-venue-br" />
             <span className="hero-venue-text">서울예술대학교 마동 예장</span>
+          </p>
+        </div>
+
+        {/* Main Copy */}
+        <div className="hero-main-copy">
+          <p className="hero-copy-lead">
+            이야기가 현실이 된 순간, 작가는 용의자가 되었다
           </p>
         </div>
 
@@ -52,6 +59,7 @@ export default function Hero({ onOpenPoster }) {
             ABOUT THE SHOW
           </button>
         </div>
+
       </div>
 
       {/* Official Bottom Red Banner matching Home Mockup Image */}

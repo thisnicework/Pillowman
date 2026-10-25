@@ -11,7 +11,7 @@ import LookupModal from './components/LookupModal';
 import PosterModal from './components/PosterModal';
 import AdminPage from './components/AdminPage';
 import Toast from './components/Toast';
-import { getBookingStats, isBookingOpen } from './services/bookingService.js';
+import { getBookingStats, isBookingOpen, isBookingClosed } from './services/bookingService.js';
 import { initVisitorPresence } from './services/trafficService.js';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -102,8 +102,17 @@ export default function App() {
       return;
     }
 
+    if (isBookingClosed()) {
+      showToast('10/30(금) 자정으로 온라인 티켓 예매가 마감되었습니다. (공연 당일 잔여석 현장 예매 가능)');
+      const ticketSection = document.getElementById('ticket');
+      if (ticketSection) {
+        ticketSection.scrollIntoView({ behavior: 'smooth' });
+      }
+      return;
+    }
+
     if (!isBookingOpen()) {
-      showToast('티켓 예매는 오늘(10/22) 20:00에 오픈됩니다.');
+      showToast('티켓 예매는 10/22(목) 20:00에 오픈됩니다.');
       const ticketSection = document.getElementById('ticket');
       if (ticketSection) {
         ticketSection.scrollIntoView({ behavior: 'smooth' });

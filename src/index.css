@@ -3811,5 +3811,215 @@ font-family: var(--font-body);
   }
 }
 
+/* ==========================================================================
+   Hero Main Copy & Instagram Quick Link
+   ========================================================================== */
+.hero-main-copy {
+  margin: 18px 0 14px;
+}
 
+.hero-copy-lead {
+  font-family: var(--font-title);
+  letter-spacing: -0.03em;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--title-color);
+  opacity: 0.95;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+}
 
+.hero-social-link-wrap {
+  margin-top: 22px;
+  display: flex;
+  justify-content: center;
+}
+
+.hero-insta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: rgba(20, 21, 18, 0.65);
+  border: 1px solid var(--border-strong);
+  color: var(--title-color);
+  text-decoration: none;
+  font-family: var(--font-title);
+  letter-spacing: -0.02em;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.hero-insta-pill:hover {
+  background: rgba(223, 54, 62, 0.2);
+  border-color: var(--accent-red);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(223, 54, 62, 0.35);
+}
+
+/* ==========================================================================
+   Theatre Embedded Map (*지도 삽입)
+   ========================================================================== */
+.theatre-map-wrapper {
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  margin-bottom: 24px;
+  overflow: hidden;
+  position: relative;
+}
+
+.theatre-map-header {
+  padding: 16px 24px;
+  background: rgba(20, 21, 18, 0.96);
+  border-bottom: 1px solid var(--border-vintage);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.map-badge-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.theatre-map-live-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent-red);
+  box-shadow: 0 0 10px var(--accent-red);
+  animation: mapPulse 2s infinite;
+}
+
+@keyframes mapPulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.theatre-map-title-label {
+  font-family: var(--font-title);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--title-color);
+  font-size: 1.05rem;
+}
+
+.theatre-map-sub-info {
+  font-size: 0.88rem;
+  color: var(--body-color);
+  opacity: 0.85;
+}
+
+.theatre-map-frame-container {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  background: #111;
+}
+
+.theatre-map-frame-container.kakao-map-container {
+  height: 480px;
+  min-height: 380px;
+  background: #141416;
+  overflow: hidden;
+  position: relative;
+  border-radius: 4px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+.theatre-kakao-iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .theatre-map-frame-container.kakao-map-container {
+    height: 380px;
+  }
+  .theatre-kakao-iframe {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.overlay-pin-title {
+  font-family: var(--font-title);
+  letter-spacing: -0.03em;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--title-color);
+  margin-bottom: 4px;
+}
+
+.overlay-pin-desc {
+  font-size: 0.84rem;
+  color: var(--body-color);
+  margin-bottom: 12px;
+  line-height: 1.45;
+}
+
+.overlay-quick-links {
+  display: flex;
+  gap: 8px;
+}
+
+.map-nav-btn {
+  font-family: var(--font-title);
+  letter-spacing: -0.02em;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.map-nav-naver {
+  background: #03c75a;
+  color: #fff;
+}
+.map-nav-naver:hover {
+  background: #02b350;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.map-nav-kakao {
+  background: #fee500;
+  color: #191919;
+}
+.map-nav-kakao:hover {
+  background: #fada0a;
+  color: #191919;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Special Thanks to Subhead Styling
+   ========================================================================== */
+.special-thanks-group {
+  margin-bottom: 16px;
+  line-height: 1.95;
+}
+
+.special-thanks-subhead {
+  font-family: var(--font-title);
+  letter-spacing: -0.03em;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--accent-red);
+  margin-bottom: 8px;
+  border-left: 3px solid var(--accent-red);
+  padding-left: 10px;
+}

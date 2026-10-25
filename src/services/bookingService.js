@@ -216,9 +216,16 @@ export async function verifyPhoneOtp(phone, token) {
 
 export const BOOKING_OPEN_ISO = '2026-10-22T20:00:00+09:00';
 export const BOOKING_OPEN_TIME = new Date(BOOKING_OPEN_ISO).getTime();
+export const BOOKING_CLOSE_ISO = '2026-10-30T23:59:59+09:00';
+export const BOOKING_CLOSE_TIME = new Date(BOOKING_CLOSE_ISO).getTime();
 
 export function isBookingOpen() {
-  return Date.now() >= BOOKING_OPEN_TIME;
+  const now = Date.now();
+  return now >= BOOKING_OPEN_TIME && now <= BOOKING_CLOSE_TIME;
+}
+
+export function isBookingClosed() {
+  return Date.now() > BOOKING_CLOSE_TIME;
 }
 
 /**
@@ -233,8 +240,12 @@ export async function createReservation({
   agreedTrigger = true,
   agreedCancellation = true,
 }) {
-  if (!isBookingOpen()) {
-    throw new Error('티켓 예매는 오늘(10/22) 20:00부터 가능합니다.');
+  if (Date.now() < BOOKING_OPEN_TIME) {
+    throw new Error('티켓 예매는 10/22(목) 20:00부터 가능합니다.');
+  }
+
+  if (isBookingClosed()) {
+    throw new Error('10/30(금) 자정으로 온라인 티켓 예매가 마감되었습니다. (공연 당일 잔여석에 한해 현장 예매 가능)');
   }
 
   // 구버전 탭에서의 예매 차단 (최신 버전으로 새로고침 유도)

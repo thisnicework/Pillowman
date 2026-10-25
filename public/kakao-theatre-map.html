@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>서울예술대학교 마동 예장 지도</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #141416;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    #map-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    .root_daum_roughmap {
+      width: 100% !important;
+      height: 100% !important;
+      border: 0 !important;
+    }
+    .root_daum_roughmap .wrap_map {
+      height: 100% !important;
+      cursor: default !important;
+    }
+    .root_daum_roughmap .map_border {
+      display: none !important;
+    }
+    /* Clip wrap_btn_zoom so ONLY the + and - buttons (0-65px) are rendered and the bottom reset square (70-103px) is completely removed */
+    .root_daum_roughmap .wrap_btn_zoom {
+      height: 65px !important;
+      overflow: hidden !important;
+      border-radius: 4px !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45) !important;
+    }
+    .root_daum_roughmap .btn_zoom_reset,
+    .root_daum_roughmap .btn_big_map,
+    .root_daum_roughmap .wrap_btn_zoom > :not(.btn_zoom_in):not(.btn_zoom_out) {
+      display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      height: 0 !important;
+      width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+    }
+    .root_daum_roughmap .btn_zoom_in,
+    .root_daum_roughmap .btn_zoom_out {
+      cursor: pointer !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="map-container">
+    <div id="daumRoughmapContainer1792948310052" class="root_daum_roughmap root_daum_roughmap_landing"></div>
+  </div>
+
+  <script>
+    window.daum = window.daum || {};
+    window.daum.roughmap = {
+      phase: 'prod',
+      cdn: '2851f17d_1789535060426',
+      loader: 'tenth',
+      URL_KEY_DATA_LOAD_PRE: 'https://t1.kakaocdn.net/roughmap/',
+      url_protocal: 'https:',
+      url_cdn_domain: '//t1.kakaocdn.net'
+    };
+  </script>
+  <script src="https://t1.kakaocdn.net/kakaomapweb/roughmap/place/prod/2851f17d_1789535060426/roughmapLander.js"></script>
+  <script>
+    function applyLock(map) {
+      if (!map) return;
+      if (typeof map.setDraggable === 'function') {
+        map.setDraggable(false);
+      }
+      if (typeof map.setZoomable === 'function') {
+        map.setZoomable(false);
+      }
+    }
+
+    if (window.daum && window.daum.roughmap && window.daum.roughmap.Lander) {
+      var origRenderMap = window.daum.roughmap.Lander.prototype.renderMap;
+      window.daum.roughmap.Lander.prototype.renderMap = function() {
+        origRenderMap.apply(this, arguments);
+        applyLock(this.jsMap);
+      };
+    }
+
+    var lander = new daum.roughmap.Lander({
+      timestamp: '1792948310052',
+      key: '3vtb5opwqmx',
+      mapHeight: '480'
+    });
+    lander.render();
+
+    function cleanZoomUI() {
+      var wrap = document.querySelector('.wrap_btn_zoom');
+      if (wrap) {
+        wrap.style.setProperty('height', '65px', 'important');
+        wrap.style.setProperty('overflow', 'hidden', 'important');
+        var resets = wrap.querySelectorAll('.btn_zoom_reset, .btn_big_map');
+        for (var i = 0; i < resets.length; i++) {
+          resets[i].remove();
+        }
+        var extraChildren = wrap.querySelectorAll(':scope > *:not(.btn_zoom_in):not(.btn_zoom_out)');
+        for (var j = 0; j < extraChildren.length; j++) {
+          extraChildren[j].remove();
+        }
+      }
+    }
+
+    var lockAttempts = 0;
+    var lockInterval = setInterval(function() {
+      lockAttempts++;
+      cleanZoomUI();
+      var instance = window.daum?.roughmap?.instances?.['1792948310052'];
+      if (instance && instance.jsMap) {
+        applyLock(instance.jsMap);
+      }
+      if (lockAttempts > 60) {
+        clearInterval(lockInterval);
+      }
+    }, 50);
+
+    // Observer to continuously guarantee clean zoom UI if Kakao re-renders
+    var observer = new MutationObserver(function() {
+      cleanZoomUI();
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    // Prevent wheel zoom from affecting map
+    window.addEventListener('wheel', function(e) {
+      var instance = window.daum?.roughmap?.instances?.['1792948310052'];
+      if (instance && instance.jsMap) {
+        applyLock(instance.jsMap);
+      }
+    }, { passive: true });
+  </script>
+</body>
+</html>

@@ -7,29 +7,53 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster, b
     hours: '00',
     minutes: '00',
     seconds: '00',
-    isOpen: false
+    isOpen: false,
+    isClosed: false,
   });
 
   const [activeTab, setActiveTab] = useState('booking');
 
   useEffect(() => {
-    const targetDate = new Date('2026-10-22T20:00:00+09:00').getTime();
+    const targetOpenDate = new Date('2026-10-22T20:00:00+09:00').getTime();
+    const targetCloseDate = new Date('2026-10-30T23:59:59+09:00').getTime();
 
     const updateTimer = () => {
       const now = new Date().getTime();
-      const distance = targetDate - now;
 
-      if (distance <= 0) {
+      // Before Ticket Open
+      if (now < targetOpenDate) {
+        const distance = targetOpenDate - now;
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        setTimeLeft({
+          days: String(days).padStart(2, '0'),
+          hours: String(hours).padStart(2, '0'),
+          minutes: String(minutes).padStart(2, '0'),
+          seconds: String(seconds).padStart(2, '0'),
+          isOpen: false,
+          isClosed: false,
+        });
+        return;
+      }
+
+      // After Close (10/30 23:59:59)
+      if (now > targetCloseDate) {
         setTimeLeft({
           days: '00',
           hours: '00',
           minutes: '00',
           seconds: '00',
-          isOpen: true
+          isOpen: false,
+          isClosed: true,
         });
         return;
       }
 
+      // During Booking Period (10/22 20:00 ~ 10/30 23:59:59) - Countdown to Close
+      const distance = targetCloseDate - now;
       const days = Math.floor(distance / (1000 * 60 * 60 * 24));
       const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -40,7 +64,8 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster, b
         hours: String(hours).padStart(2, '0'),
         minutes: String(minutes).padStart(2, '0'),
         seconds: String(seconds).padStart(2, '0'),
-        isOpen: false
+        isOpen: true,
+        isClosed: false,
       });
     };
 
@@ -54,7 +79,7 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster, b
       <div className="container">
         
         {/* ==========================================================================
-            OFFICIAL INFORMATION CARD (Matching Reference Image 2)
+            OFFICIAL INFORMATION CARD (공연 정보)
             ========================================================================== */}
         <div className="theatre-card-woodcut">
           <OrnamentDivider />
@@ -70,7 +95,7 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster, b
             </div>
             <div className="info-row">
               <span className="info-label">공연일시</span>
-              <span className="info-val">2026.11.1.(일) 13:00</span>
+              <span className="info-val">2026. 11. 1.(일) 13시</span>
             </div>
             <div className="info-row">
               <span className="info-label">공연장소</span>
@@ -110,8 +135,9 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster, b
             <div style={{ fontFamily: 'var(--font-title)', letterSpacing: '-0.03em', fontSize: '1.8rem', color: 'var(--accent-red)', fontWeight: 700, margin: '4px 0' }}>
               10/22(목) 20:00
             </div>
-            <p style={{ fontSize: '0.88rem', color: 'var(--body-color)' }}>
-              * 10/30(금) 자정까지 예매 가능하도록 설정 | 회차당 1인 1매 비지정석
+            <p style={{ fontSize: '0.88rem', color: 'var(--body-color)', lineHeight: 1.6 }}>
+              * 예매 시 이름/전화번호 작성<br />
+              * 10/30(금) 자정까지 예매 가능하도록 설정 (1인 1매 비지정석)
             </p>
           </div>
 
@@ -147,23 +173,34 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster, b
                 <span className="title">
                   {bookingStats?.isSoldOut 
                     ? '전석 매진' 
-                    : (!timeLeft.isOpen ? '예매 오픈 대기 중 (20:00)' : '예매하기')}
+                    : (timeLeft.isClosed 
+                        ? '온라인 예매 마감' 
+                        : (!timeLeft.isOpen ? '예매 오픈 대기 중 (20:00)' : '예매하기'))}
                 </span>
                 {bookingStats?.isSoldOut && (
                   <span className="btn-remaining-badge soldout">
                     전석 매진
                   </span>
                 )}
-                {!bookingStats?.isSoldOut && !timeLeft.isOpen && (
+                {!bookingStats?.isSoldOut && timeLeft.isClosed && (
+                  <span className="btn-remaining-badge soldout">
+                    10/30 자정 마감
+                  </span>
+                )}
+                {!bookingStats?.isSoldOut && !timeLeft.isOpen && !timeLeft.isClosed && (
                   <span className="btn-remaining-badge" style={{ background: '#2563eb', color: '#fff' }}>
-                    오늘 20:00 오픈
+                    10/22 20:00 오픈
                   </span>
                 )}
               </div>
               <span className="sub">
-                {!timeLeft.isOpen 
-                  ? '* 오늘(10/22) 20:00 정각부터 예매가 시작됩니다' 
-                  : '*예매 시 이름/전화번호 작성 (1인 1매 무료)'}
+                {bookingStats?.isSoldOut
+                  ? '* 준비된 전 좌석이 모두 매진되었습니다'
+                  : (timeLeft.isClosed
+                      ? '* 온라인 예매가 마감되었습니다 (당일 잔여표 현장 예매 가능)'
+                      : (!timeLeft.isOpen 
+                          ? '* 10/22(목) 20:00 정각부터 예매가 시작됩니다' 
+                          : '*예매 시 이름/전화번호 작성 (1인 1매 무료 · 10/30 자정까지)'))}
               </span>
             </div>
             <span style={{ fontSize: '1.4rem' }}>➔</span>
