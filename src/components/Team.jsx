@@ -12,9 +12,9 @@ export default function Team() {
   ];
 
   const storyCast = [
-    { id: 'story1', role: '이야기', name: '남다현', photo: '/assets/actor-story2.png' },
-    { id: 'story2', role: '이야기', name: '최하영', photo: '/assets/actor-story1.png' },
-    { id: 'story3', role: '이야기', name: '신현우', photo: '/assets/actor-story3.png' },
+    { id: 'story1', role: '이야기 1', name: '최하영', photo: '/assets/actor-story1.png' },
+    { id: 'story2', role: '이야기 2', name: '남다현', photo: '/assets/actor-story2.png' },
+    { id: 'story3', role: '이야기 3', name: '신현우', photo: '/assets/actor-story3.png' },
   ];
 
   const renderPhotoSlot = (member) => (
@@ -228,15 +228,15 @@ export default function Team() {
           <div className="thanks-deck-clean">
             <div className="thanks-box-clean">
               <div className="special-thanks-group">
-                <p><strong>기획 assistant</strong> : 조준민</p>
+                <p><strong>기획 Assistant</strong> : 조준민</p>
                 <p><strong>무대감독 Special Thanks to</strong> : 김현서</p>
               </div>
 
               <div className="special-thanks-group" style={{ marginTop: '16px' }}>
                 <div className="special-thanks-subhead">무대</div>
-                <p><strong>Technical director</strong> : 이규민</p>
-                <p><strong>Stage crew</strong> : 손성령 남우진</p>
-                <p><strong>Special thanks to</strong> : 김예지 임종민 허정우 서연우 곽민선 김가은 이성은 김민채 이지오</p>
+                <p><strong>Technical Director</strong> : 이규민</p>
+                <p><strong>Stage Crew</strong> : 손성령 남우진</p>
+                <p><strong>Special Thanks to</strong> : 김예지 임종민 허정우 서연우 곽민선 김가은 이성은 김민채 이지오</p>
                 <p><strong>Supported by</strong> : 무대사랑</p>
               </div>
 
@@ -249,7 +249,7 @@ export default function Team() {
 
               <div className="special-thanks-group" style={{ marginTop: '16px' }}>
                 <p><strong>무대영상 Special Thanks to</strong> : 박건 김휘진</p>
-                <p><strong>의상 assistant</strong> : 윤유민 심제민 이석진 이서현 신동윤 서은진 곽원영</p>
+                <p><strong>의상 Assistant</strong> : 윤유민 심제민 이석진 이서현 신동윤 서은진 곽원영</p>
               </div>
             </div>
           </div>

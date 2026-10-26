@@ -44,8 +44,8 @@ export default function Header({ onOpenBooking, bookingStats }) {
         <a href="#home" onClick={(e) => handleNavClick(e, 'home')} className="brand-logo" aria-label="필로우맨 홈으로 이동">
           <img src="/assets/symbol-white-tight.png" alt="필로우맨 심볼" className="brand-symbol-img" />
           <div className="brand-text-wrap">
-            <span className="brand-title">THE PILLOWMAN</span>
-            <span className="brand-sub">뮤지컬 〈필로우맨〉</span>
+            <span className="brand-title">뮤지컬 〈필로우맨〉</span>
+            <span className="brand-sub">THE PILLOWMAN</span>
           </div>
         </a>
 

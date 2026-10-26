@@ -260,27 +260,27 @@ input, textarea {
 
 .brand-title {
   font-family: var(--font-title);
-  letter-spacing: -0.05em;
-  font-size: 1.7rem;
+  letter-spacing: -0.04em;
+  font-size: 1.48rem;
   font-weight: 700;
   color: var(--title-color);
-  text-transform: uppercase;
-  line-height: 1.05;
+  line-height: 1.1;
   transition: font-size 0.3s ease;
 }
 
 .site-header.scrolled .brand-title {
-  font-size: 1.45rem;
+  font-size: 1.28rem;
 }
 
 .brand-sub {
-  font-family: var(--font-body);
-  letter-spacing: -0.025em;
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-family: var(--font-title);
+  letter-spacing: 0.04em;
+  font-size: 0.8rem;
+  font-weight: 700;
   color: var(--accent-red);
-  line-height: 1.2;
-  margin-top: 2px;
+  line-height: 1.15;
+  margin-top: 1px;
+  text-transform: uppercase;
 }
 
 .nav-links {
@@ -661,11 +661,16 @@ padding: 44px 36px;
 
 .info-label {
   font-family: var(--font-body);
-  letter-spacing: -0.025em;
+  letter-spacing: normal;
   font-size: 0.98rem;
   color: var(--body-color);
   font-weight: 400;
-  width: 100px;
+  width: 72px;
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  margin-right: 20px;
 }
 
 .info-val {
@@ -2227,8 +2232,9 @@ font-family: var(--font-body);
   }
 
   .info-label {
-    width: 76px;
+    width: 66px;
     font-size: 0.9rem;
+    margin-right: 14px;
   }
 
   .info-val {

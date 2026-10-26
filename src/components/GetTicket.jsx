@@ -90,31 +90,31 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster, b
 
           <div className="info-table-wrap">
             <div className="info-row">
-              <span className="info-label">작 품 명</span>
-              <span className="info-val">뮤지컬 &lt;필로우맨&gt;</span>
+              <span className="info-label"><span>작</span><span>품</span><span>명</span></span>
+              <span className="info-val">뮤지컬 〈필로우맨〉</span>
             </div>
             <div className="info-row">
-              <span className="info-label">공연일시</span>
+              <span className="info-label"><span>공</span><span>연</span><span>일</span><span>시</span></span>
               <span className="info-val">2026. 11. 1.(일) 13시</span>
             </div>
             <div className="info-row">
-              <span className="info-label">공연장소</span>
+              <span className="info-label"><span>공</span><span>연</span><span>장</span><span>소</span></span>
               <span className="info-val">서울예술대학교 마동 예장</span>
             </div>
             <div className="info-row">
-              <span className="info-label">티켓가격</span>
+              <span className="info-label"><span>티</span><span>켓</span><span>가</span><span>격</span></span>
               <span className="info-val" style={{ color: 'var(--accent-red)', fontWeight: 700 }}>전석 무료</span>
             </div>
             <div className="info-row">
-              <span className="info-label">러닝타임</span>
+              <span className="info-label"><span>러</span><span>닝</span><span>타</span><span>임</span></span>
               <span className="info-val">약 145분 (인터미션 15분 포함)</span>
             </div>
             <div className="info-row">
-              <span className="info-label">관람연령</span>
+              <span className="info-label"><span>관</span><span>람</span><span>연</span><span>령</span></span>
               <span className="info-val">15세 이상 관람가</span>
             </div>
             <div className="info-row">
-              <span className="info-label">문&nbsp;&nbsp;&nbsp;&nbsp;의</span>
+              <span className="info-label"><span>문</span><span>의</span></span>
               <span className="info-val">
                 <a href="https://www.instagram.com/pillowman_kr/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline' }}>
                   @pillowman_kr DM
