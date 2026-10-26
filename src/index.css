@@ -1507,7 +1507,7 @@ padding: 24px 30px;
 
 .address-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
   align-items: center;
 }
@@ -1540,10 +1540,7 @@ padding: 24px 30px;
 }
 
 .map-logo-group {
-  display: inline-flex;
-  gap: 10px;
-  align-items: center;
-  flex-shrink: 0;
+  display: contents;
 }
 
 .btn-map-logo {

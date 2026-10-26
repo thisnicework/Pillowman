@@ -91,28 +91,26 @@ export default function AboutTheatre({ onNotify }) {
             >
               주소 복사하기
             </button>
-            <div className="map-logo-group">
-              <a 
-                href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%98%88%EC%88%A0%EB%8C%80%ED%95%99%EA%B5%90%20%EB%A7%88%EB%8F%99" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="btn-map-logo btn-map-naver"
-                title="네이버 지도 길찾기"
-                aria-label="네이버 지도 길찾기"
-              >
-                <img src="/assets/logo-naver-map.png" alt="네이버 지도 길찾기" className="map-logo-img" />
-              </a>
-              <a 
-                href="https://map.kakao.com/?itemId=17566684" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="btn-map-logo btn-map-kakao"
-                title="카카오맵 길찾기"
-                aria-label="카카오맵 길찾기"
-              >
-                <img src="/assets/logo-kakao-map.png" alt="카카오맵 길찾기" className="map-logo-img" />
-              </a>
-            </div>
+            <a 
+              href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%EC%98%88%EC%88%A0%EB%8C%80%ED%95%99%EA%B5%90%20%EB%A7%88%EB%8F%99" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="btn-map-logo btn-map-naver"
+              title="네이버 지도 길찾기"
+              aria-label="네이버 지도 길찾기"
+            >
+              <img src="/assets/logo-naver-map.png" alt="네이버 지도 길찾기" className="map-logo-img" />
+            </a>
+            <a 
+              href="https://map.kakao.com/?itemId=17566684" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="btn-map-logo btn-map-kakao"
+              title="카카오맵 길찾기"
+              aria-label="카카오맵 길찾기"
+            >
+              <img src="/assets/logo-kakao-map.png" alt="카카오맵 길찾기" className="map-logo-img" />
+            </a>
           </div>
         </div>
 
