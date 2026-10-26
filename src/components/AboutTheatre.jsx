@@ -67,7 +67,7 @@ export default function AboutTheatre({ onNotify }) {
             극장 이용 안내
           </h3>
           <ul className="theatre-rules-list">
-            <li>본 공연은 인터미션(15분) 포함 약 145분간 진행되며, 객석 입장은 공연 시작 30분 전부터 가능합니다.</li>
+            <li>본 공연은 인터미션(15분) 포함 약 165분간 진행되며, 객석 입장은 공연 시작 30분 전부터 가능합니다.</li>
             <li><strong style={{ color: 'var(--accent-red)' }}>공연 시작 후에는 추가 입장 및 재입장이 제한됩니다.</strong></li>
             <li>배정된 좌석 외 다른 좌석으로의 이동은 불가합니다.</li>
             <li><strong style={{ color: 'var(--title-color)' }}>본 공연은 공연 시작 전 빈 무대와 공연 종료 후 커튼콜만 촬영이 가능하며, 이 외 합의되지 않은 모든 촬영은 불가합니다.</strong></li>
@@ -79,8 +79,8 @@ export default function AboutTheatre({ onNotify }) {
         {/* 찾아오시는 길 */}
         <div className="address-bar-vintage">
           <div>
-            <div className="address-title">찾아오시는 길 — 서울예술대학교 마동 예장</div>
-            <div className="address-desc">경기도 안산시 단원구 예술대학로 171, 서울예술대학교 마동 1층</div>
+            <div className="address-title">찾아오시는 길 —<br className="mobile-br" /> 서울예술대학교 마동 예장</div>
+            <div className="address-desc">경기도 안산시 단원구 예술대학로 171,<br className="mobile-br" /> 서울예술대학교 마동 1층</div>
           </div>
 
           <div className="address-actions">

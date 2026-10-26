@@ -107,7 +107,7 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster, b
             </div>
             <div className="info-row">
               <span className="info-label"><span>러</span><span>닝</span><span>타</span><span>임</span></span>
-              <span className="info-val">약 145분 (인터미션 15분 포함)</span>
+              <span className="info-val">약 165분 (인터미션 15분 포함)</span>
             </div>
             <div className="info-row">
               <span className="info-label"><span>관</span><span>람</span><span>연</span><span>령</span></span>
@@ -278,7 +278,7 @@ export default function GetTicket({ onOpenBooking, onOpenLookup, onOpenPoster, b
               <div className="guideline-panel active" role="tabpanel">
                 <h3 className="guideline-panel-title">예매 안내</h3>
                 <ul className="guideline-list">
-                  <li>본 공연은 인터미션(15분) 포함 약 145분간 진행됩니다.</li>
+                  <li>본 공연은 인터미션(15분) 포함 약 165분간 진행됩니다.</li>
                   <li>본 공연은 전석 무료이며, 서울예술대학교 재학생 및 외부인 모두 예매 가능합니다.</li>
                   <li>전석 비지정석 예매로 진행되며, 공연 당일 티켓 수령 순서에 따라 선착순으로 좌석이 배정됩니다.</li>
                   <li>회차당 1인 1매까지 예매가 가능합니다.</li>

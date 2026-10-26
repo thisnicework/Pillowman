@@ -17,12 +17,13 @@ export default function AboutPillowman() {
 
           <div style={{ margin: '36px auto 20px', maxWidth: '620px', textAlign: 'center', lineHeight: '2.1' }}>
             <p style={{ fontSize: '1.15rem', color: 'var(--title-color)', fontWeight: 700, marginBottom: '16px' }}>
-              세계를 사로잡은 마틴 맥도너의 대표작, 새로운 뮤지컬의 등장
+              세계를 사로잡은 마틴 맥도너의 대표작,<br className="mobile-br" /> 새로운 뮤지컬의 등장
             </p>
             <p style={{ marginBottom: '16px' }}>
               올리비에상 수상, 토니상 후보<br />
               동시대 최고의 이야기꾼 마틴 맥도너<br />
-              〈쓰리 빌보드〉, 〈이니셰린의 밴시〉로 무대와 스크린을 넘나들며 사랑받아온 그가 가장 아끼는 작품으로 꼽은 〈필로우맨〉<br />
+              〈쓰리 빌보드〉, 〈이니셰린의 밴시〉로 무대와 스크린을 넘나들며 사랑받아온<br className="mobile-br" />
+              그가 가장 아끼는 작품으로 꼽은 〈필로우맨〉<br />
               2003년 런던 초연 이후<br />
               잔혹한 웃음과 서늘한 질문으로 세계를 흔든 이야기가<br />
               <strong style={{ color: 'var(--accent-red)' }}>이제, 노래가 된다.</strong>
@@ -30,7 +31,7 @@ export default function AboutPillowman() {
 
             <div style={{ margin: '24px 0', borderTop: '1px solid var(--border-vintage)', borderBottom: '1px solid var(--border-vintage)', padding: '20px 0' }}>
               <p style={{ fontSize: '1.1rem', color: 'var(--title-color)', fontWeight: 700, marginBottom: '8px' }}>
-                이야기가 현실이 된 순간, 작가는 용의자가 되었다
+                이야기가 현실이 된 순간,<br className="mobile-br" /> 작가는 용의자가 되었다
               </p>
               <p>
                 동화처럼 시작된 이야기가<br />
@@ -330,7 +331,7 @@ export default function AboutPillowman() {
           <OrnamentDivider />
 
           <div className="exhibition-text-centered">
-            <h3 style={{ fontFamily: 'var(--font-title)', letterSpacing: '-0.04em', fontSize: '1.35rem', color: 'var(--title-color)', marginBottom: '6px' }}>
+            <h3 style={{ fontFamily: 'var(--font-title)', letterSpacing: '-0.04em', fontSize: 'clamp(1.1rem, 3.8vw, 1.35rem)', color: 'var(--title-color)', marginBottom: '6px' }}>
               《The Pillowman: I’m Here, Somewhere in Your Story》
             </h3>
             <p style={{ color: 'var(--accent-red)', fontWeight: 700, marginBottom: '18px' }}>

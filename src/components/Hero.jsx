@@ -35,7 +35,7 @@ export default function Hero({ onOpenPoster }) {
         {/* Main Copy */}
         <div className="hero-main-copy">
           <p className="hero-copy-lead">
-            이야기가 현실이 된 순간, 작가는 용의자가 되었다
+            이야기가 현실이 된 순간,<br className="mobile-br" /> 작가는 용의자가 되었다
           </p>
         </div>
 
@@ -65,7 +65,7 @@ export default function Hero({ onOpenPoster }) {
       {/* Official Bottom Red Banner matching Home Mockup Image */}
       <div className="hero-bottom-red-band">
         <p className="hero-red-band-text">
-          세계를 사로잡은 마틴 맥도너의 대표작, 새로운 뮤지컬의 등장
+          세계를 사로잡은 마틴 맥도너의 대표작,<br className="mobile-br" /> 새로운 뮤지컬의 등장
         </p>
       </div>
     </section>

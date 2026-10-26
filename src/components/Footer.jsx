@@ -55,7 +55,7 @@ export default function Footer({ onOpenBooking, onOpenAdmin, bookingStats }) {
                 <li><strong>일시</strong> : 2026. 11. 1.(일) 13:00</li>
                 <li><strong>장소</strong> : 서울예술대학교 마동 1층 예장</li>
                 <li><strong>티켓</strong> : 전석 무료 (10/22(목) 20:00 오픈)</li>
-                <li><strong>러닝타임</strong> : 약 145분 (인터미션 15분)</li>
+                <li><strong>러닝타임</strong> : 약 165분 (인터미션 15분)</li>
               </ul>
             </div>
 

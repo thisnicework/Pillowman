@@ -123,8 +123,8 @@ export default function Team() {
               <div style={{ fontFamily: 'var(--font-title)', letterSpacing: '-0.04em', fontSize: '0.9rem', color: 'var(--accent-red)', marginBottom: '6px' }}>
                 제작지원
               </div>
-              <div style={{ fontFamily: 'var(--font-title)', letterSpacing: '-0.03em', fontSize: '1.2rem', color: 'var(--title-color)', fontWeight: 700 }}>
-                서울예술대학교 앵커사업단 &nbsp;×&nbsp; EMK뮤지컬컴퍼니
+              <div style={{ fontFamily: 'var(--font-title)', letterSpacing: '-0.03em', fontSize: 'clamp(1rem, 3.8vw, 1.2rem)', color: 'var(--title-color)', fontWeight: 700 }}>
+                서울예술대학교 앵커사업단 <br className="mobile-br" />×&nbsp; EMK뮤지컬컴퍼니
               </div>
             </div>
           </div>
