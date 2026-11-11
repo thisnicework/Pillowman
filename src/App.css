@@ -1,0 +1,948 @@
+/* ==========================================================================
+   카메니체 숲 지도 (The Pillowman Archive) 스타일시트
+   Reference Inspiration: https://4tress.kr / https://www.kiiikiii.kr
+   ========================================================================== */
+
+/* 1. App Shell Layout */
+.app-shell {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #0d0e11;
+  color: #e8e2d5;
+  font-family: 'Gowun Batang', 'Noto Serif KR', serif;
+}
+
+/* 2. Top HUD Floating Header */
+.top-hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 32px;
+  background: linear-gradient(to bottom, rgba(10, 11, 14, 0.92) 0%, rgba(10, 11, 14, 0.6) 70%, transparent 100%);
+  pointer-events: none;
+}
+
+.brand-block {
+  pointer-events: auto;
+}
+
+.brand-eyebrow {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: rgba(215, 206, 188, 0.6);
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.brand-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #f0ebe1;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+.hud-actions {
+  pointer-events: auto;
+}
+
+.hud-index-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(24, 27, 32, 0.85);
+  border: 1px solid rgba(225, 218, 202, 0.3);
+  color: #e8e2d5;
+  font-family: inherit;
+  font-size: 12.5px;
+  padding: 7px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(8px);
+}
+
+.hud-index-btn:hover,
+.hud-index-btn.active {
+  background: rgba(42, 46, 54, 0.95);
+  border-color: rgba(225, 218, 202, 0.8);
+  box-shadow: 0 0 12px rgba(225, 218, 202, 0.2);
+}
+
+.index-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: rgba(225, 218, 202, 0.18);
+  border-radius: 50%;
+  font-size: 10px;
+  color: #f5f0e6;
+}
+
+/* 3. Main Map Viewport & Stage */
+.main-map-viewport {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.map-board {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 1280px;
+  max-height: 860px;
+  aspect-ratio: 1000 / 680;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kamenice-svg-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 6px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(225, 218, 202, 0.08);
+}
+
+/* 4. Interactive Location Nodes in SVG */
+.map-interactive-node {
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.map-interactive-node .node-glow {
+  fill: transparent;
+  transition: fill 0.3s ease;
+}
+
+.map-interactive-node:hover .node-glow,
+.map-interactive-node.is-hover .node-glow,
+.map-interactive-node:focus-visible .node-glow {
+  fill: rgba(235, 228, 213, 0.07);
+}
+
+/* 분필 명패 상자 스타일 (Parchment Tag Box) */
+.parchment-box {
+  cursor: pointer;
+}
+
+.parchment-bg {
+  fill: #14161a;
+  transition: fill 0.25s ease;
+}
+
+.parchment-border {
+  fill: none;
+  stroke: rgba(225, 218, 202, 0.85);
+  stroke-width: 1.4;
+  stroke-dasharray: 200;
+  transition: all 0.25s ease;
+}
+
+.parchment-text {
+  fill: rgba(235, 228, 213, 0.92);
+  font-size: 11.5px;
+  font-family: 'Gowun Batang', 'Noto Serif KR', serif;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: fill 0.25s ease;
+  user-select: none;
+}
+
+/* 노드 호버 및 활성 상태 */
+.map-interactive-node:hover .parchment-bg,
+.map-interactive-node.is-hover .parchment-bg {
+  fill: #22262d;
+}
+
+.map-interactive-node:hover .parchment-border,
+.map-interactive-node.is-hover .parchment-border {
+  stroke: #ffffff;
+  stroke-width: 1.8;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
+}
+
+.map-interactive-node:hover .parchment-text,
+.map-interactive-node.is-hover .parchment-text {
+  fill: #ffffff;
+}
+
+.map-interactive-node.is-active .parchment-border {
+  stroke: #d4b483;
+  stroke-width: 2;
+  filter: drop-shadow(0 0 6px rgba(212, 180, 131, 0.6));
+}
+
+.clickable-sub-icon {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.clickable-sub-icon:hover {
+  opacity: 0.8;
+}
+
+/* 5. Floating Guide Tooltip (마우스 갖다 대면 가이드 텍스트) */
+.floating-guide-tooltip {
+  position: absolute;
+  width: 260px;
+  padding: 16px 18px;
+  background: rgba(16, 18, 22, 0.95);
+  border: 1px solid rgba(225, 218, 202, 0.35);
+  border-radius: 6px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85), 0 0 15px rgba(225, 218, 202, 0.1);
+  backdrop-filter: blur(12px);
+  pointer-events: none;
+  z-index: 50;
+  animation: tooltipFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.floating-guide-tooltip.pos-left {
+  transform: translate(-108%, -50%);
+}
+
+.floating-guide-tooltip.pos-right {
+  transform: translate(12%, -50%);
+}
+
+.floating-guide-tooltip.pos-center {
+  transform: translate(-50%, -125%);
+}
+
+.tooltip-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.tooltip-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #d4b483;
+  letter-spacing: 0.05em;
+}
+
+.tooltip-team {
+  font-size: 10px;
+  color: rgba(225, 218, 202, 0.6);
+  padding: 1px 6px;
+  border: 1px solid rgba(225, 218, 202, 0.18);
+  border-radius: 3px;
+}
+
+.tooltip-story-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+
+.tooltip-body-text {
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: rgba(225, 218, 202, 0.82);
+  margin-bottom: 12px;
+}
+
+.tooltip-action-prompt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #cfc4b0;
+  border-top: 1px solid rgba(225, 218, 202, 0.15);
+  padding-top: 8px;
+}
+
+.prompt-arrow {
+  transition: transform 0.2s ease;
+}
+
+.floating-guide-tooltip:hover .prompt-arrow {
+  transform: translateX(4px);
+}
+
+/* 듀얼 툴팁 (소원의 우물 / 장난감 집) */
+.dual-choice-tooltip {
+  pointer-events: auto;
+  width: 290px;
+}
+
+.dual-btn-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.dual-link-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(30, 34, 40, 0.9);
+  border: 1px solid rgba(225, 218, 202, 0.25);
+  border-radius: 4px;
+  color: #f0ebe1;
+  font-family: inherit;
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.dual-link-btn:hover {
+  background: rgba(48, 54, 64, 1);
+  border-color: rgba(225, 218, 202, 0.7);
+  color: #fff;
+}
+
+/* 6. Bottom Quick Location Dock Bar */
+.bottom-location-dock {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: rgba(14, 16, 20, 0.85);
+  border: 1px solid rgba(225, 218, 202, 0.18);
+  border-radius: 30px;
+  backdrop-filter: blur(10px);
+  z-index: 20;
+}
+
+.dock-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: rgba(225, 218, 202, 0.75);
+  font-family: inherit;
+  font-size: 11.5px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dock-pill:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.dock-pill.active {
+  background: rgba(225, 218, 202, 0.15);
+  border-color: rgba(225, 218, 202, 0.4);
+  color: #f5f0e6;
+}
+
+.dock-code {
+  font-size: 10px;
+  opacity: 0.6;
+}
+
+/* 7. Collapsible Story Index Panel (지도 표기 및 이야기 색인) */
+.story-index-panel {
+  position: absolute;
+  top: 75px;
+  right: 32px;
+  width: 380px;
+  max-height: calc(100vh - 120px);
+  background: rgba(16, 18, 22, 0.96);
+  border: 1px solid rgba(225, 218, 202, 0.3);
+  border-radius: 8px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(16px);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: panelSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes panelSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.index-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(225, 218, 202, 0.15);
+}
+
+.index-panel-header h2 {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #f0ebe1;
+  letter-spacing: 0.04em;
+}
+
+.index-close-btn {
+  background: transparent;
+  border: none;
+  color: rgba(225, 218, 202, 0.6);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.index-close-btn:hover {
+  color: #fff;
+}
+
+.index-list {
+  list-style: none;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.index-row-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: #e8e2d5;
+  font-family: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
+.index-row-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.index-row-btn.active {
+  background: rgba(212, 180, 131, 0.15);
+  border-left: 2px solid #d4b483;
+}
+
+.index-code {
+  font-size: 11px;
+  font-weight: 700;
+  color: #d4b483;
+  width: 18px;
+}
+
+.index-place {
+  font-weight: 700;
+  width: 100px;
+  color: #f5f0e6;
+}
+
+.index-story {
+  flex: 1;
+  color: rgba(225, 218, 202, 0.7);
+  font-size: 11.5px;
+}
+
+/* 8. Location Detail Modal (세부 페이지 오버레이) */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 7, 9, 0.88);
+  backdrop-filter: blur(14px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-sheet {
+  width: 100%;
+  max-width: 860px;
+  max-height: 90vh;
+  background: #14161a;
+  border: 1px solid rgba(225, 218, 202, 0.28);
+  border-radius: 8px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(225, 218, 202, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Modal Header */
+.modal-header {
+  padding: 24px 32px 18px;
+  border-bottom: 1px solid rgba(225, 218, 202, 0.16);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.modal-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.modal-code-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #121316;
+  background: #d4b483;
+  padding: 2px 7px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+}
+
+.modal-team-badge {
+  font-size: 11px;
+  color: #e8e2d5;
+  background: rgba(225, 218, 202, 0.12);
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+.modal-table-story {
+  font-size: 12px;
+  color: rgba(225, 218, 202, 0.65);
+}
+
+.modal-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  letter-spacing: 0.02em;
+}
+
+.modal-title-divider {
+  color: rgba(225, 218, 202, 0.3);
+  font-weight: 300;
+}
+
+.modal-story-subtitle {
+  font-size: 16px;
+  font-weight: 400;
+  color: rgba(225, 218, 202, 0.85);
+}
+
+.modal-close-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(225, 218, 202, 0.08);
+  border: 1px solid rgba(225, 218, 202, 0.2);
+  border-radius: 4px;
+  color: #e8e2d5;
+  font-family: inherit;
+  font-size: 12px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: rgba(225, 218, 202, 0.2);
+  border-color: rgba(225, 218, 202, 0.6);
+  color: #fff;
+}
+
+.close-x {
+  font-size: 13px;
+}
+
+/* Modal Tabs */
+.modal-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(225, 218, 202, 0.12);
+  padding: 0 32px;
+  background: rgba(14, 16, 20, 0.6);
+}
+
+.modal-tab-btn {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: rgba(225, 218, 202, 0.65);
+  font-family: inherit;
+  font-size: 13px;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-tab-btn:hover {
+  color: #ffffff;
+}
+
+.modal-tab-btn.active {
+  color: #d4b483;
+  border-bottom-color: #d4b483;
+  font-weight: 700;
+}
+
+/* Modal Body */
+.modal-body {
+  padding: 28px 32px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.section-heading-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  border-bottom: 1px solid rgba(225, 218, 202, 0.1);
+  padding-bottom: 8px;
+}
+
+.section-index {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  color: #d4b483;
+  font-weight: 600;
+}
+
+.section-heading {
+  font-size: 17px;
+  font-weight: 700;
+  color: #f5f0e6;
+}
+
+.section-sub {
+  font-size: 12px;
+  color: rgba(225, 218, 202, 0.5);
+}
+
+/* Story Manuscript Box (원고지 서사 룩) */
+.story-manuscript-box {
+  background: #181b20;
+  border: 1px solid rgba(225, 218, 202, 0.2);
+  border-radius: 6px;
+  padding: 28px 32px;
+  line-height: 2.1;
+  font-size: 15px;
+  color: #e4ddcf;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.manuscript-line {
+  margin-bottom: 10px;
+  word-break: keep-all;
+}
+
+.manuscript-quote {
+  font-size: 16px;
+  font-weight: 600;
+  color: #d4b483;
+  margin-top: 18px;
+  padding-left: 14px;
+  border-left: 2px solid #d4b483;
+}
+
+/* Placeholder Grids (전시 아카이빙, 캐릭터) */
+.placeholder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.placeholder-card {
+  background: rgba(22, 25, 30, 0.85);
+  border: 1px dashed rgba(225, 218, 202, 0.25);
+  border-radius: 6px;
+  padding: 16px;
+  transition: border-color 0.2s ease;
+}
+
+.placeholder-card:hover {
+  border-color: rgba(225, 218, 202, 0.55);
+}
+
+.placeholder-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: rgba(225, 218, 202, 0.5);
+}
+
+.placeholder-tag {
+  font-size: 10.5px;
+  background: rgba(225, 218, 202, 0.1);
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: #d4b483;
+}
+
+.placeholder-info h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.placeholder-info p {
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(225, 218, 202, 0.65);
+}
+
+/* Character Card */
+.character-grid {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.character-card {
+  display: flex;
+  gap: 16px;
+}
+
+.character-portrait-placeholder {
+  width: 72px;
+  height: 90px;
+  background: rgba(14, 16, 20, 0.9);
+  border: 1px solid rgba(225, 218, 202, 0.2);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(225, 218, 202, 0.4);
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.character-portrait-placeholder small {
+  font-size: 8px;
+  letter-spacing: 0.1em;
+}
+
+.character-details {
+  flex: 1;
+}
+
+.character-role {
+  display: inline-block;
+  font-size: 10.5px;
+  color: #d4b483;
+  margin-bottom: 4px;
+}
+
+.character-details h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.character-details p {
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(225, 218, 202, 0.7);
+}
+
+/* Extra (+@) Interactive Module */
+.extra-interactive-placeholder {
+  background: #181b21;
+  border: 1px solid rgba(225, 218, 202, 0.2);
+  border-radius: 6px;
+  padding: 24px;
+}
+
+.extra-badge {
+  display: inline-block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  color: #d4b483;
+  margin-bottom: 8px;
+}
+
+.extra-interactive-placeholder h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.extra-desc {
+  font-size: 13px;
+  color: rgba(225, 218, 202, 0.8);
+  margin-bottom: 18px;
+}
+
+.extra-wireframe-box {
+  background: rgba(10, 12, 15, 0.7);
+  border: 1px dashed rgba(225, 218, 202, 0.25);
+  border-radius: 6px;
+  padding: 36px 20px;
+  text-align: center;
+  color: rgba(225, 218, 202, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.extra-wireframe-box span {
+  font-size: 13.5px;
+  color: #e8e2d5;
+}
+
+.extra-wireframe-box small {
+  font-size: 11.5px;
+  color: rgba(225, 218, 202, 0.45);
+}
+
+/* Modal Footer */
+.modal-footer {
+  padding: 16px 32px;
+  border-top: 1px solid rgba(225, 218, 202, 0.14);
+  background: rgba(14, 16, 20, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: transparent;
+  border: 1px solid rgba(225, 218, 202, 0.2);
+  border-radius: 4px;
+  padding: 8px 16px;
+  color: #e8e2d5;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.footer-nav-btn:hover {
+  background: rgba(225, 218, 202, 0.12);
+  border-color: rgba(225, 218, 202, 0.55);
+}
+
+.nav-text small {
+  display: block;
+  font-size: 10px;
+  color: rgba(225, 218, 202, 0.55);
+}
+
+.nav-text strong {
+  display: block;
+  font-size: 12.5px;
+  color: #ffffff;
+}
+
+.footer-hash-indicator {
+  font-family: monospace;
+  font-size: 11px;
+  color: rgba(225, 218, 202, 0.4);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .top-hud {
+    padding: 12px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .modal-sheet {
+    max-height: 95vh;
+  }
+  .modal-header,
+  .modal-tabs,
+  .modal-body,
+  .modal-footer {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+}

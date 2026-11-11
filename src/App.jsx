@@ -1,188 +1,130 @@
-import React, { useState, useEffect } from 'react';
-import Header from './components/Header';
-import Hero from './components/Hero';
-import GetTicket from './components/GetTicket';
-import AboutPillowman from './components/AboutPillowman';
-import Team from './components/Team';
-import AboutTheatre from './components/AboutTheatre';
-import Footer from './components/Footer';
-import BookingModal from './components/BookingModal';
-import LookupModal from './components/LookupModal';
-import PosterModal from './components/PosterModal';
-import AdminPage from './components/AdminPage';
-import Toast from './components/Toast';
-import { getBookingStats, isBookingOpen, isBookingClosed } from './services/bookingService.js';
-import { initVisitorPresence } from './services/trafficService.js';
-import { Analytics } from '@vercel/analytics/react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { LOCATIONS } from './data/locations';
+import KameniceMap from './components/KameniceMap';
+import LocationDetailModal from './components/LocationDetailModal';
+import './App.css';
 
 export default function App() {
-  const [isAdminRoute, setIsAdminRoute] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return window.location.pathname.startsWith('/admin') || window.location.hash === '#admin';
+  const [activeLocationId, setActiveLocationId] = useState(() => {
+    const hash = window.location.hash.replace('#', '');
+    return LOCATIONS.some((loc) => loc.id === hash) ? hash : null;
   });
+  const [isIndexOpen, setIsIndexOpen] = useState(false);
 
-  const [bookingModalOpen, setBookingModalOpen] = useState(false);
-  const [lookupModalOpen, setLookupModalOpen] = useState(false);
-  const [posterModalOpen, setPosterModalOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
-  const [toastVisible, setToastVisible] = useState(false);
-
-  // Real-time booking statistics (Capacity & Remaining Seats)
-  const [bookingStats, setBookingStats] = useState({
-    totalCapacity: 100,
-    confirmedCount: 0,
-    remainingSeats: 100,
-    isSoldOut: false,
-  });
-
-  const refreshStats = async () => {
-    try {
-      const stats = await getBookingStats();
-      setBookingStats(stats);
-    } catch (e) {
-      console.warn('Failed to load stats:', e);
-    }
-  };
-
+  // Sync with browser hash navigation (Back / Forward / Direct URL)
   useEffect(() => {
-    refreshStats();
-    const interval = setInterval(refreshStats, 4000); // Poll every 4s for live real-time sync
-    window.addEventListener('pillowman-capacity-updated', refreshStats);
-
-    // Initialize Realtime Visitor Presence & Session Traffic Logging
-    const cleanupPresence = initVisitorPresence();
-
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener('pillowman-capacity-updated', refreshStats);
-      if (cleanupPresence) cleanupPresence();
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (LOCATIONS.some((loc) => loc.id === hash)) {
+        setActiveLocationId(hash);
+      } else {
+        setActiveLocationId(null);
+      }
     };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  useEffect(() => {
-    const handlePopState = () => {
-      setIsAdminRoute(
-        window.location.pathname.startsWith('/admin') || window.location.hash === '#admin'
-      );
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    window.addEventListener('hashchange', handlePopState);
-    return () => {
-      window.removeEventListener('popstate', handlePopState);
-      window.removeEventListener('hashchange', handlePopState);
-    };
+  const handleSelectLocation = useCallback((id) => {
+    setActiveLocationId(id);
+    window.history.pushState(null, '', `#${id}`);
   }, []);
 
-  const navigateToHome = () => {
-    window.history.pushState(null, '', '/');
-    setIsAdminRoute(false);
-  };
+  const handleCloseModal = useCallback(() => {
+    setActiveLocationId(null);
+    window.history.pushState(null, '', window.location.pathname + window.location.search);
+  }, []);
 
-  const navigateToAdmin = () => {
-    window.history.pushState(null, '', '/admin');
-    setIsAdminRoute(true);
-  };
+  const activeLocation = LOCATIONS.find((loc) => loc.id === activeLocationId) || null;
 
-  const showToast = (message) => {
-    setToastMessage(message);
-    setToastVisible(true);
-    setTimeout(() => {
-      setToastVisible(false);
-    }, 3200);
-  };
-
-  const handleOpenBooking = () => {
-    if (bookingStats?.isSoldOut) {
-      showToast('준비된 전 좌석이 모두 매진되어 예매가 마감되었습니다.');
-      const ticketSection = document.getElementById('ticket');
-      if (ticketSection) {
-        ticketSection.scrollIntoView({ behavior: 'smooth' });
-      }
-      return;
-    }
-
-    if (isBookingClosed()) {
-      showToast('10/30(금) 자정으로 온라인 티켓 예매가 마감되었습니다. (공연 당일 잔여석 현장 예매 가능)');
-      const ticketSection = document.getElementById('ticket');
-      if (ticketSection) {
-        ticketSection.scrollIntoView({ behavior: 'smooth' });
-      }
-      return;
-    }
-
-    if (!isBookingOpen()) {
-      showToast('티켓 예매는 10/22(목) 20:00에 오픈됩니다.');
-      const ticketSection = document.getElementById('ticket');
-      if (ticketSection) {
-        ticketSection.scrollIntoView({ behavior: 'smooth' });
-      }
-      return;
-    }
-    setBookingModalOpen(true);
-  };
-
-  // If URL is /admin, render Admin Console
-  if (isAdminRoute) {
-    return <AdminPage onGoHome={navigateToHome} />;
-  }
-
-  // Normal Public Site
   return (
-    <div className="pillowman-app">
-      <Header 
-        onOpenBooking={handleOpenBooking} 
-        bookingStats={bookingStats}
-      />
+    <div className="app-shell">
+      {/* Top Floating Archival Header */}
+      <header className="top-hud">
+        <div className="brand-block">
+          <span className="brand-eyebrow">THE PILLOWMAN STORY ARCHIVE</span>
+          <h1 className="brand-title">카메니체 숲 지도</h1>
+        </div>
 
-      <main>
-        <Hero onNotify={showToast} onOpenPoster={() => setPosterModalOpen(true)} />
-        
-        <GetTicket 
-          onOpenBooking={handleOpenBooking}
-          onOpenLookup={() => setLookupModalOpen(true)}
-          onOpenPoster={() => setPosterModalOpen(true)}
-          bookingStats={bookingStats}
+        <div className="hud-actions">
+          <button
+            type="button"
+            className={`hud-index-btn ${isIndexOpen ? 'active' : ''}`}
+            onClick={() => setIsIndexOpen((prev) => !prev)}
+            aria-expanded={isIndexOpen}
+          >
+            <span>지도 표기 · 이야기 색인</span>
+            <span className="index-count">{LOCATIONS.length}</span>
+          </button>
+        </div>
+      </header>
+
+      {/* Collapsible Story Index Table (Matches Proposal Page 1-2 Table) */}
+      {isIndexOpen && (
+        <aside className="story-index-panel" aria-label="지도 표기 및 이야기 목록">
+          <div className="index-panel-header">
+            <h2>지도 표기별 이야기 목록</h2>
+            <button
+              type="button"
+              className="index-close-btn"
+              onClick={() => setIsIndexOpen(false)}
+              aria-label="색인 닫기"
+            >
+              ✕
+            </button>
+          </div>
+          <ul className="index-list">
+            {LOCATIONS.map((loc) => (
+              <li key={loc.id}>
+                <button
+                  type="button"
+                  className={`index-row-btn ${activeLocationId === loc.id ? 'active' : ''}`}
+                  onClick={() => {
+                    handleSelectLocation(loc.id);
+                    setIsIndexOpen(false);
+                  }}
+                >
+                  <span className="index-code">{loc.code}</span>
+                  <span className="index-place">{loc.name}</span>
+                  <span className="index-story">{loc.tableStory}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      )}
+
+      {/* Main Interactive Map Canvas */}
+      <main className="main-map-viewport">
+        <KameniceMap
+          locations={LOCATIONS}
+          activeLocationId={activeLocationId}
+          onSelectLocation={handleSelectLocation}
         />
-        
-        <AboutPillowman />
-        
-        <Team />
-        
-        <AboutTheatre onNotify={showToast} />
       </main>
 
-      <Footer 
-        onOpenBooking={handleOpenBooking} 
-        onOpenAdmin={navigateToAdmin}
-        bookingStats={bookingStats}
+      {/* Bottom Quick Location Bar for Accessibility & Mobile */}
+      <nav className="bottom-location-dock" aria-label="장소 빠른 이동">
+        {LOCATIONS.map((loc) => (
+          <button
+            key={loc.id}
+            type="button"
+            className={`dock-pill ${activeLocationId === loc.id ? 'active' : ''}`}
+            onClick={() => handleSelectLocation(loc.id)}
+          >
+            <span className="dock-code">{loc.code}.</span>
+            <span className="dock-name">{loc.name}</span>
+          </button>
+        ))}
+      </nav>
+
+      {/* Detail Page Modal Overlay */}
+      <LocationDetailModal
+        location={activeLocation}
+        locations={LOCATIONS}
+        onClose={handleCloseModal}
+        onSelectLocation={handleSelectLocation}
       />
-
-      {/* Modals */}
-      <BookingModal 
-        isOpen={bookingModalOpen}
-        onClose={() => setBookingModalOpen(false)}
-        onNotify={showToast}
-        bookingStats={bookingStats}
-        onReservationSuccess={refreshStats}
-      />
-
-      <LookupModal 
-        isOpen={lookupModalOpen}
-        onClose={() => setLookupModalOpen(false)}
-        onNotify={showToast}
-      />
-
-      <PosterModal 
-        isOpen={posterModalOpen}
-        onClose={() => setPosterModalOpen(false)}
-      />
-
-      {/* Global Toast */}
-      <Toast message={toastMessage} visible={toastVisible} />
-
-      {/* Vercel Web Analytics */}
-      <Analytics />
     </div>
   );
 }
