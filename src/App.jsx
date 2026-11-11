@@ -2,17 +2,33 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { LOCATIONS } from './data/locations';
 import KameniceMap from './components/KameniceMap';
 import LocationDetailModal from './components/LocationDetailModal';
+import LockScreen from './components/LockScreen';
 import './App.css';
 
 export default function App() {
+  const [isUnlocked, setIsUnlocked] = useState(() => {
+    return sessionStorage.getItem('pillowman_unlocked') === 'true';
+  });
+
   const [activeLocationId, setActiveLocationId] = useState(() => {
     const hash = window.location.hash.replace('#', '');
     return LOCATIONS.some((loc) => loc.id === hash) ? hash : null;
   });
   const [isIndexOpen, setIsIndexOpen] = useState(false);
 
+  const handleUnlock = useCallback(() => {
+    sessionStorage.setItem('pillowman_unlocked', 'true');
+    setIsUnlocked(true);
+  }, []);
+
+  const handleLock = useCallback(() => {
+    sessionStorage.removeItem('pillowman_unlocked');
+    setIsUnlocked(false);
+  }, []);
+
   // Sync with browser hash navigation (Back / Forward / Direct URL)
   useEffect(() => {
+    if (!isUnlocked) return;
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
       if (LOCATIONS.some((loc) => loc.id === hash)) {
@@ -23,7 +39,7 @@ export default function App() {
     };
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
+  }, [isUnlocked]);
 
   const handleSelectLocation = useCallback((id) => {
     setActiveLocationId(id);
@@ -37,6 +53,10 @@ export default function App() {
 
   const activeLocation = LOCATIONS.find((loc) => loc.id === activeLocationId) || null;
 
+  if (!isUnlocked) {
+    return <LockScreen onUnlock={handleUnlock} />;
+  }
+
   return (
     <div className="app-shell">
       {/* Top Floating Archival Header */}
@@ -47,6 +67,15 @@ export default function App() {
         </div>
 
         <div className="hud-actions">
+          <button
+            type="button"
+            className="hud-lock-btn"
+            onClick={handleLock}
+            title="화면 잠그기"
+          >
+            <span>🔒 잠금</span>
+          </button>
+
           <button
             type="button"
             className={`hud-index-btn ${isIndexOpen ? 'active' : ''}`}
