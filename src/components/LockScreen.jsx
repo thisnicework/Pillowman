@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-// 기본 설정 암호 (원하는 암호로 언제든 변경 가능하며, 환경변수 VITE_ACCESS_PASSWORD도 지원합니다)
-export const DEFAULT_PASSWORDS = ['pillowman', 'kamenice', '1234'];
+// 기본 설정 암호
+export const DEFAULT_PASSWORDS = ['admin'];
 
 export default function LockScreen({ onUnlock }) {
   const [password, setPassword] = useState('');
